@@ -1,10 +1,8 @@
 """Detectores de evidência semântica.
 
-Cada detector olha para uma fonte diferente e emite `Evidencia`. Nenhum
-decide sozinho — quem decide é o combinador em `evidence`. Isso é o que
-permite o caso difícil: um nome opaco (`f27`, `cd_dpto_lot`) que o dicionário
-não conhece pode ser resolvido pelo conteúdo, pela abreviatura reconstruída ou
-pelo contexto das colunas vizinhas.
+Cada detector olha uma fonte diferente e emite `Evidencia`; quem decide é o
+combinador em `evidence`. Nomes opacos (`f27`, `cd_dpto_lot`) se resolvem
+pelo conteúdo, pela abreviatura reconstruída ou pelo contexto da tabela.
 """
 from dataclasses import dataclass, field
 
@@ -15,8 +13,7 @@ from .evidence import EIXO_DOMINIO, EIXO_PAPEL, Evidencia
 from .tokens import expandir_abreviatura, normalizar, tokens_expandidos
 from .vocabulary import GAZETTEERS
 
-# Papéis que definem sozinhos o tratamento de ETL da coluna: se a coluna é uma
-# chave ou uma data, isso importa mais para o pipeline do que o assunto dela.
+# Papéis que definem sozinhos o tratamento de ETL da coluna.
 PAPEIS_ESTRUTURAIS = frozenset({
     config.SEMANTICA_CHAVE_ID,
     config.SEMANTICA_DATA_CALENDARIO,
@@ -44,10 +41,8 @@ for _categoria, _palavras in config.CATEGORIAS_FORTES.items():
 
 _DECAIMENTO_POSICIONAL = 0.03
 
-# Prefixo que cobre mais que isto da palavra-alvo continua sendo evidência
-# cheia; abaixo disso vira palpite proporcional ao que cobre. 0,7 é o piso —
-# `forma` cobre 0,625 de `formacao` e ainda assim é uma palavra comum demais
-# para valer como evidência plena de "Curso / Treinamento".
+# Prefixo que cobre menos que isto da palavra-alvo vira evidência parcial
+# (proporcional à cobertura). `forma` cobre 0,625 de `formacao`.
 _COBERTURA_MINIMA_PREFIXO = 0.7
 
 
@@ -55,9 +50,7 @@ _COBERTURA_MINIMA_PREFIXO = 0.7
 class PerfilConteudo:
     """O que os detectores de conteúdo precisam saber sobre a coluna.
 
-    Construído diretamente pelo chamador a partir do que já sabe sobre a
-    coluna (amostra de valores, cardinalidade, forma dos dados) — nenhum
-    campo é recomputado internamente.
+    Construído pelo chamador; nenhum campo é recomputado aqui.
     """
     tipo_dados: str = ""
     valores_distintos: list[str] = field(default_factory=list)
@@ -78,9 +71,7 @@ def _peso_posicional(indice: int) -> float:
 # ── 1. Conteúdo: padrão estruturado ─────────────────────────────────────────
 
 def por_padrao_conteudo(detectado_padrao: str) -> list[Evidencia]:
-    """CPF/CNPJ/e-mail validados no conteúdo. É a evidência mais forte que
-    existe: uma coluna chamada `campo1` que só contém CPF é um identificador,
-    independentemente de como alguém a batizou."""
+    """CPF/CNPJ/e-mail validados no conteúdo. Evidência mais forte que existe."""
     entrada = _MAPA_PADRAO_SEMANTICA.get(detectado_padrao)
     if entrada is None:
         return []
@@ -93,9 +84,8 @@ def por_padrao_conteudo(detectado_padrao: str) -> list[Evidencia]:
 def por_gazetteer(perfil: PerfilConteudo) -> list[Evidencia]:
     """Compara os valores da coluna com conjuntos fechados conhecidos.
 
-    É o detector que resolve o nome ilegível: `f27` cujos valores são as 27
-    siglas de UF é uma coluna de localização, e nenhuma análise do nome
-    chegaria lá.
+    Resolve nome ilegível pelo conteúdo — `f27` com 27 siglas de UF nos
+    valores é localização.
     """
     if not perfil.valores_distintos or perfil.n_unicos <= 0:
         return []
@@ -124,10 +114,9 @@ def por_gazetteer(perfil: PerfilConteudo) -> list[Evidencia]:
 def _qualificador_de_borda(token: str, posicao: str) -> Evidencia | None:
     """Evidência de papel vinda do token na borda do nome da coluna.
 
-    A expansão da abreviatura conta: `vl_saque` só é reconhecido como valor
-    financeiro porque `vl` vira `valor`. Quando a expansão é ambígua, a posição
-    resolve — `des` em `REFUND_TYPE_DES` pode ser `desc`, `despesa` ou
-    `demissao`, e na ponta do nome só `desc` faz sentido como qualificador.
+    Considera abreviatura expandida (`vl` -> `valor` em `vl_saque`). Em
+    expansão ambígua, usa a posição (`des` em `REFUND_TYPE_DES` só faz
+    sentido como `desc`).
     """
     candidatos: list[tuple[str, float]] = [(token, 1.0)]
     expansoes = expandir_abreviatura(token)
@@ -154,16 +143,11 @@ def _qualificador_de_borda(token: str, posicao: str) -> Evidencia | None:
 # ── 3. Nome: token forte (com abreviaturas expandidas) ──────────────────────
 
 def por_token_forte(tokens: list[str]) -> list[Evidencia]:
-    """Casa os tokens do nome — e as expansões das abreviaturas — contra o
+    """Casa os tokens do nome (e expansões de abreviatura) contra o
     dicionário curado.
 
-    A regra do qualificador posicional continua valendo: o token na *borda* do
-    nome define o papel. As duas convenções que aparecem em sistema corporativo
-    põem o qualificador em pontas opostas — `id_funcionario`, `dt_movimento`,
-    `nome_departamento` no português; `EMPLOYEE_ID`, `SUPPLIER_CONTACT_CODE`,
-    `DEPARTMENT_NAME` no inglês. Olhar só o primeiro token classificava
-    `SUPPLIER_CONTACT_CODE` como valor financeiro, e alguém acabaria somando um
-    centro de custo.
+    Qualificador na borda do nome define o papel — no português vem primeiro
+    (`id_funcionario`), no inglês vem por último (`SUPPLIER_CONTACT_CODE`).
     """
     if not tokens:
         return []
@@ -196,13 +180,10 @@ def por_token_forte(tokens: list[str]) -> list[Evidencia]:
 
 
 def _fator_truncagem(candidato: str, palavra: str) -> float:
-    """Desconto para o match fuzzy que é só um prefixo da palavra-alvo.
+    """Desconto pro match fuzzy que é só um prefixo da palavra-alvo.
 
-    Jaro-Winkler bonifica prefixo comum de propósito, então `work` casa com
-    `workshop` a 0,9 — foi assim que `WORK_EMAIL_ADDRESS` ganhou o domínio
-    "Curso / Treinamento". Quando o candidato é prefixo estrito e cobre pouco
-    da palavra, a evidência vale o que ela cobre, exatamente como já acontece
-    na reconstrução de abreviatura por subsequência.
+    Jaro-Winkler bonifica prefixo comum (`work` casa com `workshop` a 0,9).
+    Prefixo estrito conta pelo que cobre, não como match cheio.
     """
     if len(candidato) >= len(palavra) or not palavra.startswith(candidato):
         return 1.0
@@ -215,18 +196,14 @@ def _fator_truncagem(candidato: str, palavra: str) -> float:
 def por_fuzzy(nome_limpo: str, tokens: list[str]) -> list[Evidencia]:
     """Jaro-Winkler contra as palavras-chave de domínio.
 
-    Roda sempre, inclusive quando um papel forte já foi encontrado: `nome` e
-    `cod` prefixam metade das colunas de um sistema corporativo, e condicionar
-    o fuzzy à ausência de token forte tornava as categorias de domínio
-    inalcançáveis.
+    Roda sempre, mesmo com papel forte já encontrado (`nome`/`cod` prefixam
+    metade das colunas de um sistema corporativo).
     """
     melhores: dict[str, tuple[float, str]] = {}
 
-    # Token que já é palavra conhecida com papel definido não entra no fuzzy de
-    # domínio: a semelhança que sobra é homógrafo, não evidência. `time` é
-    # "equipe" em português e está no vocabulário de estrutura organizacional —
-    # por isso `RECORD_UPDATE_TIME` ganhava domínio "Estrutura Organizacional"
-    # tendo papel de data com 0,96 de confiança vindo do *mesmo* token.
+    # Token que já é palavra conhecida com papel definido não entra no fuzzy
+    # de domínio — a semelhança que sobra é homógrafo (`time` = "equipe" e
+    # também data, via `RECORD_UPDATE_TIME`).
     candidatos_nome = [(nome_limpo, 1.0, nome_limpo)] + [
         c for c in tokens_expandidos(tokens)
         if not (c[0] == c[2] and c[0] in _INDICE_TOKEN_FORTE)
@@ -244,12 +221,9 @@ def por_fuzzy(nome_limpo: str, tokens: list[str]) -> list[Evidencia]:
                 if similaridade < threshold:
                     continue
                 similaridade *= _fator_truncagem(candidato_norm, palavra_norm)
-                # Token que já é qualificador estrutural (`categoria`, `tipo`,
-                # `status`) pesa menos como evidência de domínio, do mesmo jeito
-                # que já pesa menos como evidência de papel: é genérico demais
-                # para decidir sozinho. Sem isso, `CATEGORIA_PRODUTO` empatava
-                # "Cargo / Função" (de `categoria`) com "Produto / Item" (de
-                # `produto`) e o desempate virava sorte de posição.
+                # Qualificador estrutural (`categoria`, `tipo`, `status`)
+                # pesa menos como evidência de domínio — genérico demais pra
+                # decidir sozinho.
                 peso_qualificador = (
                     config.PESO_TOKEN_QUALIFICADOR if original in config.TOKENS_QUALIFICADORES
                     else 1.0
@@ -275,10 +249,9 @@ def por_fuzzy(nome_limpo: str, tokens: list[str]) -> list[Evidencia]:
 # ── 5. Conteúdo: assinatura estrutural ──────────────────────────────────────
 
 def por_assinatura_estrutural(perfil: PerfilConteudo) -> list[Evidencia]:
-    """Deduz o papel pela *forma* dos dados, não pelo nome.
+    """Deduz o papel pela forma dos dados, não pelo nome.
 
-    Pistas fracas de propósito: sozinhas não decidem nada, mas somadas a um
-    nome ambíguo costumam ser o que desempata.
+    Pistas fracas; costumam desempatar um nome ambíguo.
     """
     evidencias: list[Evidencia] = []
     tipo = perfil.tipo_dados
@@ -324,10 +297,8 @@ def por_contexto_da_tabela(
 ) -> list[Evidencia]:
     """Desempata abreviaturas ambíguas usando o assunto da tabela.
 
-    `dep` pode ser departamento, dependente ou depósito. Sozinho é insolúvel —
-    nenhum modelo acerta olhando só a coluna. Mas se as outras colunas da
-    tabela já estabeleceram "Estrutura Organizacional" com confiança, a
-    expansão `departamento` passa a ser a leitura provável.
+    `dep` (departamento, dependente ou depósito) se resolve se a tabela já
+    tem "Estrutura Organizacional" estabelecido.
     """
     if not dominios_da_tabela:
         return []

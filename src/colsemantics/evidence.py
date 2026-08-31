@@ -1,15 +1,7 @@
 """Acúmulo e combinação de evidências semânticas.
 
-O modelo antigo era "primeiro match vence": o primeiro detector que
-respondesse definia a categoria e os demais nem rodavam. Isso descarta
-informação — o nome pode sugerir uma coisa fracamente e o conteúdo confirmar
-outra, e a resposta certa costuma ser a que várias fontes fracas apontam
-juntas.
-
-Aqui cada detector emite `Evidencia` e a combinação é feita por **noisy-OR**:
-`1 - Π(1 - peso)`. Duas pistas de 0,5 valem 0,75; três valem 0,875. Evidências
-independentes se reforçam sem nunca estourar 1,0, e uma pista forte sozinha
-continua bastando.
+Cada detector emite `Evidencia`; a combinação é por noisy-OR:
+`1 - Π(1 - peso)`. Duas pistas de 0,5 dão 0,75; três dão 0,875.
 """
 from dataclasses import dataclass
 from typing import Any
@@ -17,9 +9,7 @@ from typing import Any
 EIXO_PAPEL = "papel"
 EIXO_DOMINIO = "dominio"
 
-# Diferença mínima entre a 1ª e a 2ª hipótese para a escolha ser considerada
-# conclusiva. Abaixo disso o relatório mostra as alternativas em vez de
-# fingir certeza.
+# Diferença mínima entre a 1ª e a 2ª hipótese pra considerar conclusiva.
 _MARGEM_CONCLUSIVA = 0.15
 
 
@@ -27,9 +17,8 @@ _MARGEM_CONCLUSIVA = 0.15
 class Evidencia:
     """Uma pista sobre o significado de uma coluna.
 
-    `peso` é a confiança *desta* pista isoladamente (0-1). `origem` é o texto
-    que aparece no relatório — precisa explicar por que a pista existe, não só
-    nomeá-la.
+    `peso`: confiança da pista isolada (0-1). `origem`: texto exibido no
+    relatório.
     """
     categoria: str
     eixo: str
@@ -66,9 +55,8 @@ def ranquear(evidencias: list[Evidencia], eixo: str) -> list[dict[str, Any]]:
 def escolher(ranking: list[dict[str, Any]]) -> tuple[str | None, float, str, bool]:
     """Escolhe a categoria vencedora de um ranking já ordenado.
 
-    Devolve `(categoria, confiança, origem, conclusiva)`. `conclusiva` é falso
-    quando a segunda hipótese está perto demais — sinal de que o nome é
-    ambíguo e o leitor deveria olhar as alternativas.
+    Devolve `(categoria, confiança, origem, conclusiva)`. `conclusiva` é
+    falso quando a 2ª hipótese está perto demais da 1ª.
     """
     if not ranking:
         return None, 0.0, "Sem evidência", False

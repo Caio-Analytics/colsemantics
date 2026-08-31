@@ -1,13 +1,12 @@
 # colsemantics
 
-**Descobre o que uma coluna *é* e do que ela *fala* — a partir do nome, de
-abreviações corporativas e do conteúdo.**
+Infere o papel de uma coluna (o que ela é: chave, data, valor financeiro...)
+e o domínio (do que ela fala: estrutura organizacional, cargo,
+localidade...) a partir do nome, de abreviações corporativas e do conteúdo.
 
-`cd_dpto_lot` não está em nenhum dicionário. Mas a abreviatura reconstrói
-`codigo` / `departamento` / `lotacao`, o conteúdo confirma baixa
-cardinalidade, e o resultado é uma coluna com **papel** "Chave Identificadora"
-e **domínio** "Estrutura Organizacional" — com a confiança e a evidência que
-levaram a essa conclusão.
+`cd_dpto_lot` não está em nenhum dicionário, mas a abreviatura reconstrói
+`codigo` / `departamento` / `lotacao` e o conteúdo confirma baixa
+cardinalidade:
 
 ```python
 from colsemantics import inferir_semantica
@@ -24,29 +23,17 @@ inferir_semantica("cd_dpto_lot")
 # }
 ```
 
-## Por que isso é diferente de inferir `dtype`
-
-Toda ferramenta de profiling te diz que uma coluna é `int64` ou `object`.
-Nenhuma te diz que `f27` é geografia porque os valores são siglas de UF, ou
-que `DEPARTMENT_NAME` não é dado pessoal mesmo terminando em `_NAME`. É essa
-segunda pergunta — **papel** (o que a coluna é: chave, data, valor
-financeiro...) e **domínio** (do que ela fala: estrutura organizacional,
-cargo, localidade...) — que `colsemantics` responde.
-
 ## Como funciona
 
-A inferência é uma **cascata de detectores independentes**, não um
-`if/elif` em que o primeiro match vence:
+Cascata de detectores independentes, combinados por noisy-OR
+(`1 - Π(1 - peso)` — pistas fracas se somam):
 
-1. **Padrão de conteúdo validado** (CPF, CNPJ, e-mail...) — a pista mais forte que existe.
-2. **Token forte** — match exato contra um dicionário curado, com abreviações expandidas (`vl` → `valor`).
-3. **Fuzzy (Jaro-Winkler)** — nome parecido com uma palavra-chave de domínio, tolera erro de digitação.
-4. **Gazetteer de conteúdo** — os valores da coluna batem com um conjunto fechado conhecido (UFs, meses, sexo/gênero...), independente do nome.
-5. **Assinatura estrutural** — a *forma* dos dados (inteiro crescente e único, decimal de 2 casas assimétrico à direita...) sugere o papel.
-6. **Contexto da tabela** — colunas vizinhas já resolvidas desambiguam abreviaturas ambíguas (`dep` é departamento, dependente ou depósito — sozinho é insolúvel, trivial se a tabela já fala de RH).
-
-Cada detector emite evidência com peso; a combinação é **noisy-OR**
-(`1 - Π(1 - peso)`), não "o primeiro que responder". Pistas fracas se somam.
+1. Padrão de conteúdo validado (CPF, CNPJ, e-mail...).
+2. Token forte — match exato contra dicionário curado, com abreviações expandidas (`vl` → `valor`).
+3. Fuzzy (Jaro-Winkler) — nome parecido com palavra-chave de domínio, tolera erro de digitação.
+4. Gazetteer de conteúdo — valores batem com um conjunto fechado (UFs, meses, sexo/gênero...), independente do nome.
+5. Assinatura estrutural — forma dos dados (inteiro crescente e único, decimal de 2 casas assimétrico...).
+6. Contexto da tabela — colunas vizinhas já resolvidas desambiguam abreviaturas ambíguas (`dep`: departamento, dependente ou depósito).
 
 ## Instalação
 
@@ -80,7 +67,7 @@ perfil = PerfilConteudo(
     ratio_unicidade=4 / 40,
 )
 inferir_semantica("f27", perfil=perfil)["semantica"]
-# "Localização Geográfica" — nenhuma análise do nome chegaria lá
+# "Localização Geográfica"
 ```
 
 `PerfilConteudo` é um dataclass simples — todos os campos são opcionais além

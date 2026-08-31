@@ -30,8 +30,8 @@ def test_match_fuzzy_nome_com_erro_de_digitacao():
 def test_fallback_por_conteudo_cpf_ignora_nome():
     resultado = inferir_semantica("campo_qualquer", detectado_padrao="CPF")
     assert resultado["semantica"] == config.SEMANTICA_CHAVE_ID
-    # A confiança é calculada a partir do peso das evidências, não fixada —
-    # conteúdo validado é a pista mais forte que existe, mas nem ela chega a 1,0.
+    # Confiança calculada a partir do peso, não fixada — nem conteúdo
+    # validado chega a 1,0.
     assert resultado["confianca_score"] >= 0.95
 
 
@@ -48,9 +48,7 @@ def test_nome_sem_semantica_cai_em_generico():
     ("data_nascimento_usuario", config.SEMANTICA_DATA_CALENDARIO),
 ])
 def test_qualificador_posicional_define_o_papel(nome, esperado):
-    """Regressão: o desempate usava o comprimento da palavra-chave, então o
-    qualificador (`id`, `dt`, `cod`) sempre perdia para a entidade — e
-    `id_funcionario` era classificado como 'Nome / Identificação Pessoal'."""
+    """Regressão: `id_funcionario` saía como nome de pessoa."""
     assert inferir_semantica(nome)["semantica"] == esperado
 
 
@@ -61,17 +59,15 @@ def test_qualificador_posicional_define_o_papel(nome, esperado):
     ("desc_cargo", "Cargo / Função"),
 ])
 def test_dominio_vence_quando_o_papel_e_apenas_formal(nome, dominio):
-    """`nome_departamento` é sobre estrutura organizacional; 'Nome' descreve a
-    forma, não o assunto."""
+    """`nome_departamento`: domínio vence, "Nome" é só a forma."""
     resultado = inferir_semantica(nome)
     assert resultado["semantica"] == dominio
     assert resultado["dominio"] == dominio
 
 
 def test_dominio_e_avaliado_mesmo_com_papel_forte():
-    """Regressão estrutural: o fuzzy só rodava quando nenhum token forte
-    casava. Como `cod`/`nome`/`id` prefixam metade das colunas de um sistema
-    corporativo, as categorias de domínio ficavam inalcançáveis."""
+    """Regressão: fuzzy só rodava sem token forte, domínio ficava
+    inalcançável."""
     resultado = inferir_semantica("cod_departamento")
     assert resultado["papel"] == config.SEMANTICA_CHAVE_ID
     assert resultado["dominio"] == "Estrutura Organizacional"
@@ -105,9 +101,7 @@ def test_coluna_de_uf_e_localizacao():
     ("nasc", "nascimento"),
 ])
 def test_abreviatura_reconstruida_por_subsequencia(abreviatura, esperado):
-    """Abreviatura corporativa é a palavra com letras removidas *na ordem*
-    (`dpto` ⊂ `departamento`). Distância de edição erra esse caso;
-    subsequência acerta."""
+    """`dpto` ⊂ `departamento` na ordem."""
     assert esperado in [palavra for palavra, _ in expandir_abreviatura(abreviatura)]
 
 
@@ -153,8 +147,7 @@ def _perfil(valores, tipo="Texto"):
     (["janeiro", "fevereiro", "marco", "abril"] * 10, "Data / Calendário"),
 ])
 def test_nome_opaco_resolvido_pelo_conteudo(valores, esperado):
-    """Uma coluna chamada `f27` cujos valores são as siglas de UF é uma coluna
-    de localização, e nenhuma análise do nome chegaria lá."""
+    """`f27` com siglas de UF nos valores é localização."""
     resultado = inferir_semantica("f27", perfil=_perfil(valores))
     assert resultado["semantica"] == esperado
 
@@ -176,8 +169,7 @@ def test_resultado_traz_hipoteses_ranqueadas():
 
 
 def test_evidencias_independentes_se_reforcam():
-    """Noisy-OR: nome e conteúdo apontando para a mesma coisa devem dar mais
-    confiança do que qualquer um sozinho."""
+    """Noisy-OR: nome + conteúdo dão mais confiança que qualquer um sozinho."""
     valores = ["SP", "RJ", "MG", "BA"] * 10
     so_nome = inferir_semantica("uf")
     so_conteudo = inferir_semantica("f27", perfil=_perfil(valores))
@@ -188,8 +180,7 @@ def test_evidencias_independentes_se_reforcam():
 
 
 def test_dominio_incerto_nao_e_afirmado():
-    """Domínio abaixo do piso continua listado como hipótese, mas não vira
-    fato no resultado."""
+    """Domínio abaixo do piso fica em hipóteses, não vira fato."""
     resultado = inferir_semantica("cod_dep")
     assert resultado["dominio"] is None
     assert any(h["semantica"] == "Estrutura Organizacional" for h in resultado["hipoteses"])
@@ -205,9 +196,7 @@ def _tabela(colunas):
 
 
 def test_contexto_da_tabela_desambigua_abreviatura():
-    """`dep` é insolúvel na coluna e trivial na tabela: com uma coluna
-    organizacional inequívoca por perto, a leitura 'departamento' passa a ser
-    a provável."""
+    """`dep` + coluna organizacional na tabela -> "departamento"."""
     colunas = ["matricula", "nome_func", "cod_dep", "diretoria", "dt_admissao"]
     resultado = _tabela(colunas)[colunas.index("cod_dep")]
 
@@ -230,19 +219,13 @@ def test_contexto_nao_altera_coluna_ja_conclusiva():
 
 
 def test_coluna_com_apenas_dominio_entra_no_contexto():
-    """`diretoria` não tem papel nenhum — ausência de evidência não é
-    ambiguidade, e ela precisa contar como contexto resolvido."""
+    """`diretoria` não tem papel; ausência de evidência não é ambiguidade."""
     assert inferir_semantica("diretoria")["conclusiva"] is True
 
 
 def test_token_conhecido_nao_e_expandido_como_abreviatura():
-    """Regressão real (base MDM): `name` é subsequência de `nascimento`
-    (n-a-s-c-i-M-E-n-t-o), então a coluna `FULL_NAME` era classificada como
-    "Data / Calendário" — a expansão especulativa (0,39) vencia o match
-    literal do mesmo token (0,37).
-
-    Um token que já é palavra conhecida do vocabulário não abrevia nada.
-    """
+    """Regressão (base MDM): `FULL_NAME` saía como "Data / Calendário"
+    (`name` ⊂ `nascimento`)."""
     assert expandir_abreviatura("name") == ()
     assert inferir_semantica("FULL_NAME")["semantica"] == "Nome / Identificação Pessoal"
 
@@ -255,11 +238,8 @@ def test_abreviatura_de_verdade_continua_expandindo():
 
 
 def test_qualificador_na_ponta_final_define_o_papel():
-    """Nomenclatura inglesa põe o qualificador no fim (`SUPPLIER_CONTACT_CODE`),
-    a portuguesa no início (`id_funcionario`). Olhar só o início classificava
-    esse tipo de coluna pela primeira palavra do nome — que costuma ser o
-    assunto, não o papel.
-    """
+    """Inglês põe qualificador no fim (`SUPPLIER_CONTACT_CODE`); português
+    no início (`id_funcionario`)."""
     for coluna in ("SUPPLIER_CONTACT_CODE", "WAREHOUSE_ACCESS_IDENTIFIER",
                    "PROJECT_BUDGET_CODE", "SHIPPING_MANAGER_IDEN"):
         assert inferir_semantica(coluna)["papel"] == config.SEMANTICA_CHAVE_ID, coluna
@@ -267,22 +247,20 @@ def test_qualificador_na_ponta_final_define_o_papel():
 
 
 def test_expansao_ambigua_na_borda_resolve_pelo_papel():
-    """`des` expande para desc/despesa/demissao. Na ponta do nome só `desc`
-    faz sentido: `REFUND_TYPE_DES` não é uma despesa."""
+    """`des` em `REFUND_TYPE_DES` só faz sentido como `desc`."""
     assert inferir_semantica("REFUND_TYPE_DES")["papel"] != "Valor Financeiro"
 
 
 def test_nome_de_coisa_nao_e_nome_de_pessoa():
-    """O domínio separa `FULL_NAME` de `DEPARTMENT_NAME` — ambos terminam no
-    mesmo qualificador, mas nome de departamento não é dado pessoal."""
+    """Domínio separa `FULL_NAME` de `DEPARTMENT_NAME`."""
     assert inferir_semantica("FULL_NAME")["papel"] == config.SEMANTICA_NOME_PESSOA
     for coluna in ("DEPARTMENT_NAME", "POSITION_NAME"):
         assert inferir_semantica(coluna)["papel"] == config.SEMANTICA_ROTULO_ENTIDADE, coluna
 
 
 def test_descricao_com_poucos_valores_vira_categoria():
-    """`JOB_DESCRIPTION` com milhares de valores é texto; `TYPE_DESC` com poucos
-    valores numa tabela grande é dimensão, e quem modela precisa da diferença."""
+    """`JOB_DESCRIPTION` (muitos valores) é texto; `TYPE_DESC` (poucos) é
+    categoria."""
     poucos = PerfilConteudo(tipo_dados="Texto", n_unicos=4, ratio_unicidade=0.00005)
     muitos = PerfilConteudo(tipo_dados="Texto", n_unicos=9000, ratio_unicidade=0.7)
     assert inferir_semantica("SHIFT_TYPE_DESC", perfil=poucos)["papel"] == \
@@ -292,56 +270,45 @@ def test_descricao_com_poucos_valores_vira_categoria():
 
 
 def test_homografo_com_papel_forte_nao_gera_dominio():
-    """`time` é "equipe" em português e está no vocabulário de estrutura
-    organizacional. Em `RECORD_UPDATE_TIME` o mesmo token já resolveu o papel
-    como data com alta confiança — a semelhança que sobra é homógrafo."""
+    """`time` = "equipe" e também papel de data; `RECORD_UPDATE_TIME` não
+    vira Estrutura Organizacional."""
     resultado = inferir_semantica("RECORD_UPDATE_TIME")
     assert resultado["papel"] == config.SEMANTICA_DATA_CALENDARIO
     assert resultado["dominio"] != "Estrutura Organizacional"
 
 
 def test_prefixo_curto_nao_casa_com_palavra_longa():
-    """Jaro-Winkler bonifica prefixo comum, então `work` casava com `workshop`
-    a 0,9 e `WORK_EMAIL_ADDRESS` ganhava domínio "Curso / Treinamento"."""
+    """`work` casava com `workshop` a 0,9 (bônus de prefixo do Jaro-Winkler)."""
     assert inferir_semantica("WORK_EMAIL_ADDRESS")["dominio"] != "Curso / Treinamento"
 
 
 def test_nome_de_produto_nao_e_nome_de_pessoa():
-    """Regressão real: `NOME_PRODUTO` não tinha domínio cadastrado para
-    competir com o default, e caía no mesmo bug que `DEPARTMENT_NAME` — só
-    que sem um domínio pronto para resolvê-lo."""
+    """Regressão: `NOME_PRODUTO` sem domínio cadastrado caía no default de
+    nome de pessoa."""
     assert inferir_semantica("NOME_PRODUTO")["papel"] == config.SEMANTICA_ROTULO_ENTIDADE
     assert inferir_semantica("NOME_CLIENTE")["papel"] == config.SEMANTICA_NOME_PESSOA
 
 
 def test_marca_de_produto_nao_vira_matricula():
-    """`marca` é subsequência de `matricula` (m-a-t-r-i-c-u-l-a) e não tinha
-    domínio cadastrado, então a mesma classe de bug do `NOME_PRODUTO` fazia
-    `MARCA_PRODUTO` virar Chave Identificadora via abreviatura especulativa."""
+    """`marca` ⊂ `matricula`; `MARCA_PRODUTO` virava Chave Identificadora."""
     resultado = inferir_semantica("MARCA_PRODUTO")
     assert resultado["papel"] != config.SEMANTICA_CHAVE_ID
     assert resultado["dominio"] == "Produto / Item"
 
 
 def test_qualificador_generico_perde_para_palavra_de_dominio_no_fuzzy():
-    """`categoria` está cadastrado como palavra-chave de "Cargo / Função", mas
-    também é qualificador estrutural genérico (aparece em toda tabela).
-    `CATEGORIA_PRODUTO` empatava os dois domínios por match exato de nome —
-    o qualificador não pode competir em pé de igualdade com a palavra que
-    nomeia a entidade de verdade."""
+    """`CATEGORIA_PRODUTO` empatava "Cargo / Função" (de `categoria`) com
+    "Produto / Item"."""
     assert inferir_semantica("CATEGORIA_PRODUTO")["dominio"] == "Produto / Item"
 
 
 def test_sufixo_de_unidade_de_duracao_vence_palavra_ambigua():
-    """`prazo` é data em muitos contextos (`data de prazo`), mas
-    `PRAZO_ENTREGA_DIAS` termina em `dias` — unidade de contagem, não data."""
+    """`PRAZO_ENTREGA_DIAS` termina em `dias`, não data."""
     assert inferir_semantica("PRAZO_ENTREGA_DIAS")["papel"] == "Quantidade / Métrica"
 
 
 def test_ano_nao_vira_dado_pessoal():
-    """Regressão real: `ano` não tinha vocabulário próprio e virava palpite
-    de abreviatura — é subsequência de `aluno` (a-n-o ⊂ al-u-n-o) — e
-    `ANO_BASE` (ano-calendário, 2010–2025) saía marcada como "Nome de pessoa"."""
+    """Regressão: `ANO_BASE` saía como "Nome de pessoa" (`ano` ⊂ `aluno`)."""
     assert expandir_abreviatura("ano") == ()
     resultado = inferir_semantica("ANO_BASE")
     assert resultado["papel"] == config.SEMANTICA_DATA_CALENDARIO
@@ -349,10 +316,7 @@ def test_ano_nao_vira_dado_pessoal():
 
 
 def test_abreviatura_especulativa_de_duas_letras_nao_e_tentada():
-    """Regressão real (dado do TSE): `ue` é subsequência de `user`
-    (u-e ⊂ u-s-e-r) e virava palpite de nome de pessoa em `SG_UE`/`NM_UE`,
-    sem nenhuma relação real entre as duas palavras. Abaixo de 3 letras, só o
-    dicionário curado vale — é o que já protege `nm`, `sg`, `dt`."""
+    """Regressão (dado do TSE): `ue` ⊂ `user` virava palpite em `SG_UE`."""
     assert expandir_abreviatura("ue") == ()
     assert inferir_semantica("nm")[  # ainda funciona: curado, não especulativo
         "papel"
@@ -360,9 +324,8 @@ def test_abreviatura_especulativa_de_duas_letras_nao_e_tentada():
 
 
 def test_nome_de_conceito_eleitoral_nao_e_dado_pessoal():
-    """Regressão real (dado do TSE): `NM_PARTIDO`/`NM_TIPO_ELEICAO` são nome
-    de partido e tipo de eleição, não de pessoa — mas sem domínio próprio pra
-    competir com o qualificador `nm`→`nome`, saíam como dado pessoal."""
+    """Regressão (dado do TSE): `NM_PARTIDO`/`NM_TIPO_ELEICAO` saíam como
+    dado pessoal."""
     for coluna in ("NM_PARTIDO", "NM_TIPO_ELEICAO", "NM_PARTIDO_FORNECEDOR"):
         assert inferir_semantica(coluna)["papel"] != config.SEMANTICA_NOME_PESSOA, coluna
     for coluna in ("NM_DOADOR", "NM_FORNECEDOR"):
@@ -370,15 +333,11 @@ def test_nome_de_conceito_eleitoral_nao_e_dado_pessoal():
 
 
 def test_nome_de_orgao_publico_nao_e_dado_pessoal():
-    """Regressão real (Portal da Transparência): `Nome do órgão superior` é
-    nome de instituição, não de pessoa."""
+    """Regressão (Portal da Transparência): órgão público, não pessoa."""
     for coluna in ("Nome do órgão superior", "Nome órgão solicitante"):
         assert inferir_semantica(coluna)["papel"] != config.SEMANTICA_NOME_PESSOA, coluna
 
 
 def test_sequencial_de_candidato_e_chave_nao_nome():
-    """Regressão real (dado do TSE): `SQ_CANDIDATO_FORNECEDOR` é um número
-    sequencial que referencia um candidato — não é o nome dele. `candidato`
-    sozinho pesa como nome de pessoa; o qualificador `sq`/`sequencial` na
-    borda precisa vencer."""
+    """Regressão (dado do TSE): `SQ_CANDIDATO_FORNECEDOR` é chave, não nome."""
     assert inferir_semantica("SQ_CANDIDATO_FORNECEDOR")["papel"] == config.SEMANTICA_CHAVE_ID
