@@ -1,6 +1,6 @@
 [project]
 name = "colsemantics"
-version = "0.1.0"
+version = "0.1.1"
 description = "Inferência semântica de colunas: descobre o papel (o que a coluna é) e o domínio (do que ela fala) a partir do nome, de abreviações corporativas e do conteúdo."
 readme = "README.md"
 license = "MIT"

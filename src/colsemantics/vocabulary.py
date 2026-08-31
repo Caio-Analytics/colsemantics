@@ -1,24 +1,22 @@
 """Vocabulários da inferência semântica: abreviaturas e gazetteers de valor.
 
-Só dado, sem lógica. Duas famílias:
+Só dado, sem lógica.
 
-- **Abreviaturas** — sistemas corporativos brasileiros abreviam de forma
-  sistemática (`cd_dpto_lot`, `nr_seq_mvto`, `vl_tot_liq`). Um dicionário
-  curado resolve o caso frequente; o resto cai na reconstrução por
-  subsequência (ver `tokens.expandir_abreviatura`).
-- **Gazetteers** — conjuntos fechados de valores que identificam a coluna pelo
-  *conteúdo*, independentemente de como ela foi batizada. Uma coluna chamada
-  `f27` cujos valores são as 27 siglas de UF é uma coluna de localização, e
-  nenhuma análise do nome chegaria lá.
+Abreviaturas: sistemas corporativos abreviam de forma sistemática
+(`cd_dpto_lot`, `nr_seq_mvto`, `vl_tot_liq`). Dicionário curado pro caso
+frequente; o resto vai pra reconstrução por subsequência
+(`tokens.expandir_abreviatura`).
+
+Gazetteers: conjuntos fechados de valores que identificam a coluna pelo
+conteúdo (`f27` com siglas de UF nos valores é localização).
 """
 from typing import Any
 
 from . import _taxonomy as config
 
 # ── Abreviaturas ────────────────────────────────────────────────────────────
-# token abreviado -> lista de expansões possíveis, da mais provável para a
-# menos. Múltiplas expansões são o caso interessante: `dep` sozinho é
-# ambíguo e só o contexto da tabela desempata.
+# token abreviado -> lista de expansões possíveis, mais provável primeiro.
+# `dep` sozinho é ambíguo; o contexto da tabela desempata.
 ABREVIATURAS: dict[str, list[str]] = {
     # papel / estrutura do nome
     "cd": ["codigo"], "cod": ["codigo"], "cdg": ["codigo"],
@@ -61,9 +59,8 @@ ABREVIATURAS: dict[str, list[str]] = {
 }
 
 # ── Gazetteers ──────────────────────────────────────────────────────────────
-# Cada entrada declara um conjunto fechado de valores. A coluna é atribuída à
-# categoria quando a fração dos seus valores distintos contida no conjunto
-# supera `cobertura_minima`.
+# Cada entrada declara um conjunto fechado de valores. A coluna entra na
+# categoria quando a fração de valores contidos supera `cobertura_minima`.
 
 _UFS = {
     "ac", "al", "ap", "am", "ba", "ce", "df", "es", "go", "ma", "mt", "ms",
