@@ -1,16 +1,7 @@
-"""colsemantics: inferência semântica de colunas por acúmulo de evidências.
-
-Dois eixos: papel (o que a coluna é) e domínio (do que ela fala).
-Ex: `nome_departamento` -> papel "Nome", domínio "Estrutura Organizacional".
-
-Detectores independentes emitem evidências com peso; combinação por
-noisy-OR. Duas passadas — a segunda desambigua com os domínios já
-resolvidos da primeira (contexto de tabela resolve `dep`: departamento,
-dependente ou depósito).
-"""
 from typing import Any
 
 from . import _taxonomy as config
+from .context import SemanticContext, current_context
 from .detectors import (
     PAPEIS_ESTRUTURAIS,
     PerfilConteudo,
@@ -20,29 +11,41 @@ from .detectors import (
     por_gazetteer,
     por_padrao_conteudo,
     por_token_forte,
+    profile_from_record,
 )
 from .evidence import EIXO_DOMINIO, EIXO_PAPEL, Evidencia, escolher, ranquear
 from .tokens import expandir_abreviatura, normalizar, tokenizar
+from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 __all__ = [
     "Evidencia",
     "PAPEIS_ESTRUTURAIS",
     "PerfilConteudo",
+    "SemanticContext",
+    "current_context",
     "expandir_abreviatura",
+    "infer_column",
+    "infer_table",
     "inferir_semantica",
     "inferir_semanticas_da_tabela",
     "normalizar",
+    "profile_from_record",
+    "load_vocabularies",
+    "temporary_vocabulary",
+    "export_overrides_template",
     "semanticas_para_gap_analysis",
     "tokenizar",
 ]
 
-# Confiança mínima pra um domínio da 1ª passada entrar no contexto de
-# desambiguação.
+# Confiança mínima para um domínio da primeira passada entrar no contexto que
+# desambigua as demais colunas. Baixo demais e o contexto propaga o próprio
+# erro; alto demais e ele nunca ajuda.
 _CONFIANCA_MINIMA_CONTEXTO = 0.7
 
-# Piso pra afirmar um domínio; abaixo disso fica só em `hipoteses`.
+# Piso para *afirmar* um domínio. Abaixo dele a categoria continua visível em
+# `hipoteses`, mas o campo `dominio` fica vazio.
 _CONFIANCA_MINIMA_DOMINIO = 0.5
 
 _MAX_HIPOTESES = 4
@@ -68,12 +71,22 @@ def _coletar_evidencias(
     return evidencias
 
 
-def _refinar_papel(papel: str | None, dominio: str | None, perfil: PerfilConteudo | None) -> str | None:
-    """Ajusta o papel com o domínio e a cardinalidade da coluna.
+def _refinar_papel(
+    papel: str | None, dominio: str | None, perfil: PerfilConteudo | None
+) -> str | None:
+    """Ajusta o papel com o que os outros dois sinais já sabem.
 
-    FULL_NAME (pessoa) x DEPARTMENT_NAME (rótulo de entidade): separa pelo
-    domínio. JOB_DESCRIPTION (texto livre) x SHIFT_TYPE_DESC (poucos
-    valores -> categoria): separa pela cardinalidade.
+    O eixo de domínio e a cardinalidade da coluna carregam informação que o
+    nome sozinho não dá, e são eles que separam dois pares que o motor
+    confundia:
+
+    - **nome de gente × nome de coisa** — `FULL_NAME` e `DEPARTMENT_NAME` têm o
+      mesmo qualificador. O que os separa é o domínio: departamento é estrutura
+      organizacional, e nome de departamento não é dado pessoal.
+    - **descrição × categoria** — `JOB_DESCRIPTION` (milhares de valores) é
+      texto livre; `SHIFT_TYPE_DESC` (poucos valores numa tabela grande) é uma
+      dimensão. Quem vai modelar precisa dessa diferença, e ela está no dado,
+      não no nome.
     """
     if papel == config.SEMANTICA_NOME_PESSOA:
         if dominio is not None and dominio not in config.DOMINIOS_DE_PESSOA:
@@ -97,16 +110,20 @@ def _montar_resultado(
     papel, conf_papel, origem_papel, papel_conclusivo = escolher(ranking_papel)
     dominio, conf_dominio, origem_dominio, _ = escolher(ranking_dominio)
 
-    # Abaixo do piso, o domínio fica só em `hipoteses`, não vira fato.
-    # `cod_dep` sem outra pista de estrutura organizacional é palpite.
+    # Domínio abaixo do piso não é afirmado: continua listado em `hipoteses`,
+    # mas não vira fato no relatório. `cod_dep` numa tabela sem nenhuma outra
+    # pista de estrutura organizacional é um palpite, não um achado — e é
+    # justamente esse caso que a segunda passada por contexto vai resolver (ou
+    # deixar em aberto, o que também é uma resposta honesta).
     dominio_incerto = dominio is not None and conf_dominio < _CONFIANCA_MINIMA_DOMINIO
     if dominio_incerto:
         dominio, conf_dominio, origem_dominio = None, 0.0, "Sem evidência"
 
     papel = _refinar_papel(papel, dominio, perfil)
 
-    # Papel estrutural decide o tratamento no pipeline. Papel "fraco" (Nome,
-    # Texto Descritivo) só descreve a forma; aí o domínio importa mais.
+    # O papel estrutural manda porque é ele que decide o tratamento no
+    # pipeline. Papel "fraco" (Nome, Texto Descritivo) descreve a forma e não
+    # o assunto — aí o domínio é mais informativo.
     if papel in PAPEIS_ESTRUTURAIS:
         semantica, confianca, origem = papel, conf_papel, origem_papel
     elif dominio is not None:
@@ -117,10 +134,16 @@ def _montar_resultado(
         semantica, confianca, origem = config.SEMANTICA_GENERICA, 0.0, "Unmatched"
 
     hipoteses = sorted(
-        [{"semantica": r["categoria"], "eixo": eixo, "confianca": r["confianca"],
-          "evidencias": r["origens"][:3]}
-         for eixo, ranking in ((EIXO_PAPEL, ranking_papel), (EIXO_DOMINIO, ranking_dominio))
-         for r in ranking],
+        [
+            {
+                "semantica": r["categoria"],
+                "eixo": eixo,
+                "confianca": r["confianca"],
+                "evidencias": r["origens"][:3],
+            }
+            for eixo, ranking in ((EIXO_PAPEL, ranking_papel), (EIXO_DOMINIO, ranking_dominio))
+            for r in ranking
+        ],
         key=lambda h: -h["confianca"],
     )[:_MAX_HIPOTESES]
 
@@ -130,9 +153,10 @@ def _montar_resultado(
         "dominio": dominio,
         "confianca_score": round(confianca, 4),
         "origem": origem,
-        # Conclusiva exige os dois eixos resolvidos. `diretoria` só tem
-        # domínio e nenhum papel — está resolvida, entra no contexto mesmo
-        # assim.
+        # Conclusiva exige os *dois* eixos resolvidos — mas ambiguidade é ter
+        # candidatos empatados, não é não ter candidato nenhum. Uma coluna como
+        # `diretoria`, que só tem domínio e nenhum papel, está perfeitamente
+        # resolvida e precisa entrar no contexto que desambigua as vizinhas.
         "conclusiva": not (bool(ranking_papel) and not papel_conclusivo) and not dominio_incerto,
         "hipoteses": hipoteses,
     }
@@ -143,31 +167,47 @@ def inferir_semantica(
     detectado_padrao: str = "Nenhum",
     perfil: PerfilConteudo | None = None,
 ) -> dict[str, Any]:
-    """Infere papel, domínio e semântica primária de uma coluna isolada.
-
-    `perfil` habilita os detectores de conteúdo (gazetteer, assinatura
-    estrutural). Sem ele, a inferência usa só o nome.
-    """
+    override = current_context().column_overrides.get(nome_col)
+    if override:
+        axis = EIXO_PAPEL if override in PAPEIS_ESTRUTURAIS else EIXO_DOMINIO
+        result = _montar_resultado([Evidencia(override, axis, 1.0, "vocabulary override")], perfil)
+        result["conclusiva"] = True
+        return result
     return _montar_resultado(_coletar_evidencias(nome_col, detectado_padrao, perfil), perfil)
 
 
 def inferir_semanticas_da_tabela(entradas: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Infere a semântica de todas as colunas, com desambiguação por contexto.
 
-    Cada entrada: `{"nome": str, "padrao": str, "perfil": PerfilConteudo}`.
+    Cada entrada é `{"nome": str, "padrao": str, "perfil": PerfilConteudo}`.
 
-    Passada 1 classifica cada coluna isolada. Passada 2 monta o assunto da
-    tabela a partir do que ficou confiante e reprocessa só as colunas
-    inconclusivas (`cod_dep` numa tabela de RH -> departamento).
+    Passada 1 classifica cada coluna isoladamente. Passada 2 monta o perfil de
+    assunto da tabela a partir do que ficou confiante e reprocessa apenas as
+    colunas cuja escolha não foi conclusiva — é onde `cod_dep` numa tabela de
+    RH vira departamento em vez de dependente.
     """
     evidencias_por_coluna: list[list[Evidencia]] = []
     resultados: list[dict[str, Any]] = []
     for entrada in entradas:
-        evidencias = _coletar_evidencias(
-            str(entrada["nome"]), entrada.get("padrao", "Nenhum"), entrada.get("perfil")
+        nome = str(entrada["nome"])
+        override = current_context().column_overrides.get(nome)
+        evidencias = (
+            [
+                Evidencia(
+                    override,
+                    EIXO_PAPEL if override in PAPEIS_ESTRUTURAIS else EIXO_DOMINIO,
+                    1.0,
+                    "vocabulary override",
+                )
+            ]
+            if override
+            else _coletar_evidencias(nome, entrada.get("padrao", "Nenhum"), entrada.get("perfil"))
         )
         evidencias_por_coluna.append(evidencias)
-        resultados.append(_montar_resultado(evidencias, entrada.get("perfil")))
+        resultado = _montar_resultado(evidencias, entrada.get("perfil"))
+        if override:
+            resultado["conclusiva"] = True
+        resultados.append(resultado)
 
     contexto = _perfil_de_assunto(resultados)
     if not contexto:
@@ -187,10 +227,11 @@ def inferir_semanticas_da_tabela(entradas: list[dict[str, Any]]) -> list[dict[st
 
 
 def _perfil_de_assunto(resultados: list[dict[str, Any]]) -> dict[str, float]:
-    """Resume o assunto da tabela a partir das colunas já classificadas.
+    """Resume de que a tabela trata, a partir das colunas já bem classificadas.
 
-    Só entram categorias com confiança acima do piso — contexto de palpite
-    propagaria erro em vez de desambiguar.
+    Só entram categorias estabelecidas com confiança: o contexto serve para
+    desempatar, e um contexto construído a partir de palpites propagaria o
+    erro para as colunas ambíguas em vez de resolvê-las.
     """
     forcas: dict[str, float] = {}
     for resultado in resultados:
@@ -208,10 +249,16 @@ def _perfil_de_assunto(resultados: list[dict[str, Any]]) -> dict[str, float]:
 def semanticas_para_gap_analysis(registro: dict[str, Any]) -> list[str]:
     """Todas as semânticas que uma coluna aporta a uma análise de cobertura.
 
-    `cod_departamento` aporta tanto "Chave Identificadora" quanto
-    "Estrutura Organizacional".
+    Uma coluna `cod_departamento` habilita tanto requisitos de "Chave
+    Identificadora" quanto de "Estrutura Organizacional" — considerar só a
+    semântica primária deixaria esse tipo de requisito bloqueado por engano.
     """
     return [
-        v for v in (registro.get("semantica"), registro.get("papel"), registro.get("dominio"))
+        v
+        for v in (registro.get("semantica"), registro.get("papel"), registro.get("dominio"))
         if v and v != config.SEMANTICA_GENERICA
     ]
+
+
+infer_column = inferir_semantica
+infer_table = inferir_semanticas_da_tabela

@@ -1,10 +1,10 @@
 """Normalização, tokenização e expansão de abreviaturas de nomes de coluna."""
+
 import re
-from functools import lru_cache
 
 from unidecode import unidecode
 
-from . import _taxonomy as config
+from .context import current_context
 from .vocabulary import ABREVIATURAS
 
 _RE_CAMEL = re.compile(r"([a-z0-9])([A-Z])")
@@ -36,17 +36,10 @@ def tokenizar(nome_col: str) -> list[str]:
     return [p for p in _RE_SEPARADORES.split(nome) if p]
 
 
-@lru_cache(maxsize=1)
 def _vocabulario_expansao() -> tuple[str, ...]:
     """Todas as palavras que valem como alvo de expansão: as palavras-chave da
     taxonomia mais as expansões conhecidas do dicionário de abreviaturas."""
-    palavras: set[str] = set()
-    for grupo in (config.CATEGORIAS_FORTES, config.CATEGORIAS_FUZZY):
-        for lista in grupo.values():
-            palavras.update(lista)
-    for expansoes in ABREVIATURAS.values():
-        palavras.update(expansoes)
-    return tuple(sorted(palavras))
+    return current_context().abbreviation_words
 
 
 def _e_subsequencia(abreviatura: str, palavra: str) -> bool:
@@ -58,7 +51,6 @@ def _e_subsequencia(abreviatura: str, palavra: str) -> bool:
     return all(letra in iterador for letra in abreviatura)
 
 
-@lru_cache(maxsize=4096)
 def expandir_abreviatura(token: str) -> tuple[tuple[str, float], ...]:
     """Devolve as expansões possíveis de um token, com a confiança de cada uma.
 
