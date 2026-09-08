@@ -1,12 +1,12 @@
 [project]
 name = "colsemantics"
-version = "0.1.1"
-description = "Inferência semântica de colunas: descobre o papel (o que a coluna é) e o domínio (do que ela fala) a partir do nome, de abreviações corporativas e do conteúdo."
+version = "0.2.0"
+description = "Infer semantic roles and domains for tabular columns from names, values, and table context."
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Caio" }]
 requires-python = ">=3.10"
-keywords = ["semantic", "data-profiling", "column-inference", "pii", "etl", "pandas"]
+keywords = ["semantic-inference", "data-profiling", "schema-inference", "column-classification", "pii", "etl"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -20,10 +20,13 @@ classifiers = [
 dependencies = [
     "rapidfuzz>=3.0",
     "unidecode>=1.3",
+    "PyYAML>=6.0",
 ]
 
 [project.urls]
 Homepage = "https://github.com/Caio-Analytics/colsemantics"
+Repository = "https://github.com/Caio-Analytics/colsemantics"
+Issues = "https://github.com/Caio-Analytics/colsemantics/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "mypy>=1.10", "ruff>=0.6"]
