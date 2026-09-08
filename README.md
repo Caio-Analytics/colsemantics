@@ -16,25 +16,25 @@ pip install colsemantics
 from colsemantics import infer_column
 
 result = infer_column("SUPPLIER_CONTACT_CODE")
-print(result["papel"])
+print(result["role"])
 ```
 
-The package keeps the original Portuguese category labels for compatibility with Recon, the project it was extracted from.
+The English API returns English field names and category labels.
 
 ## Use sampled values
 
 ```python
-from colsemantics import PerfilConteudo, infer_column
+from colsemantics import ContentProfile, infer_column
 
-profile = PerfilConteudo(
-    tipo_dados="Texto",
-    valores_distintos=["SP", "RJ", "MG", "BA"],
-    n_unicos=4,
-    ratio_unicidade=0.1,
+profile = ContentProfile(
+    data_type="Text",
+    distinct_values=["SP", "RJ", "MG", "BA"],
+    distinct_count=4,
+    uniqueness_ratio=0.1,
 )
 
 result = infer_column("f27", perfil=profile)
-print(result["dominio"])
+print(result["domain"])
 ```
 
 ## Analyze a table
@@ -44,9 +44,9 @@ from colsemantics import infer_table
 
 results = infer_table(
     [
-        {"nome": "employee_id"},
-        {"nome": "department_name"},
-        {"nome": "start_date"},
+        {"column_name": "employee_id"},
+        {"column_name": "department_name"},
+        {"column_name": "start_date"},
     ]
 )
 ```
@@ -82,13 +82,13 @@ Custom vocabularies are scoped with `ContextVar`, so separate concurrent analyse
 
 ```python
 {
-    "semantica": str,
-    "papel": str | None,
-    "dominio": str | None,
-    "confianca_score": float,
-    "origem": str,
-    "conclusiva": bool,
-    "hipoteses": list[dict],
+    "semantic": str,
+    "role": str | None,
+    "domain": str | None,
+    "confidence": float,
+    "evidence": str,
+    "conclusive": bool,
+    "hypotheses": list[dict],
 }
 ```
 
@@ -103,4 +103,4 @@ mypy
 
 ## License
 
-MIT. The semantic inference engine was extracted from [Recon](https://github.com/Caio-Analytics/Recon).
+MIT.

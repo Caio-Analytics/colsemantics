@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field
 from typing import Any
 
 from . import _taxonomy as config
@@ -21,6 +22,7 @@ __version__ = "0.2.0"
 
 __all__ = [
     "Evidencia",
+    "ContentProfile",
     "PAPEIS_ESTRUTURAIS",
     "PerfilConteudo",
     "SemanticContext",
@@ -38,6 +40,44 @@ __all__ = [
     "semanticas_para_gap_analysis",
     "tokenizar",
 ]
+
+
+@dataclass
+class ContentProfile:
+    data_type: str = ""
+    distinct_values: list[str] = field(default_factory=list)
+    distinct_count: int = 0
+    uniqueness_ratio: float = 0.0
+    mean_string_length: float | None = None
+    fixed_length: bool = False
+    skewness: float | None = None
+    minimum: float | None = None
+    monotonically_increasing: bool = False
+    fixed_decimal_places: int | None = None
+
+
+_CATEGORY_LABELS = {
+    "Genérico / Não mapeado": "Generic / Unmapped",
+    "Data / Calendário": "Date / Calendar",
+    "Chave Identificadora (ID)": "Identifier (ID)",
+    "Texto Descritivo Livre": "Free-form Text",
+    "Nome / Identificação Pessoal": "Person Name / Identifier",
+    "Rótulo / Nome de Entidade": "Entity Label / Name",
+    "Categoria / Classificação": "Category / Classification",
+    "Status / Indicador / Flag": "Status / Indicator / Flag",
+    "Valor Financeiro": "Financial Value",
+    "Quantidade / Métrica": "Quantity / Metric",
+    "Contato / Rede": "Contact / Network",
+    "Resultado de Avaliação": "Assessment Result",
+    "Localização Geográfica": "Geographic Location",
+    "Estrutura Organizacional": "Organizational Structure",
+    "Perfil do Colaborador": "Workforce Profile",
+    "Produto / Item": "Product / Item",
+    "Cargo / Função": "Job / Function",
+    "Financeiro / Custo": "Finance / Cost",
+    "Curso / Treinamento": "Course / Training",
+    "Processo Eleitoral": "Electoral Process",
+}
 
 # Confiança mínima para um domínio da primeira passada entrar no contexto que
 # desambigua as demais colunas. Baixo demais e o contexto propaga o próprio
@@ -260,5 +300,60 @@ def semanticas_para_gap_analysis(registro: dict[str, Any]) -> list[str]:
     ]
 
 
-infer_column = inferir_semantica
-infer_table = inferir_semanticas_da_tabela
+def _english_result(result: dict[str, Any]) -> dict[str, Any]:
+    hypotheses = [
+        {
+            "semantic": _CATEGORY_LABELS.get(item["semantica"], item["semantica"]),
+            "axis": "role" if item["eixo"] == EIXO_PAPEL else "domain",
+            "confidence": item["confianca"],
+            "evidence": item["evidencias"],
+        }
+        for item in result["hipoteses"]
+    ]
+    return {
+        "semantic": _CATEGORY_LABELS.get(result["semantica"], result["semantica"]),
+        "role": _CATEGORY_LABELS.get(result["papel"], result["papel"]),
+        "domain": _CATEGORY_LABELS.get(result["dominio"], result["dominio"]),
+        "confidence": result["confianca_score"],
+        "evidence": result["origem"],
+        "conclusive": result["conclusiva"],
+        "hypotheses": hypotheses,
+    }
+
+
+def _legacy_profile(profile: ContentProfile | PerfilConteudo | None) -> PerfilConteudo | None:
+    if profile is None or isinstance(profile, PerfilConteudo):
+        return profile
+    return PerfilConteudo(
+        tipo_dados=profile.data_type,
+        valores_distintos=profile.distinct_values,
+        n_unicos=profile.distinct_count,
+        ratio_unicidade=profile.uniqueness_ratio,
+        str_len_media=profile.mean_string_length,
+        comprimento_fixo=profile.fixed_length,
+        assimetria=profile.skewness,
+        minimo=profile.minimum,
+        monotonica_crescente=profile.monotonically_increasing,
+        casas_decimais_fixas=profile.fixed_decimal_places,
+    )
+
+
+def infer_column(
+    column_name: str,
+    detected_pattern: str = "None",
+    profile: ContentProfile | PerfilConteudo | None = None,
+) -> dict[str, Any]:
+    pattern = "Nenhum" if detected_pattern == "None" else detected_pattern
+    return _english_result(inferir_semantica(column_name, pattern, _legacy_profile(profile)))
+
+
+def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    entries = [
+        {
+            "nome": column.get("column_name", column.get("name")),
+            "padrao": column.get("detected_pattern", column.get("pattern", "Nenhum")),
+            "perfil": _legacy_profile(column.get("profile")),
+        }
+        for column in columns
+    ]
+    return [_english_result(result) for result in inferir_semanticas_da_tabela(entries)]

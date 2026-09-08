@@ -1,6 +1,6 @@
 [project]
 name = "colsemantics"
-version = "0.2.0"
+version = "0.3.0"
 description = "Infer semantic roles and domains for tabular columns from names, values, and table context."
 readme = "README.md"
 license = "MIT"

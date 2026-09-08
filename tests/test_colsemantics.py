@@ -3,8 +3,11 @@
 import pytest
 
 from colsemantics import (
+    ContentProfile,
     PerfilConteudo,
     expandir_abreviatura,
+    infer_column,
+    infer_table,
     inferir_semantica,
     inferir_semanticas_da_tabela,
     semanticas_para_gap_analysis,
@@ -18,6 +21,19 @@ from colsemantics.vocabularies import load_vocabularies
 def test_tokenizar_separa_camel_case_e_snake_case():
     assert tokenizar("dt_admissao") == ["dt", "admissao"]
     assert tokenizar("hireDate") == ["hire", "date"]
+
+
+def test_english_api_uses_english_result_fields():
+    result = infer_column("employee_id")
+    assert result["semantic"] == "Identifier (ID)"
+    assert result["role"] == "Identifier (ID)"
+    assert "semantica" not in result
+    assert ContentProfile(data_type="Text").data_type == "Text"
+
+
+def test_english_table_api_accepts_english_column_keys():
+    results = infer_table([{"column_name": "department_name"}])
+    assert results[0]["domain"] == "Organizational Structure"
 
 
 def test_custom_vocabulary_is_scoped(tmp_path):
