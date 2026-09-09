@@ -21,6 +21,16 @@ print(result["role"])
 
 The English API returns English field names and category labels.
 
+## Analyze a CSV file
+
+Install the command-line interface with the package, then create a JSON report from a bounded CSV sample:
+
+```bash
+colsemantics infer employees.csv --profile pt-BR --sample 10000 --output report.json
+```
+
+CSV is the supported file format in this release. The report records its source, profile, sample size, inferred columns, and a semantic summary.
+
 ## Use sampled values
 
 ```python
@@ -53,7 +63,18 @@ results = infer_table(
 
 `infer_table` uses high-confidence classifications as table context when it evaluates ambiguous columns.
 
-## Customize a vocabulary
+## Vocabulary profiles and extensions
+
+`pt-BR` is the embedded profile. Use `available_profiles()` to list embedded profiles and `load_profile()` when an application needs an explicit context.
+
+```python
+from colsemantics import infer_column, temporary_profile
+
+with temporary_profile("pt-BR", "company-vocabulary.yaml"):
+    result = infer_column("cost_bucket")
+```
+
+YAML extensions use the English schema and apply only within the selected context:
 
 Provide one or more comma-separated YAML files to `load_vocabularies`, then use the returned context for the current operation.
 
@@ -65,18 +86,17 @@ column_overrides:
   cost_bucket: Finance / Cost
 ```
 
-```python
-from colsemantics import infer_column, load_vocabularies
-from colsemantics.context import reset_context, set_context
+Custom vocabularies are scoped with `ContextVar`, so separate concurrent analyses do not share vocabulary changes.
 
-token = set_context(load_vocabularies("company-vocabulary.yaml"))
-try:
-    result = infer_column("cost_bucket")
-finally:
-    reset_context(token)
+## Benchmark inference quality
+
+Run the synthetic benchmark fixture included with the repository:
+
+```bash
+colsemantics benchmark benchmarks/synthetic.json --output benchmark-report.json
 ```
 
-Custom vocabularies are scoped with `ContextVar`, so separate concurrent analyses do not share vocabulary changes.
+The report includes semantic, role, and domain accuracy, coverage, per-profile metrics, and a confusion matrix. Public corpus definitions are stored as source manifests; they are not bundled or downloaded automatically.
 
 ## Result shape
 

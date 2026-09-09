@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import csv
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from . import ContentProfile, infer_table
 from .profiles import temporary_profile
+
+if TYPE_CHECKING:
+    from . import ContentProfile
 
 
 def _content_profile(values: list[str]) -> ContentProfile:
+    from . import ContentProfile
+
     distinct_values = sorted(set(values))
     mean_string_length = sum(len(value) for value in values) / len(values) if values else None
     return ContentProfile(
@@ -28,6 +34,8 @@ def infer_csv(
     vocabulary_paths: str | None = None,
     encoding: str = "utf-8",
 ) -> dict[str, Any]:
+    from . import infer_table
+
     if sample_size <= 0:
         raise ValueError("sample_size must be greater than zero.")
 

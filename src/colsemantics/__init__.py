@@ -3,6 +3,7 @@ from typing import Any
 
 from . import _taxonomy as config
 from .context import SemanticContext, current_context
+from .csv_inference import infer_csv
 from .detectors import (
     PAPEIS_ESTRUTURAIS as _STRUCTURAL_ROLES,
 )
@@ -18,6 +19,7 @@ from .detectors import (
     por_token_forte,
 )
 from .evidence import EIXO_DOMINIO, EIXO_PAPEL, Evidencia, escolher, ranquear
+from .profiles import available_profiles, load_profile, temporary_profile
 from .tokens import normalizar, tokenizar
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
@@ -26,12 +28,16 @@ __version__ = "0.3.0"
 __all__ = [
     "ContentProfile",
     "SemanticContext",
+    "available_profiles",
     "current_context",
+    "infer_csv",
     "infer_column",
     "infer_table",
+    "load_profile",
     "normalizar",
     "load_vocabularies",
     "temporary_vocabulary",
+    "temporary_profile",
     "export_overrides_template",
     "tokenizar",
 ]

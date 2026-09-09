@@ -11,9 +11,7 @@ def available_profiles() -> tuple[str, ...]:
     return tuple(_PROFILES)
 
 
-def load_profile(
-    name: str = "pt-BR", vocabulary_paths: str | None = None
-) -> SemanticContext:
+def load_profile(name: str = "pt-BR", vocabulary_paths: str | None = None) -> SemanticContext:
     try:
         base_context = _PROFILES[name]
     except KeyError as error:
@@ -23,9 +21,7 @@ def load_profile(
 
 
 @contextmanager
-def temporary_profile(
-    name: str = "pt-BR", vocabulary_paths: str | None = None
-) -> Iterator[None]:
+def temporary_profile(name: str = "pt-BR", vocabulary_paths: str | None = None) -> Iterator[None]:
     token = set_context(load_profile(name, vocabulary_paths))
     try:
         yield

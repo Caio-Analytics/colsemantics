@@ -20,12 +20,16 @@ def test_public_api_exposes_only_english_contract():
     assert colsemantics.__all__ == [
         "ContentProfile",
         "SemanticContext",
+        "available_profiles",
         "current_context",
+        "infer_csv",
         "infer_column",
         "infer_table",
+        "load_profile",
         "normalizar",
         "load_vocabularies",
         "temporary_vocabulary",
+        "temporary_profile",
         "export_overrides_template",
         "tokenizar",
     ]
@@ -156,3 +160,9 @@ def test_custom_gazetteer_uses_english_schema(tmp_path):
 
 def test_runtime_version_matches_the_release_candidate():
     assert colsemantics.__version__ == "0.3.0"
+
+
+def test_public_api_exports_csv_and_profile_interfaces():
+    assert {"available_profiles", "infer_csv", "load_profile", "temporary_profile"} <= set(
+        colsemantics.__all__
+    )

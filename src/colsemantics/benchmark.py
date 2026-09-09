@@ -62,13 +62,14 @@ def _evaluate(case: Mapping[str, object]) -> _BenchmarkEntry:
     return {"profile": profile_name, "expected": dict(case), "result": result}
 
 
-def _accuracy(entries: Sequence[_BenchmarkEntry], expected_key: str, actual_key: str) -> float | None:
+def _accuracy(
+    entries: Sequence[_BenchmarkEntry], expected_key: str, actual_key: str
+) -> float | None:
     comparable = [entry for entry in entries if expected_key in entry["expected"]]
     if not comparable:
         return None
     correct = sum(
-        entry["expected"][expected_key] == entry["result"][actual_key]
-        for entry in comparable
+        entry["expected"][expected_key] == entry["result"][actual_key] for entry in comparable
     )
     return round(correct / len(comparable), 4)
 
