@@ -1,5 +1,10 @@
 # colsemantics
 
+[![PyPI version](https://img.shields.io/pypi/v/colsemantics)](https://pypi.org/project/colsemantics/)
+[![Python versions](https://img.shields.io/pypi/pyversions/colsemantics)](https://pypi.org/project/colsemantics/)
+[![License](https://img.shields.io/github/license/Caio-Analytics/colsemantics)](LICENSE)
+[![PyPI downloads](https://img.shields.io/pypi/dm/colsemantics)](https://pypi.org/project/colsemantics/)
+
 `colsemantics` infers the structural role and business domain of tabular columns from column names, sampled values, and neighboring columns.
 
 It is useful when a dataset has unclear headers such as `cd_dpto_lot`, `f27`, or `SUPPLIER_CONTACT_CODE`.
