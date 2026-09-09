@@ -3,7 +3,7 @@ import re
 from unidecode import unidecode
 
 from .context import current_context
-from .vocabulary import ABREVIATURAS
+from .vocabulary import ABBREVIATIONS
 
 _RE_CAMEL = re.compile(r"([a-z0-9])([A-Z])")
 _RE_SEPARADORES = re.compile(r"[_\s\-\.]+")
@@ -17,64 +17,64 @@ _MIN_LEN_ABREVIATURA = 2
 _MIN_LEN_ABREVIATURA_ESPECULATIVA = 3
 
 
-def normalizar(texto: str) -> str:
-    return unidecode(str(texto)).lower().strip()
+def normalizar(text: str) -> str:
+    return unidecode(str(text)).lower().strip()
 
 
-def tokenizar(nome_col: str) -> list[str]:
-    nome = _RE_CAMEL.sub(r"\1_\2", str(nome_col))
-    nome = normalizar(nome)
-    nome = _RE_LETRA_NUMERO.sub(r"\1_\2", nome)
-    return [p for p in _RE_SEPARADORES.split(nome) if p]
+def tokenizar(column_name: str) -> list[str]:
+    name = _RE_CAMEL.sub(r"\1_\2", str(column_name))
+    name = normalizar(name)
+    name = _RE_LETRA_NUMERO.sub(r"\1_\2", name)
+    return [p for p in _RE_SEPARADORES.split(name) if p]
 
 
-def _vocabulario_expansao() -> tuple[str, ...]:
+def _expansion_vocabulary() -> tuple[str, ...]:
     return current_context().abbreviation_words
 
 
-def _e_subsequencia(abreviatura: str, palavra: str) -> bool:
-    iterador = iter(palavra)
-    return all(letra in iterador for letra in abreviatura)
+def _is_subsequence(abbreviation: str, word: str) -> bool:
+    iterator = iter(word)
+    return all(letter in iterator for letter in abbreviation)
 
 
-def expandir_abreviatura(token: str) -> tuple[tuple[str, float], ...]:
+def expand_abbreviation(token: str) -> tuple[tuple[str, float], ...]:
     if len(token) < _MIN_LEN_ABREVIATURA or not token.isalpha():
         return ()
 
-    if token in _vocabulario_expansao():
+    if token in _expansion_vocabulary():
         return ()
 
-    curadas = ABREVIATURAS.get(token)
-    if curadas:
-        confianca = 0.85 if len(curadas) == 1 else 0.55
-        return tuple((palavra, confianca) for palavra in curadas)
+    curated = ABBREVIATIONS.get(token)
+    if curated:
+        confidence = 0.85 if len(curated) == 1 else 0.55
+        return tuple((word, confidence) for word in curated)
 
     if len(token) < _MIN_LEN_ABREVIATURA_ESPECULATIVA:
         return ()
 
-    candidatos: list[tuple[str, float]] = []
-    for palavra in _vocabulario_expansao():
-        if palavra == token or len(palavra) <= len(token):
+    candidates: list[tuple[str, float]] = []
+    for word in _expansion_vocabulary():
+        if word == token or len(word) <= len(token):
             continue
-        if len(palavra) > len(token) * _RAZAO_MAX_EXPANSAO:
+        if len(word) > len(token) * _RAZAO_MAX_EXPANSAO:
             continue
-        if palavra[0] != token[0]:
+        if word[0] != token[0]:
             continue
-        if not _e_subsequencia(token, palavra):
+        if not _is_subsequence(token, word):
             continue
 
-        cobertura = len(token) / len(palavra)
-        candidatos.append((palavra, round(0.35 + 0.35 * cobertura, 4)))
+        coverage = len(token) / len(word)
+        candidates.append((word, round(0.35 + 0.35 * coverage, 4)))
 
-    candidatos.sort(key=lambda c: -c[1])
-    return tuple(candidatos[:3])
+    candidates.sort(key=lambda c: -c[1])
+    return tuple(candidates[:3])
 
 
-def tokens_expandidos(tokens: list[str]) -> list[tuple[str, float, str]]:
-    resultado: list[tuple[str, float, str]] = []
+def expanded_tokens(tokens: list[str]) -> list[tuple[str, float, str]]:
+    result: list[tuple[str, float, str]] = []
     for token in tokens:
-        resultado.append((token, 1.0, token))
-        for palavra, confianca in expandir_abreviatura(token):
-            if palavra != token:
-                resultado.append((palavra, confianca, token))
-    return resultado
+        result.append((token, 1.0, token))
+        for word, confidence in expand_abbreviation(token):
+            if word != token:
+                result.append((word, confidence, token))
+    return result

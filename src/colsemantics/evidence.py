@@ -1,54 +1,54 @@
 from dataclasses import dataclass
 from typing import Any
 
-EIXO_PAPEL = "papel"
-EIXO_DOMINIO = "dominio"
+ROLE_AXIS = "role"
+DOMAIN_AXIS = "domain"
 
 
-_MARGEM_CONCLUSIVA = 0.15
+_CONCLUSIVE_MARGIN = 0.15
 
 
 @dataclass(frozen=True)
-class Evidencia:
-    categoria: str
-    eixo: str
-    peso: float
-    origem: str
+class Evidence:
+    category: str
+    axis: str
+    weight: float
+    source: str
 
 
-def _noisy_or(pesos: list[float]) -> float:
-    resultado = 1.0
-    for peso in pesos:
-        resultado *= 1.0 - max(0.0, min(1.0, peso))
-    return 1.0 - resultado
+def _noisy_or(weights: list[float]) -> float:
+    result = 1.0
+    for weight in weights:
+        result *= 1.0 - max(0.0, min(1.0, weight))
+    return 1.0 - result
 
 
-def ranquear(evidencias: list[Evidencia], eixo: str) -> list[dict[str, Any]]:
-    por_categoria: dict[str, list[Evidencia]] = {}
-    for evidencia in evidencias:
-        if evidencia.eixo == eixo:
-            por_categoria.setdefault(evidencia.categoria, []).append(evidencia)
+def rank(evidence_items: list[Evidence], axis: str) -> list[dict[str, Any]]:
+    by_category: dict[str, list[Evidence]] = {}
+    for evidence_item in evidence_items:
+        if evidence_item.axis == axis:
+            by_category.setdefault(evidence_item.category, []).append(evidence_item)
 
     ranking: list[dict[str, Any]] = [
         {
-            "categoria": categoria,
-            "confianca": round(_noisy_or([e.peso for e in itens]), 4),
-            "origens": [e.origem for e in sorted(itens, key=lambda e: -e.peso)],
+            "category": category,
+            "confidence": round(_noisy_or([e.weight for e in items]), 4),
+            "sources": [e.source for e in sorted(items, key=lambda e: -e.weight)],
         }
-        for categoria, itens in por_categoria.items()
+        for category, items in by_category.items()
     ]
-    ranking.sort(key=lambda r: -float(r["confianca"]))
+    ranking.sort(key=lambda r: -float(r["confidence"]))
     return ranking
 
 
-def escolher(ranking: list[dict[str, Any]]) -> tuple[str | None, float, str, bool]:
+def choose(ranking: list[dict[str, Any]]) -> tuple[str | None, float, str, bool]:
     if not ranking:
-        return None, 0.0, "Sem evidência", False
-    melhor = ranking[0]
-    margem = melhor["confianca"] - (ranking[1]["confianca"] if len(ranking) > 1 else 0.0)
+        return None, 0.0, "No evidence", False
+    winner = ranking[0]
+    margin = winner["confidence"] - (ranking[1]["confidence"] if len(ranking) > 1 else 0.0)
     return (
-        melhor["categoria"],
-        float(melhor["confianca"]),
-        " + ".join(melhor["origens"][:3]),
-        bool(margem >= _MARGEM_CONCLUSIVA),
+        winner["category"],
+        float(winner["confidence"]),
+        " + ".join(winner["sources"][:3]),
+        bool(margin >= _CONCLUSIVE_MARGIN),
     )

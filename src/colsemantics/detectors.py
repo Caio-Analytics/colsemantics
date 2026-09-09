@@ -5,316 +5,316 @@ from rapidfuzz.distance import JaroWinkler
 
 from . import _taxonomy as config
 from .context import current_context
-from .evidence import EIXO_DOMINIO, EIXO_PAPEL, Evidencia
-from .tokens import expandir_abreviatura, normalizar, tokens_expandidos
+from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence
+from .tokens import expand_abbreviation, normalizar, expanded_tokens
 
-PAPEIS_ESTRUTURAIS = frozenset(
+STRUCTURAL_ROLES = frozenset(
     {
-        config.SEMANTICA_CHAVE_ID,
-        config.SEMANTICA_DATA_CALENDARIO,
-        "Valor Financeiro",
-        "Quantidade / Métrica",
-        "Contato / Rede",
-        "Status / Indicador / Flag",
-        "Resultado de Avaliação",
+        config.IDENTIFIER_SEMANTIC,
+        config.DATE_CALENDAR_SEMANTIC,
+        'Financial Value',
+        'Quantity / Metric',
+        'Contact / Network',
+        'Status / Indicator / Flag',
+        'Assessment Result',
     }
 )
 
-_MAPA_PADRAO_SEMANTICA: dict[str, tuple[str, str]] = {
-    "CPF": (config.SEMANTICA_CHAVE_ID, EIXO_PAPEL),
-    "CNPJ": (config.SEMANTICA_CHAVE_ID, EIXO_PAPEL),
-    "UUID": (config.SEMANTICA_CHAVE_ID, EIXO_PAPEL),
-    "E-mail": ("Contato / Rede", EIXO_PAPEL),
-    "Telefone": ("Contato / Rede", EIXO_PAPEL),
-    "CEP": ("Localização Geográfica", EIXO_DOMINIO),
+_PATTERN_SEMANTICS: dict[str, tuple[str, str]] = {
+    "CPF": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "CNPJ": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "UUID": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "E-mail": ('Contact / Network', ROLE_AXIS),
+    "Telefone": ('Contact / Network', ROLE_AXIS),
+    "CEP": ('Geographic Location', DOMAIN_AXIS),
 }
 
-_DECAIMENTO_POSICIONAL = 0.03
+_POSITIONAL_DECAY = 0.03
 
 
-_COBERTURA_MINIMA_PREFIXO = 0.7
+_MINIMUM_PREFIX_COVERAGE = 0.7
 
 
 @dataclass
-class PerfilConteudo:
-    tipo_dados: str = ""
-    valores_distintos: list[str] = field(default_factory=list)
-    n_unicos: int = 0
-    ratio_unicidade: float = 0.0
-    str_len_media: float | None = None
-    comprimento_fixo: bool = False
-    assimetria: float | None = None
-    minimo: float | None = None
-    monotonica_crescente: bool = False
-    casas_decimais_fixas: int | None = None
+class ContentProfile:
+    data_type: str = ""
+    distinct_values: list[str] = field(default_factory=list)
+    distinct_count: int = 0
+    uniqueness_ratio: float = 0.0
+    mean_string_length: float | None = None
+    fixed_length: bool = False
+    skewness: float | None = None
+    minimum: float | None = None
+    monotonically_increasing: bool = False
+    fixed_decimal_places: int | None = None
 
 
-def _peso_posicional(indice: int) -> float:
-    return max(1.0 - _DECAIMENTO_POSICIONAL * indice, 0.5)
+def _positional_weight(index: int) -> float:
+    return max(1.0 - _POSITIONAL_DECAY * index, 0.5)
 
 
-def por_padrao_conteudo(detectado_padrao: str) -> list[Evidencia]:
-    entrada = _MAPA_PADRAO_SEMANTICA.get(detectado_padrao)
-    if entrada is None:
+def by_content_pattern(detected_pattern: str) -> list[Evidence]:
+    entry = _PATTERN_SEMANTICS.get(detected_pattern)
+    if entry is None:
         return []
-    categoria, eixo = entrada
-    return [Evidencia(categoria, eixo, 0.98, f"conteúdo validado como {detectado_padrao}")]
+    category, axis = entry
+    return [Evidence(category, axis, 0.98, f"validated {detected_pattern} pattern")]
 
 
-def por_gazetteer(perfil: PerfilConteudo) -> list[Evidencia]:
-    if not perfil.valores_distintos or perfil.n_unicos <= 0:
-        return []
-
-    normalizados = [normalizar(v) for v in perfil.valores_distintos]
-    normalizados = [v for v in normalizados if v]
-    if not normalizados:
+def by_gazetteer(profile: ContentProfile) -> list[Evidence]:
+    if not profile.distinct_values or profile.distinct_count <= 0:
         return []
 
-    achados: list[Evidencia] = []
+    normalized_values = [normalizar(value) for value in profile.distinct_values]
+    normalized_values = [value for value in normalized_values if value]
+    if not normalized_values:
+        return []
+
+    findings: list[Evidence] = []
     for gazetteer in current_context().gazetteers:
-        if perfil.n_unicos > gazetteer["max_distintos"]:
+        if profile.distinct_count > gazetteer["max_distinct"]:
             continue
-        contidos = sum(1 for v in normalizados if v in gazetteer["valores"])
-        cobertura = contidos / len(normalizados)
-        if cobertura < gazetteer["cobertura_minima"]:
+        matches = sum(1 for value in normalized_values if value in gazetteer["values"])
+        coverage = matches / len(normalized_values)
+        if coverage < gazetteer["minimum_coverage"]:
             continue
-        achados.append(
-            Evidencia(
-                gazetteer["categoria"],
-                gazetteer["eixo"],
-                round(gazetteer["peso"] * cobertura, 4),
-                f"valores correspondem a {gazetteer['nome']} ({cobertura:.0%} da coluna)",
+        findings.append(
+            Evidence(
+                gazetteer["category"],
+                gazetteer["axis"],
+                round(gazetteer["weight"] * coverage, 4),
+                f"values match {gazetteer['name']} ({coverage:.0%} of the column)",
             )
         )
-    return achados
+    return findings
 
 
-def _qualificador_de_borda(token: str, posicao: str) -> Evidencia | None:
-    candidatos: list[tuple[str, float]] = [(token, 1.0)]
-    expansoes = expandir_abreviatura(token)
-    qualificadoras = [e for e in expansoes if e[0] in config.TOKENS_QUALIFICADORES]
-    if len(expansoes) == 1:
-        candidatos.append(expansoes[0])
-    elif len(qualificadoras) == 1:
-        candidatos.append(qualificadoras[0])
+def _edge_qualifier(token: str, position: str) -> Evidence | None:
+    candidates: list[tuple[str, float]] = [(token, 1.0)]
+    expansions = expand_abbreviation(token)
+    qualifiers = [entry for entry in expansions if entry[0] in config.QUALIFIER_TOKENS]
+    if len(expansions) == 1:
+        candidates.append(expansions[0])
+    elif len(qualifiers) == 1:
+        candidates.append(qualifiers[0])
 
-    for palavra, confianca in candidatos:
-        if palavra not in config.TOKENS_QUALIFICADORES:
+    for word, confidence in candidates:
+        if word not in config.QUALIFIER_TOKENS:
             continue
-        categorias = current_context().strong_token_index.get(palavra, ())
-        if len(categorias) != 1:
+        categories = current_context().strong_token_index.get(word, ())
+        if len(categories) != 1:
             continue
-        origem = (
-            f"qualificador {posicao} '{palavra}'"
-            if palavra == token
-            else f"qualificador {posicao} '{token}' → '{palavra}'"
+        source = (
+            f"{position} qualifier '{word}'"
+            if word == token
+            else f"{position} qualifier '{token}' → '{word}'"
         )
-        return Evidencia(categorias[0], EIXO_PAPEL, round(0.9 * confianca, 4), origem)
+        return Evidence(categories[0], ROLE_AXIS, round(0.9 * confidence, 4), source)
     return None
 
 
-def por_token_forte(tokens: list[str]) -> list[Evidencia]:
+def by_strong_token(tokens: list[str]) -> list[Evidence]:
     if not tokens:
         return []
 
-    evidencias: list[Evidencia] = []
+    evidence_items: list[Evidence] = []
 
-    bordas = [(tokens[0], "inicial")]
+    edges = [(tokens[0], "leading")]
     if len(tokens) > 1:
-        bordas.append((tokens[-1], "final"))
-    for token, posicao in bordas:
-        evidencia = _qualificador_de_borda(token, posicao)
-        if evidencia is not None:
-            evidencias.append(evidencia)
+        edges.append((tokens[-1], "trailing"))
+    for token, position in edges:
+        evidence_item = _edge_qualifier(token, position)
+        if evidence_item is not None:
+            evidence_items.append(evidence_item)
 
-    for indice, (palavra, confianca_expansao, original) in enumerate(tokens_expandidos(tokens)):
-        for categoria in current_context().strong_token_index.get(palavra, ()):
-            peso_token = (
-                config.PESO_TOKEN_QUALIFICADOR
-                if palavra in config.TOKENS_QUALIFICADORES
-                else config.PESO_TOKEN_ENTIDADE
+    for index, (word, expansion_confidence, original) in enumerate(expanded_tokens(tokens)):
+        for category in current_context().strong_token_index.get(word, ()):
+            token_weight = (
+                config.QUALIFIER_TOKEN_WEIGHT
+                if word in config.QUALIFIER_TOKENS
+                else config.ENTITY_TOKEN_WEIGHT
             )
-            peso = 0.85 * peso_token * confianca_expansao * _peso_posicional(indice)
-            origem = (
-                f"token '{palavra}'"
-                if palavra == original
-                else f"abreviatura '{original}' → '{palavra}'"
+            weight = 0.85 * token_weight * expansion_confidence * _positional_weight(index)
+            source = (
+                f"token '{word}'"
+                if word == original
+                else f"abbreviation '{original}' → '{word}'"
             )
-            evidencias.append(Evidencia(categoria, EIXO_PAPEL, round(peso, 4), origem))
+            evidence_items.append(Evidence(category, ROLE_AXIS, round(weight, 4), source))
 
-    return evidencias
+    return evidence_items
 
 
-def _fator_truncagem(candidato: str, palavra: str) -> float:
-    if len(candidato) >= len(palavra) or not palavra.startswith(candidato):
+def _truncation_factor(candidate: str, word: str) -> float:
+    if len(candidate) >= len(word) or not word.startswith(candidate):
         return 1.0
-    cobertura = len(candidato) / len(palavra)
-    return 1.0 if cobertura > _COBERTURA_MINIMA_PREFIXO else cobertura
+    coverage = len(candidate) / len(word)
+    return 1.0 if coverage > _MINIMUM_PREFIX_COVERAGE else coverage
 
 
-def por_fuzzy(nome_limpo: str, tokens: list[str]) -> list[Evidencia]:
-    melhores: dict[str, tuple[float, str]] = {}
+def by_fuzzy(normalized_name: str, tokens: list[str]) -> list[Evidence]:
+    matches: dict[str, tuple[float, str]] = {}
 
-    candidatos_nome = [(nome_limpo, 1.0, nome_limpo)] + [
+    name_candidates = [(normalized_name, 1.0, normalized_name)] + [
         c
-        for c in tokens_expandidos(tokens)
+        for c in expanded_tokens(tokens)
         if not (c[0] == c[2] and c[0] in current_context().strong_token_index)
     ]
-    for categoria, palavras_chave in current_context().fuzzy_categories.items():
-        for palavra in palavras_chave:
-            palavra_norm = normalizar(palavra)
+    for category, keywords in current_context().fuzzy_categories.items():
+        for word in keywords:
+            normalized_word = normalizar(word)
             threshold = (
-                config.THRESHOLD_FUZZY_CURTO
-                if len(palavra_norm) <= 3
-                else config.THRESHOLD_FUZZY_PADRAO
+                config.SHORT_FUZZY_THRESHOLD
+                if len(normalized_word) <= 3
+                else config.DEFAULT_FUZZY_THRESHOLD
             )
-            for indice, (candidato, confianca, original) in enumerate(candidatos_nome):
-                candidato_norm = normalizar(candidato)
-                similaridade = JaroWinkler.similarity(candidato_norm, palavra_norm)
-                if similaridade < threshold:
+            for index, (candidate, confidence, original) in enumerate(name_candidates):
+                normalized_candidate = normalizar(candidate)
+                similarity = JaroWinkler.similarity(normalized_candidate, normalized_word)
+                if similarity < threshold:
                     continue
-                similaridade *= _fator_truncagem(candidato_norm, palavra_norm)
+                similarity *= _truncation_factor(normalized_candidate, normalized_word)
 
-                peso_qualificador = (
-                    config.PESO_TOKEN_QUALIFICADOR
-                    if original in config.TOKENS_QUALIFICADORES
+                qualifier_weight = (
+                    config.QUALIFIER_TOKEN_WEIGHT
+                    if original in config.QUALIFIER_TOKENS
                     else 1.0
                 )
-                peso = (
+                weight = (
                     0.8
-                    * similaridade
-                    * confianca
-                    * peso_qualificador
-                    * _peso_posicional(max(indice - 1, 0))
+                    * similarity
+                    * confidence
+                    * qualifier_weight
+                    * _positional_weight(max(index - 1, 0))
                 )
-                atual = melhores.get(categoria)
-                if atual is None or peso > atual[0]:
-                    origem = (
-                        f"nome parecido com '{palavra}'"
-                        if candidato == original
-                        else f"abreviatura '{original}' → '{candidato}' ~ '{palavra}'"
+                current = matches.get(category)
+                if current is None or weight > current[0]:
+                    source = (
+                        f"name similar to '{word}'"
+                        if candidate == original
+                        else f"abbreviation '{original}' → '{candidate}' ~ '{word}'"
                     )
-                    melhores[categoria] = (peso, origem)
+                    matches[category] = (weight, source)
 
     return [
-        Evidencia(categoria, EIXO_DOMINIO, round(peso, 4), origem)
-        for categoria, (peso, origem) in melhores.items()
+        Evidence(category, DOMAIN_AXIS, round(weight, 4), source)
+        for category, (weight, source) in matches.items()
     ]
 
 
-def por_assinatura_estrutural(perfil: PerfilConteudo) -> list[Evidencia]:
-    evidencias: list[Evidencia] = []
-    tipo = perfil.tipo_dados
+def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
+    evidence_items: list[Evidence] = []
+    data_type = profile.data_type
 
-    if tipo == "Booleano":
-        evidencias.append(
-            Evidencia("Status / Indicador / Flag", EIXO_PAPEL, 0.7, "coluna booleana")
+    if data_type == "Booleano":
+        evidence_items.append(
+            Evidence('Status / Indicator / Flag', ROLE_AXIS, 0.7, "boolean column")
         )
 
-    if tipo == "Número Inteiro" and perfil.monotonica_crescente and perfil.ratio_unicidade >= 0.99:
-        evidencias.append(
-            Evidencia(
-                config.SEMANTICA_CHAVE_ID,
-                EIXO_PAPEL,
+    if data_type == "Número Inteiro" and profile.monotonically_increasing and profile.uniqueness_ratio >= 0.99:
+        evidence_items.append(
+            Evidence(
+                config.IDENTIFIER_SEMANTIC,
+                ROLE_AXIS,
                 0.6,
-                "inteiro único e crescente (cara de chave sequencial)",
+                "unique increasing integer sequence",
             )
         )
 
     if (
-        tipo == "Número Decimal"
-        and perfil.casas_decimais_fixas == 2
-        and perfil.minimo is not None
-        and perfil.minimo >= 0
-        and perfil.assimetria is not None
-        and perfil.assimetria > 0.5
+        data_type == "Número Decimal"
+        and profile.fixed_decimal_places == 2
+        and profile.minimum is not None
+        and profile.minimum >= 0
+        and profile.skewness is not None
+        and profile.skewness > 0.5
     ):
-        evidencias.append(
-            Evidencia(
-                "Valor Financeiro",
-                EIXO_PAPEL,
+        evidence_items.append(
+            Evidence(
+                'Financial Value',
+                ROLE_AXIS,
                 0.45,
-                "decimal de 2 casas, não negativo e assimétrico à direita (perfil monetário)",
+                "non-negative, right-skewed decimal with two places",
             )
         )
 
-    if tipo.startswith("Texto") and perfil.str_len_media is not None:
-        if perfil.str_len_media > 40 and perfil.ratio_unicidade > 0.5:
-            evidencias.append(
-                Evidencia(
-                    "Texto Descritivo Livre",
-                    EIXO_PAPEL,
+    if data_type.startswith("Texto") and profile.mean_string_length is not None:
+        if profile.mean_string_length > 40 and profile.uniqueness_ratio > 0.5:
+            evidence_items.append(
+                Evidence(
+                    'Free-form Text',
+                    ROLE_AXIS,
                     0.55,
-                    f"texto longo (média de {perfil.str_len_media:.0f} caracteres) e pouco repetido",
+                    f"long text with {profile.mean_string_length:.0f} average characters",
                 )
             )
-        elif perfil.comprimento_fixo and perfil.ratio_unicidade > 0.9:
-            evidencias.append(
-                Evidencia(
-                    config.SEMANTICA_CHAVE_ID,
-                    EIXO_PAPEL,
+        elif profile.fixed_length and profile.uniqueness_ratio > 0.9:
+            evidence_items.append(
+                Evidence(
+                    config.IDENTIFIER_SEMANTIC,
+                    ROLE_AXIS,
                     0.5,
-                    "texto de comprimento fixo e quase único (cara de código)",
+                    "fixed-length, near-unique text",
                 )
             )
 
-    return evidencias
+    return evidence_items
 
 
-def por_contexto_da_tabela(
-    tokens: list[str], dominios_da_tabela: dict[str, float]
-) -> list[Evidencia]:
-    if not dominios_da_tabela:
+def by_table_context(
+    tokens: list[str], table_domains: dict[str, float]
+) -> list[Evidence]:
+    if not table_domains:
         return []
 
-    evidencias: list[Evidencia] = []
-    vistos: set[str] = set()
-    for palavra, confianca, original in tokens_expandidos(tokens):
-        if palavra == original or confianca >= 0.85:
+    evidence_items: list[Evidence] = []
+    seen: set[str] = set()
+    for word, confidence, original in expanded_tokens(tokens):
+        if word == original or confidence >= 0.85:
             continue
-        for categoria in current_context().strong_token_index.get(palavra, ()):
-            chave = f"{categoria}|{palavra}"
-            if chave in vistos or categoria not in dominios_da_tabela:
+        for category in current_context().strong_token_index.get(word, ()):
+            key = f"{category}|{word}"
+            if key in seen or category not in table_domains:
                 continue
-            vistos.add(chave)
-            evidencias.append(
-                Evidencia(
-                    categoria,
-                    EIXO_PAPEL,
-                    round(0.4 * dominios_da_tabela[categoria], 4),
-                    f"contexto da tabela favorece '{original}' → '{palavra}'",
+            seen.add(key)
+            evidence_items.append(
+                Evidence(
+                    category,
+                    ROLE_AXIS,
+                    round(0.4 * table_domains[category], 4),
+                    f"table context favors '{original}' → '{word}'",
                 )
             )
-        for categoria, forca in dominios_da_tabela.items():
-            if categoria not in current_context().fuzzy_categories:
+        for category, strength in table_domains.items():
+            if category not in current_context().fuzzy_categories:
                 continue
-            if palavra in current_context().fuzzy_categories[categoria]:
-                chave = f"{categoria}|{palavra}"
-                if chave in vistos:
+            if word in current_context().fuzzy_categories[category]:
+                key = f"{category}|{word}"
+                if key in seen:
                     continue
-                vistos.add(chave)
-                evidencias.append(
-                    Evidencia(
-                        categoria,
-                        EIXO_DOMINIO,
-                        round(0.4 * forca, 4),
-                        f"contexto da tabela favorece '{original}' → '{palavra}'",
+                seen.add(key)
+                evidence_items.append(
+                    Evidence(
+                        category,
+                        DOMAIN_AXIS,
+                        round(0.4 * strength, 4),
+                        f"table context favors '{original}' → '{word}'",
                     )
                 )
-    return evidencias
+    return evidence_items
 
 
-def profile_from_record(stats: dict[str, Any], sample: list[str]) -> PerfilConteudo:
+def profile_from_record(stats: dict[str, Any], sample: list[str]) -> ContentProfile:
     extra = stats.get("additional_statistics", {})
-    return PerfilConteudo(
-        tipo_dados=stats.get("data_type", ""),
-        valores_distintos=sample,
-        n_unicos=int(stats.get("distinct_values", 0)),
-        ratio_unicidade=float(stats.get("uniqueness_ratio", 0.0)),
-        str_len_media=extra.get("mean_string_length"),
-        comprimento_fixo=bool(extra.get("fixed_length", False)),
-        assimetria=extra.get("skewness"),
-        minimo=extra.get("min"),
-        monotonica_crescente=bool(stats.get("monotonically_increasing", False)),
-        casas_decimais_fixas=stats.get("fixed_decimal_places"),
+    return ContentProfile(
+        data_type=stats.get("data_type", ""),
+        distinct_values=sample,
+        distinct_count=int(stats.get("distinct_values", 0)),
+        uniqueness_ratio=float(stats.get("uniqueness_ratio", 0.0)),
+        mean_string_length=extra.get("mean_string_length"),
+        fixed_length=bool(extra.get("fixed_length", False)),
+        skewness=extra.get("skewness"),
+        minimum=extra.get("min"),
+        monotonically_increasing=bool(stats.get("monotonically_increasing", False)),
+        fixed_decimal_places=stats.get("fixed_decimal_places"),
     )

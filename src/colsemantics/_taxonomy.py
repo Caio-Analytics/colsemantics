@@ -1,22 +1,22 @@
-SEMANTICA_GENERICA: str = "Genérico / Não mapeado"
-SEMANTICA_DATA_CALENDARIO: str = "Data / Calendário"
-SEMANTICA_CHAVE_ID: str = "Chave Identificadora (ID)"
-SEMANTICA_TEXTO_LIVRE: str = "Texto Descritivo Livre"
-SEMANTICA_NOME_PESSOA: str = "Nome / Identificação Pessoal"
+GENERIC_SEMANTIC: str = 'Generic / Unmapped'
+DATE_CALENDAR_SEMANTIC: str = 'Date / Calendar'
+IDENTIFIER_SEMANTIC: str = 'Identifier (ID)'
+FREE_FORM_TEXT_SEMANTIC: str = 'Free-form Text'
+PERSON_NAME_SEMANTIC: str = 'Person Name / Identifier'
 
 
-SEMANTICA_ROTULO_ENTIDADE: str = "Rótulo / Nome de Entidade"
+ENTITY_LABEL_SEMANTIC: str = 'Entity Label / Name'
 
 
-SEMANTICA_CATEGORIA: str = "Categoria / Classificação"
+CATEGORY_SEMANTIC: str = 'Category / Classification'
 
 
-THRESHOLD_FUZZY_PADRAO: float = 0.85
-THRESHOLD_FUZZY_CURTO: float = 0.95
+DEFAULT_FUZZY_THRESHOLD: float = 0.85
+SHORT_FUZZY_THRESHOLD: float = 0.95
 
 
-CATEGORIAS_FORTES: dict[str, list[str]] = {
-    SEMANTICA_CHAVE_ID: [
+STRONG_CATEGORIES: dict[str, list[str]] = {
+    IDENTIFIER_SEMANTIC: [
         "id",
         "cod",
         "codigo",
@@ -37,7 +37,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "fk",
         "sequencial",
     ],
-    SEMANTICA_DATA_CALENDARIO: [
+    DATE_CALENDAR_SEMANTIC: [
         "date",
         "dt",
         "data",
@@ -58,7 +58,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "expiracao",
         "ano",
     ],
-    "Status / Indicador / Flag": [
+    'Status / Indicator / Flag': [
         "status",
         "flg",
         "flag",
@@ -72,7 +72,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "habilitado",
         "bloqueado",
     ],
-    "Valor Financeiro": [
+    'Financial Value': [
         "salario",
         "salary",
         "wage",
@@ -96,7 +96,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "provisao",
         "encargo",
     ],
-    "Quantidade / Métrica": [
+    'Quantity / Metric': [
         "qtd",
         "quantidade",
         "count",
@@ -117,7 +117,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "proporcao",
         "media",
     ],
-    "Texto Descritivo Livre": [
+    'Free-form Text': [
         "desc",
         "descricao",
         "description",
@@ -135,7 +135,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "anotacao",
         "mensagem",
     ],
-    "Nome / Identificação Pessoal": [
+    'Person Name / Identifier': [
         "nome",
         "name",
         "colaborador",
@@ -148,7 +148,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "usuario",
         "user",
     ],
-    "Contato / Rede": [
+    'Contact / Network': [
         "email",
         "mail",
         "telefone",
@@ -159,7 +159,7 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
         "fone",
         "phone",
     ],
-    "Resultado de Avaliação": [
+    'Assessment Result': [
         "resultado",
         "result",
         "aprovacao",
@@ -177,8 +177,8 @@ CATEGORIAS_FORTES: dict[str, list[str]] = {
 }
 
 
-CATEGORIAS_FUZZY: dict[str, list[str]] = {
-    "Localização Geográfica": [
+FUZZY_CATEGORIES: dict[str, list[str]] = {
+    'Geographic Location': [
         "country",
         "province",
         "city",
@@ -197,7 +197,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
         "bairro",
         "logradouro",
     ],
-    "Estrutura Organizacional": [
+    'Organizational Structure': [
         "department",
         "company",
         "business",
@@ -225,7 +225,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
         "ministerio",
         "autarquia",
     ],
-    "Processo Eleitoral": [
+    'Electoral Process': [
         "eleicao",
         "partido",
         "pleito",
@@ -236,7 +236,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
         "sufragio",
         "candidatura",
     ],
-    "Perfil do Colaborador": [
+    'Workforce Profile': [
         "gender",
         "nationality",
         "career",
@@ -250,7 +250,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
         "deficiencia",
         "etnia",
     ],
-    "Produto / Item": [
+    'Product / Item': [
         "product",
         "item",
         "sku",
@@ -268,7 +268,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
         "modelo",
         "model",
     ],
-    "Cargo / Função": [
+    'Job / Function': [
         "cargo",
         "funcao",
         "nivel",
@@ -284,7 +284,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
         "title",
         "occupation",
     ],
-    "Financeiro / Custo": [
+    'Finance / Cost': [
         "custo",
         "cost",
         "centro de custo",
@@ -298,7 +298,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
         "conta",
         "rateio",
     ],
-    "Curso / Treinamento": [
+    'Course / Training': [
         "curso",
         "treinamento",
         "capacitacao",
@@ -317,7 +317,7 @@ CATEGORIAS_FUZZY: dict[str, list[str]] = {
 }
 
 
-TOKENS_QUALIFICADORES: frozenset[str] = frozenset(
+QUALIFIER_TOKENS: frozenset[str] = frozenset(
     {
         "id",
         "cod",
@@ -368,11 +368,11 @@ TOKENS_QUALIFICADORES: frozenset[str] = frozenset(
 )
 
 
-PESO_TOKEN_QUALIFICADOR: float = 0.45
-PESO_TOKEN_ENTIDADE: float = 1.0
+QUALIFIER_TOKEN_WEIGHT: float = 0.45
+ENTITY_TOKEN_WEIGHT: float = 1.0
 
 
-DOMINIOS_DE_PESSOA: frozenset[str] = frozenset({"Perfil do Colaborador"})
+PERSON_DOMAINS: frozenset[str] = frozenset({'Workforce Profile'})
 
 
-CARDINALIDADE_MAX_CATEGORIA: int = 100
+MAX_CATEGORY_CARDINALITY: int = 100

@@ -3,7 +3,7 @@ import pytest
 import colsemantics
 from colsemantics import ContentProfile, infer_column, infer_table, load_vocabularies, tokenizar
 from colsemantics.context import reset_context, set_context
-from colsemantics.tokens import expandir_abreviatura
+from colsemantics.tokens import expand_abbreviation
 
 
 def profile(values: list[str], data_type: str = "Text") -> ContentProfile:
@@ -46,6 +46,7 @@ def test_result_has_only_english_keys():
         "semantic",
         "role",
         "domain",
+        "raw_confidence",
         "confidence",
         "evidence",
         "conclusive",
@@ -119,8 +120,8 @@ def test_tokenization_handles_camel_and_snake_case():
 
 
 def test_abbreviation_expansion_supports_portuguese_source_tokens():
-    assert "departamento" in [word for word, _ in expandir_abreviatura("dpto")]
-    assert expandir_abreviatura("name") == ()
+    assert "departamento" in [word for word, _ in expand_abbreviation("dpto")]
+    assert expand_abbreviation("name") == ()
 
 
 def test_custom_vocabulary_is_scoped(tmp_path):
