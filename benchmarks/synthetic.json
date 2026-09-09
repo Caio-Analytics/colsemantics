@@ -1,0 +1,50 @@
+[
+  {
+    "profile": "pt-BR",
+    "column_name": "employee_id",
+    "expected_semantic": "Identifier (ID)",
+    "expected_role": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "start_date",
+    "expected_semantic": "Date / Calendar",
+    "expected_role": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f27",
+    "values": ["SP", "RJ", "MG", "BA"],
+    "expected_semantic": "Geographic Location",
+    "expected_domain": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f28",
+    "values": ["S", "N"],
+    "expected_semantic": "Status / Indicator / Flag",
+    "expected_role": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "department_name",
+    "expected_semantic": "Organizational Structure",
+    "expected_domain": "Organizational Structure"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "cost_center_code",
+    "expected_domain": "Finance / Cost"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "description",
+    "expected_semantic": "Free-form Text",
+    "expected_role": "Free-form Text"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "xyzabc123",
+    "expected_semantic": "Generic / Unmapped"
+  }
+]

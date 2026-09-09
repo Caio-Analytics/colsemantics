@@ -23,3 +23,17 @@ def test_cli_returns_an_input_error_for_an_unknown_profile(tmp_path, capsys):
     assert main(["infer", str(source), "--profile", "en-US", "--output", str(output)]) == 2
 
     assert "Unknown profile" in capsys.readouterr().err
+
+
+def test_cli_writes_a_benchmark_report(tmp_path):
+    cases = tmp_path / "synthetic.json"
+    output = tmp_path / "benchmark.json"
+    cases.write_text(
+        '[{"profile": "pt-BR", "column_name": "employee_id", "expected_semantic": "Identifier (ID)"}]',
+        encoding="utf-8",
+    )
+
+    assert main(["benchmark", str(cases), "--output", str(output)]) == 0
+
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert report["semantic_accuracy"] == 1.0

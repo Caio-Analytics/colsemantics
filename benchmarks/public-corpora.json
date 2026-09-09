@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Anatel licensed stations dataset",
+    "source_url": "https://dados.gov.br/dados/conjuntos-dados/outorga-e-licenciamento---estaes-licenciadas",
+    "license": "Creative Commons Attribution",
+    "sha256": null,
+    "adapter": "csv-header-labels"
+  }
+]
