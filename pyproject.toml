@@ -28,6 +28,9 @@ Homepage = "https://github.com/Caio-Analytics/colsemantics"
 Repository = "https://github.com/Caio-Analytics/colsemantics"
 Issues = "https://github.com/Caio-Analytics/colsemantics/issues"
 
+[project.scripts]
+colsemantics = "colsemantics.cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8", "mypy>=1.10", "ruff>=0.6"]
 
