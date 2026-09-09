@@ -33,7 +33,7 @@ profile = ContentProfile(
     uniqueness_ratio=0.1,
 )
 
-result = infer_column("f27", perfil=profile)
+result = infer_column("f27", profile=profile)
 print(result["domain"])
 ```
 
@@ -62,7 +62,7 @@ strong_categories:
   Project domain:
     - workstream
 column_overrides:
-  cost_bucket: Financeiro / Custo
+  cost_bucket: Finance / Cost
 ```
 
 ```python
