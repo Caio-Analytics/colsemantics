@@ -50,6 +50,7 @@ def test_result_has_only_english_keys():
         "confidence",
         "evidence",
         "conclusive",
+        "review_required",
         "hypotheses",
     }
 
@@ -91,8 +92,8 @@ def test_independent_evidence_increases_confidence():
     from_name = infer_column("uf")
     from_values = infer_column("f27", profile=profile(values))
     combined = infer_column("uf", profile=profile(values))
-    assert combined["confidence"] > from_name["confidence"]
-    assert combined["confidence"] > from_values["confidence"]
+    assert combined["raw_confidence"] > from_name["raw_confidence"]
+    assert combined["raw_confidence"] > from_values["raw_confidence"]
 
 
 def test_table_context_resolves_an_ambiguous_abbreviation():

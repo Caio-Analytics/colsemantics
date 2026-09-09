@@ -42,7 +42,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-colsemantics = ["py.typed"]
+colsemantics = ["py.typed", "calibration.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

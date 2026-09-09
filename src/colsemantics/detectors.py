@@ -6,7 +6,7 @@ from rapidfuzz.distance import JaroWinkler
 from . import _taxonomy as config
 from .context import current_context
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence
-from .tokens import expand_abbreviation, normalizar, expanded_tokens
+from .tokens import expand_abbreviation, expanded_tokens, normalizar
 
 STRUCTURAL_ROLES = frozenset(
     {

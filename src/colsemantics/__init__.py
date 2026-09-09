@@ -1,6 +1,7 @@
 from typing import Any
 
 from . import _taxonomy as config
+from .calibration import calibrate, requires_review
 from .context import SemanticContext, current_context
 from .csv_inference import infer_csv
 from .detectors import (
@@ -86,14 +87,16 @@ def _build_result(evidence_items: list[Evidence], profile: ContentProfile | None
         ],
         key=lambda hypothesis: -hypothesis["confidence"],
     )[:_MAX_HYPOTHESES]
+    confidence = calibrate(round(raw_confidence, 4), current_context().profile_name)
     return {
         "semantic": semantic,
         "role": role,
         "domain": domain,
         "raw_confidence": round(raw_confidence, 4),
-        "confidence": round(raw_confidence, 4),
+        "confidence": confidence,
         "evidence": source,
         "conclusive": not (bool(role_ranking) and not role_conclusive) and not uncertain_domain,
+        "review_required": requires_review(confidence),
         "hypotheses": hypotheses,
     }
 

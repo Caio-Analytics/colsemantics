@@ -29,7 +29,7 @@ def load_vocabularies(paths: str | None, base: SemanticContext | None = None) ->
     ]
     overrides = dict(context.column_overrides)
     if not paths:
-        return create_context(strong, fuzzy, tuple(gazetteers), overrides)
+        return create_context(context.profile_name, strong, fuzzy, tuple(gazetteers), overrides)
     for path in (Path(value.strip()) for value in paths.split(",") if value.strip()):
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
@@ -76,7 +76,7 @@ def load_vocabularies(paths: str | None, base: SemanticContext | None = None) ->
         ):
             raise ValueError(f"'column_overrides' in '{path}' must map column names to categories.")
         overrides.update(file_overrides)
-    return create_context(strong, fuzzy, tuple(gazetteers), overrides)
+    return create_context(context.profile_name, strong, fuzzy, tuple(gazetteers), overrides)
 
 
 def export_overrides_template(payload: dict[str, Any], path: str) -> None:
