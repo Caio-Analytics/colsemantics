@@ -16,6 +16,7 @@ from .detectors import (
 )
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence, choose, rank
 from .profiles import available_profiles, load_profile, temporary_profile
+from .sensitivity import assess_sensitivity
 from .tokens import normalizar, tokenizar
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
@@ -62,7 +63,11 @@ def _refine_role(role: str | None, domain: str | None, profile: ContentProfile |
     return role
 
 
-def _build_result(evidence_items: list[Evidence], profile: ContentProfile | None = None) -> dict[str, Any]:
+def _build_result(
+    evidence_items: list[Evidence],
+    profile: ContentProfile | None = None,
+    detected_pattern: str = "None",
+) -> dict[str, Any]:
     role_ranking = rank(evidence_items, ROLE_AXIS)
     domain_ranking = rank(evidence_items, DOMAIN_AXIS)
     role, role_confidence, role_source, role_conclusive = choose(role_ranking)
@@ -97,6 +102,7 @@ def _build_result(evidence_items: list[Evidence], profile: ContentProfile | None
         "evidence": source,
         "conclusive": not (bool(role_ranking) and not role_conclusive) and not uncertain_domain,
         "review_required": requires_review(confidence),
+        "sensitivity": assess_sensitivity(semantic, detected_pattern),
         "hypotheses": hypotheses,
     }
 
@@ -105,10 +111,12 @@ def infer_column(column_name: str, detected_pattern: str = "None", profile: Cont
     override = current_context().column_overrides.get(column_name)
     if override:
         axis = ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS
-        result = _build_result([Evidence(override, axis, 1.0, "vocabulary override")], profile)
+        result = _build_result(
+            [Evidence(override, axis, 1.0, "vocabulary override")], profile, detected_pattern
+        )
         result["conclusive"] = True
         return result
-    return _build_result(_collect_evidence(column_name, detected_pattern, profile), profile)
+    return _build_result(_collect_evidence(column_name, detected_pattern, profile), profile, detected_pattern)
 
 
 def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -120,9 +128,10 @@ def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if profile is not None and not isinstance(profile, ContentProfile):
             raise TypeError("profile must be a ContentProfile instance")
         override = current_context().column_overrides.get(name)
-        evidence_items = [Evidence(override, ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS, 1.0, "vocabulary override")] if override else _collect_evidence(name, str(column.get("detected_pattern", column.get("pattern", "None"))), profile)
+        detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))
+        evidence_items = [Evidence(override, ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS, 1.0, "vocabulary override")] if override else _collect_evidence(name, detected_pattern, profile)
         evidence_by_column.append(evidence_items)
-        result = _build_result(evidence_items, profile)
+        result = _build_result(evidence_items, profile, detected_pattern)
         if override:
             result["conclusive"] = True
         results.append(result)
@@ -135,7 +144,10 @@ def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
         name = str(column.get("column_name", column.get("name")))
         extras = by_table_context(tokenizar(name), table_domains)
         if extras:
-            results[index] = _build_result(evidence_by_column[index] + extras, column.get("profile"))
+            detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))
+            results[index] = _build_result(
+                evidence_by_column[index] + extras, column.get("profile"), detected_pattern
+            )
     return results
 
 
