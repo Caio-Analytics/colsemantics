@@ -41,6 +41,22 @@ def test_reports_metrics_by_profile():
     assert report["by_profile"]["pt-BR"]["total_cases"] == 1
 
 
+def test_reports_calibration_by_profile():
+    report = evaluate_cases(
+        [
+            {
+                "profile": "pt-BR",
+                "column_name": "employee_id",
+                "expected_semantic": "Identifier (ID)",
+            }
+        ]
+    )
+
+    profile = report["by_profile"]["pt-BR"]
+    assert sum(bucket["count"] for bucket in profile["calibration"].values()) == 1
+    assert profile["expected_calibration_error"] >= 0.0
+
+
 def test_rejects_cases_without_an_expected_label():
     with pytest.raises(ValueError, match="expected"):
         evaluate_cases([{"profile": "pt-BR", "column_name": "employee_id"}])

@@ -96,7 +96,23 @@ Run the synthetic benchmark fixture included with the repository:
 colsemantics benchmark benchmarks/synthetic.json --output benchmark-report.json
 ```
 
-The report includes semantic, role, and domain accuracy, coverage, per-profile metrics, and a confusion matrix. Public corpus definitions are stored as source manifests; they are not bundled or downloaded automatically.
+The report includes semantic, role, and domain accuracy, coverage, per-profile metrics, a confusion matrix, and calibration buckets with expected calibration error. Public corpus definitions are stored as source manifests; they are not bundled or downloaded automatically.
+
+## Confidence and review decisions
+
+`raw_confidence` is the direct score assembled from independent evidence. `confidence` is the profile calibration for that score bucket, derived from the versioned calibration fixture. A result sets `review_required` when calibrated confidence is below `0.80`.
+
+The embedded calibration is provisional: it is a controlled regression fixture, not evidence of production-grade accuracy. A held-out, versioned corpus is required before treating its precision as a production measurement.
+
+## Sensitive-data recommendations
+
+Each result includes a descriptive `sensitivity` recommendation. It does not modify input data.
+
+- Validated CPF patterns: `high` / `mask`
+- Person identity semantics: `high` / `restrict`
+- Contact semantics: `high` / `mask`
+- Other identifiers: `medium` / `review`
+- Everything else: `none` / `allow`
 
 ## Result shape
 
@@ -105,9 +121,12 @@ The report includes semantic, role, and domain accuracy, coverage, per-profile m
     "semantic": str,
     "role": str | None,
     "domain": str | None,
+    "raw_confidence": float,
     "confidence": float,
     "evidence": str,
     "conclusive": bool,
+    "review_required": bool,
+    "sensitivity": {"level": str, "action": str, "reason": str},
     "hypotheses": list[dict],
 }
 ```
