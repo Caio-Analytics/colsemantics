@@ -166,3 +166,36 @@ def test_public_api_exports_csv_and_profile_interfaces():
     assert {"available_profiles", "infer_csv", "load_profile", "temporary_profile"} <= set(
         colsemantics.__all__
     )
+
+
+@pytest.mark.parametrize(
+    ("column_name", "expected_semantic", "expected_role", "expected_domain"),
+    [
+        ("employee_id", "Identifier (ID)", "Identifier (ID)", None),
+        ("start_date", "Date / Calendar", "Date / Calendar", None),
+        (
+            "department_name",
+            "Organizational Structure",
+            "Entity Label / Name",
+            "Organizational Structure",
+        ),
+        ("xyzabc123", "Generic / Unmapped", None, None),
+    ],
+)
+def test_english_core_regression_cases(
+    column_name, expected_semantic, expected_role, expected_domain
+):
+    result = infer_column(column_name)
+    assert result["semantic"] == expected_semantic
+    assert result["role"] == expected_role
+    assert result["domain"] == expected_domain
+
+
+def test_english_core_regression_uses_profiled_values():
+    profile = ContentProfile(
+        data_type="Text",
+        distinct_values=["SP", "RJ", "MG", "BA"],
+        distinct_count=4,
+        uniqueness_ratio=0.1,
+    )
+    assert infer_column("f27", profile=profile)["semantic"] == "Geographic Location"
