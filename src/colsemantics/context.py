@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from contextvars import ContextVar
+from contextvars import ContextVar, Token
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any
@@ -62,9 +62,9 @@ def current_context() -> SemanticContext:
     return _CURRENT_CONTEXT.get()
 
 
-def set_context(context: SemanticContext):
+def set_context(context: SemanticContext) -> Token[SemanticContext]:
     return _CURRENT_CONTEXT.set(context)
 
 
-def reset_context(token: object) -> None:
-    _CURRENT_CONTEXT.reset(token)  # type: ignore[arg-type]
+def reset_context(token: Token[SemanticContext]) -> None:
+    _CURRENT_CONTEXT.reset(token)

@@ -56,12 +56,14 @@ def load_vocabularies(paths: str | None, base: SemanticContext | None = None) ->
             values = item["values"]
             if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
                 raise ValueError(f"Gazetteer values in '{path}' must be strings.")
+            if item["axis"] not in {"role", "domain"}:
+                raise ValueError(f"Gazetteer axis in '{path}' must be 'role' or 'domain'.")
             gazetteers.append(
                 {
                     "nome": str(item["name"]),
                     "valores": set(values),
                     "categoria": str(item["category"]),
-                    "eixo": str(item["axis"]),
+                    "eixo": "papel" if item["axis"] == "role" else "dominio",
                     "cobertura_minima": float(item.get("minimum_coverage", 0.8)),
                     "peso": float(item.get("weight", 0.8)),
                     "max_distintos": int(item.get("max_distinct", 100)),

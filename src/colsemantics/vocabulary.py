@@ -1,25 +1,8 @@
-"""Vocabulários da inferência semântica: abreviaturas e gazetteers de valor.
-
-Só dado, sem lógica.
-
-Abreviaturas: sistemas corporativos abreviam de forma sistemática
-(`cd_dpto_lot`, `nr_seq_mvto`, `vl_tot_liq`). Dicionário curado pro caso
-frequente; o resto vai pra reconstrução por subsequência
-(`tokens.expandir_abreviatura`).
-
-Gazetteers: conjuntos fechados de valores que identificam a coluna pelo
-conteúdo (`f27` com siglas de UF nos valores é localização).
-"""
-
 from typing import Any
 
 from . import _taxonomy as config
 
-# ── Abreviaturas ────────────────────────────────────────────────────────────
-# token abreviado -> lista de expansões possíveis, mais provável primeiro.
-# `dep` sozinho é ambíguo; o contexto da tabela desempata.
 ABREVIATURAS: dict[str, list[str]] = {
-    # papel / estrutura do nome
     "cd": ["codigo"],
     "cod": ["codigo"],
     "cdg": ["codigo"],
@@ -53,7 +36,6 @@ ABREVIATURAS: dict[str, list[str]] = {
     "ind": ["indicador"],
     "mt": ["matricula"],
     "mat": ["matricula"],
-    # entidades de RH e estrutura organizacional
     "dep": ["departamento", "dependente", "deposito"],
     "dpto": ["departamento"],
     "depto": ["departamento"],
@@ -80,7 +62,6 @@ ABREVIATURAS: dict[str, list[str]] = {
     "sit": ["situacao"],
     "escol": ["escolaridade"],
     "esc": ["escolaridade"],
-    # negócio e localização
     "mvto": ["movimento"],
     "mov": ["movimento"],
     "movto": ["movimento"],
@@ -102,7 +83,6 @@ ABREVIATURAS: dict[str, list[str]] = {
     "reg": ["regiao"],
     "fil": ["filial"],
     "uni": ["unidade"],
-    # temporais e agregações
     "ini": ["inicio"],
     "fim": ["fim"],
     "venc": ["vencimento"],
@@ -126,9 +106,6 @@ ABREVIATURAS: dict[str, list[str]] = {
     "nota": ["nota"],
 }
 
-# ── Gazetteers ──────────────────────────────────────────────────────────────
-# Cada entrada declara um conjunto fechado de valores. A coluna entra na
-# categoria quando a fração de valores contidos supera `cobertura_minima`.
 
 _UFS = {
     "ac",
@@ -365,7 +342,7 @@ _PORTE_CONTRATO = {
     "diretor estatutario",
 }
 
-# `eixo` diz se o gazetteer identifica o papel da coluna ou o domínio dela.
+
 GAZETTEERS: list[dict[str, Any]] = [
     {
         "nome": "UF brasileira",
