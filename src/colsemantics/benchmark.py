@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, TypedDict
 
 from . import ContentProfile, infer_column
+from .calibration import bucket_for
 from .profiles import temporary_profile
 
 _GENERIC_SEMANTIC = "Generic / Unmapped"
@@ -91,6 +92,47 @@ def _metrics(entries: Sequence[_BenchmarkEntry]) -> dict[str, object]:
         "confusion_matrix": {
             expected: dict(sorted(actual.items())) for expected, actual in sorted(confusion.items())
         },
+        **_calibration_metrics(entries),
+    }
+
+
+def _bucket_midpoint(bucket: str) -> float:
+    lower, upper = (float(bound) for bound in bucket.split("-", maxsplit=1))
+    return round((lower + upper) / 2, 4)
+
+
+def _calibration_metrics(entries: Sequence[_BenchmarkEntry]) -> dict[str, object]:
+    buckets: dict[str, dict[str, int]] = defaultdict(lambda: {"count": 0, "correct_count": 0})
+    for entry in entries:
+        expected_semantic = entry["expected"].get("expected_semantic")
+        if expected_semantic is None:
+            continue
+        result = entry["result"]
+        bucket = bucket_for(float(result["raw_confidence"]))
+        buckets[bucket]["count"] += 1
+        if expected_semantic == result["semantic"]:
+            buckets[bucket]["correct_count"] += 1
+
+    calibration = {
+        bucket: {
+            **values,
+            "precision": round(values["correct_count"] / values["count"], 4),
+        }
+        for bucket, values in sorted(buckets.items())
+    }
+    total = sum(values["count"] for values in calibration.values())
+    expected_calibration_error = (
+        sum(
+            abs(float(values["precision"]) - _bucket_midpoint(bucket)) * int(values["count"])
+            for bucket, values in calibration.items()
+        )
+        / total
+        if total
+        else 0.0
+    )
+    return {
+        "calibration": calibration,
+        "expected_calibration_error": round(expected_calibration_error, 4),
     }
 
 

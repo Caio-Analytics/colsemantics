@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from .context import SemanticContext, create_context, reset_context, set_context
 from .vocabularies import load_vocabularies
 
-_PROFILES = {"pt-BR": create_context()}
+_PROFILES = {"pt-BR": create_context("pt-BR")}
 
 
 def available_profiles() -> tuple[str, ...]:

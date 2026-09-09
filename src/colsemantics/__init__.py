@@ -1,25 +1,22 @@
-from dataclasses import dataclass, field
 from typing import Any
 
 from . import _taxonomy as config
+from .calibration import calibrate, requires_review
 from .context import SemanticContext, current_context
 from .csv_inference import infer_csv
 from .detectors import (
-    PAPEIS_ESTRUTURAIS as _STRUCTURAL_ROLES,
+    STRUCTURAL_ROLES,
+    ContentProfile,
+    by_content_pattern,
+    by_fuzzy,
+    by_gazetteer,
+    by_strong_token,
+    by_structural_signature,
+    by_table_context,
 )
-from .detectors import (
-    PerfilConteudo as _LegacyContentProfile,
-)
-from .detectors import (
-    por_assinatura_estrutural,
-    por_contexto_da_tabela,
-    por_fuzzy,
-    por_gazetteer,
-    por_padrao_conteudo,
-    por_token_forte,
-)
-from .evidence import EIXO_DOMINIO, EIXO_PAPEL, Evidencia, escolher, ranquear
+from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence, choose, rank
 from .profiles import available_profiles, load_profile, temporary_profile
+from .sensitivity import assess_sensitivity
 from .tokens import normalizar, tokenizar
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
@@ -42,269 +39,124 @@ __all__ = [
     "tokenizar",
 ]
 
-
-@dataclass
-class ContentProfile:
-    data_type: str = ""
-    distinct_values: list[str] = field(default_factory=list)
-    distinct_count: int = 0
-    uniqueness_ratio: float = 0.0
-    mean_string_length: float | None = None
-    fixed_length: bool = False
-    skewness: float | None = None
-    minimum: float | None = None
-    monotonically_increasing: bool = False
-    fixed_decimal_places: int | None = None
+_CONTEXT_MINIMUM_CONFIDENCE = 0.7
+_DOMAIN_MINIMUM_CONFIDENCE = 0.5
+_MAX_HYPOTHESES = 4
 
 
-_CATEGORY_LABELS = {
-    "Genérico / Não mapeado": "Generic / Unmapped",
-    "Data / Calendário": "Date / Calendar",
-    "Chave Identificadora (ID)": "Identifier (ID)",
-    "Texto Descritivo Livre": "Free-form Text",
-    "Nome / Identificação Pessoal": "Person Name / Identifier",
-    "Rótulo / Nome de Entidade": "Entity Label / Name",
-    "Categoria / Classificação": "Category / Classification",
-    "Status / Indicador / Flag": "Status / Indicator / Flag",
-    "Valor Financeiro": "Financial Value",
-    "Quantidade / Métrica": "Quantity / Metric",
-    "Contato / Rede": "Contact / Network",
-    "Resultado de Avaliação": "Assessment Result",
-    "Localização Geográfica": "Geographic Location",
-    "Estrutura Organizacional": "Organizational Structure",
-    "Perfil do Colaborador": "Workforce Profile",
-    "Produto / Item": "Product / Item",
-    "Cargo / Função": "Job / Function",
-    "Financeiro / Custo": "Finance / Cost",
-    "Curso / Treinamento": "Course / Training",
-    "Processo Eleitoral": "Electoral Process",
-}
+def _collect_evidence(column_name: str, detected_pattern: str, profile: ContentProfile | None) -> list[Evidence]:
+    tokens = tokenizar(column_name)
+    normalized_name = normalizar(column_name)
+    evidence_items = by_content_pattern(detected_pattern) + by_strong_token(tokens) + by_fuzzy(normalized_name, tokens)
+    if profile is not None:
+        evidence_items += by_gazetteer(profile) + by_structural_signature(profile)
+    return evidence_items
 
 
-_CONFIANCA_MINIMA_CONTEXTO = 0.7
+def _refine_role(role: str | None, domain: str | None, profile: ContentProfile | None) -> str | None:
+    if role == config.PERSON_NAME_SEMANTIC and domain is not None and domain not in config.PERSON_DOMAINS:
+        return config.ENTITY_LABEL_SEMANTIC
+    if role == config.FREE_FORM_TEXT_SEMANTIC and profile is not None:
+        is_dimension_cardinality = 1 < profile.distinct_count <= config.MAX_CATEGORY_CARDINALITY and profile.uniqueness_ratio < 0.5
+        if is_dimension_cardinality:
+            return config.CATEGORY_SEMANTIC
+    return role
 
 
-_CONFIANCA_MINIMA_DOMINIO = 0.5
-
-_MAX_HIPOTESES = 4
-
-
-def _coletar_evidencias(
-    nome_col: str,
-    detectado_padrao: str,
-    perfil: _LegacyContentProfile | None,
-) -> list[Evidencia]:
-    tokens = tokenizar(nome_col)
-    nome_limpo = normalizar(nome_col)
-
-    evidencias: list[Evidencia] = []
-    evidencias += por_padrao_conteudo(detectado_padrao)
-    evidencias += por_token_forte(tokens)
-    evidencias += por_fuzzy(nome_limpo, tokens)
-
-    if perfil is not None:
-        evidencias += por_gazetteer(perfil)
-        evidencias += por_assinatura_estrutural(perfil)
-
-    return evidencias
-
-
-def _refinar_papel(
-    papel: str | None, dominio: str | None, perfil: _LegacyContentProfile | None
-) -> str | None:
-    if papel == config.SEMANTICA_NOME_PESSOA:
-        if dominio is not None and dominio not in config.DOMINIOS_DE_PESSOA:
-            return config.SEMANTICA_ROTULO_ENTIDADE
-    elif papel == config.SEMANTICA_TEXTO_LIVRE and perfil is not None:
-        cardinalidade_de_dimensao = (
-            1 < perfil.n_unicos <= config.CARDINALIDADE_MAX_CATEGORIA
-            and perfil.ratio_unicidade < 0.5
-        )
-        if cardinalidade_de_dimensao:
-            return config.SEMANTICA_CATEGORIA
-    return papel
-
-
-def _montar_resultado(
-    evidencias: list[Evidencia], perfil: _LegacyContentProfile | None = None
+def _build_result(
+    evidence_items: list[Evidence],
+    profile: ContentProfile | None = None,
+    detected_pattern: str = "None",
 ) -> dict[str, Any]:
-    ranking_papel = ranquear(evidencias, EIXO_PAPEL)
-    ranking_dominio = ranquear(evidencias, EIXO_DOMINIO)
-
-    papel, conf_papel, origem_papel, papel_conclusivo = escolher(ranking_papel)
-    dominio, conf_dominio, origem_dominio, _ = escolher(ranking_dominio)
-
-    dominio_incerto = dominio is not None and conf_dominio < _CONFIANCA_MINIMA_DOMINIO
-    if dominio_incerto:
-        dominio, conf_dominio, origem_dominio = None, 0.0, "Sem evidência"
-
-    papel = _refinar_papel(papel, dominio, perfil)
-
-    if papel in _STRUCTURAL_ROLES:
-        semantica, confianca, origem = papel, conf_papel, origem_papel
-    elif dominio is not None:
-        semantica, confianca, origem = dominio, conf_dominio, origem_dominio
-    elif papel is not None:
-        semantica, confianca, origem = papel, conf_papel, origem_papel
+    role_ranking = rank(evidence_items, ROLE_AXIS)
+    domain_ranking = rank(evidence_items, DOMAIN_AXIS)
+    role, role_confidence, role_source, role_conclusive = choose(role_ranking)
+    domain, domain_confidence, domain_source, _ = choose(domain_ranking)
+    uncertain_domain = domain is not None and domain_confidence < _DOMAIN_MINIMUM_CONFIDENCE
+    if uncertain_domain:
+        domain, domain_confidence, domain_source = None, 0.0, "No evidence"
+    role = _refine_role(role, domain, profile)
+    if role in STRUCTURAL_ROLES:
+        semantic, raw_confidence, source = role, role_confidence, role_source
+    elif domain is not None:
+        semantic, raw_confidence, source = domain, domain_confidence, domain_source
+    elif role is not None:
+        semantic, raw_confidence, source = role, role_confidence, role_source
     else:
-        semantica, confianca, origem = config.SEMANTICA_GENERICA, 0.0, "Unmatched"
-
-    hipoteses = sorted(
+        semantic, raw_confidence, source = config.GENERIC_SEMANTIC, 0.0, "Unmatched"
+    hypotheses = sorted(
         [
-            {
-                "semantica": r["categoria"],
-                "eixo": eixo,
-                "confianca": r["confianca"],
-                "evidencias": r["origens"][:3],
-            }
-            for eixo, ranking in ((EIXO_PAPEL, ranking_papel), (EIXO_DOMINIO, ranking_dominio))
-            for r in ranking
+            {"semantic": item["category"], "axis": axis, "confidence": item["confidence"], "evidence": item["sources"][:3]}
+            for axis, ranking in ((ROLE_AXIS, role_ranking), (DOMAIN_AXIS, domain_ranking))
+            for item in ranking
         ],
-        key=lambda h: -h["confianca"],
-    )[:_MAX_HIPOTESES]
-
+        key=lambda hypothesis: -hypothesis["confidence"],
+    )[:_MAX_HYPOTHESES]
+    confidence = calibrate(round(raw_confidence, 4), current_context().profile_name)
     return {
-        "semantica": semantica,
-        "papel": papel,
-        "dominio": dominio,
-        "confianca_score": round(confianca, 4),
-        "origem": origem,
-        "conclusiva": not (bool(ranking_papel) and not papel_conclusivo) and not dominio_incerto,
-        "hipoteses": hipoteses,
-    }
-
-
-def _infer_column(
-    nome_col: str,
-    detectado_padrao: str = "Nenhum",
-    perfil: _LegacyContentProfile | None = None,
-) -> dict[str, Any]:
-    override = current_context().column_overrides.get(nome_col)
-    if override:
-        axis = EIXO_PAPEL if override in _STRUCTURAL_ROLES else EIXO_DOMINIO
-        result = _montar_resultado([Evidencia(override, axis, 1.0, "vocabulary override")], perfil)
-        result["conclusiva"] = True
-        return result
-    return _montar_resultado(_coletar_evidencias(nome_col, detectado_padrao, perfil), perfil)
-
-
-def _infer_table(entradas: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    evidencias_por_coluna: list[list[Evidencia]] = []
-    resultados: list[dict[str, Any]] = []
-    for entrada in entradas:
-        nome = str(entrada["nome"])
-        override = current_context().column_overrides.get(nome)
-        evidencias = (
-            [
-                Evidencia(
-                    override,
-                    EIXO_PAPEL if override in _STRUCTURAL_ROLES else EIXO_DOMINIO,
-                    1.0,
-                    "vocabulary override",
-                )
-            ]
-            if override
-            else _coletar_evidencias(nome, entrada.get("padrao", "Nenhum"), entrada.get("perfil"))
-        )
-        evidencias_por_coluna.append(evidencias)
-        resultado = _montar_resultado(evidencias, entrada.get("perfil"))
-        if override:
-            resultado["conclusiva"] = True
-        resultados.append(resultado)
-
-    contexto = _perfil_de_assunto(resultados)
-    if not contexto:
-        return resultados
-
-    for indice, (entrada, resultado) in enumerate(zip(entradas, resultados, strict=True)):
-        if resultado["conclusiva"]:
-            continue
-        extras = por_contexto_da_tabela(tokenizar(str(entrada["nome"])), contexto)
-        if not extras:
-            continue
-        resultados[indice] = _montar_resultado(
-            evidencias_por_coluna[indice] + extras, entrada.get("perfil")
-        )
-
-    return resultados
-
-
-def _perfil_de_assunto(resultados: list[dict[str, Any]]) -> dict[str, float]:
-    forcas: dict[str, float] = {}
-    for resultado in resultados:
-        if not resultado["conclusiva"]:
-            continue
-        for categoria in (resultado["papel"], resultado["dominio"]):
-            if not categoria or categoria == config.SEMANTICA_GENERICA:
-                continue
-            if resultado["confianca_score"] < _CONFIANCA_MINIMA_CONTEXTO:
-                continue
-            forcas[categoria] = max(forcas.get(categoria, 0.0), resultado["confianca_score"])
-    return forcas
-
-
-def _semantics_for_gap_analysis(registro: dict[str, Any]) -> list[str]:
-    return [
-        v
-        for v in (registro.get("semantica"), registro.get("papel"), registro.get("dominio"))
-        if v and v != config.SEMANTICA_GENERICA
-    ]
-
-
-def _english_result(result: dict[str, Any]) -> dict[str, Any]:
-    hypotheses = [
-        {
-            "semantic": _CATEGORY_LABELS.get(item["semantica"], item["semantica"]),
-            "axis": "role" if item["eixo"] == EIXO_PAPEL else "domain",
-            "confidence": item["confianca"],
-            "evidence": item["evidencias"],
-        }
-        for item in result["hipoteses"]
-    ]
-    return {
-        "semantic": _CATEGORY_LABELS.get(result["semantica"], result["semantica"]),
-        "role": _CATEGORY_LABELS.get(result["papel"], result["papel"]),
-        "domain": _CATEGORY_LABELS.get(result["dominio"], result["dominio"]),
-        "confidence": result["confianca_score"],
-        "evidence": result["origem"],
-        "conclusive": result["conclusiva"],
+        "semantic": semantic,
+        "role": role,
+        "domain": domain,
+        "raw_confidence": round(raw_confidence, 4),
+        "confidence": confidence,
+        "evidence": source,
+        "conclusive": not (bool(role_ranking) and not role_conclusive) and not uncertain_domain,
+        "review_required": requires_review(confidence),
+        "sensitivity": assess_sensitivity(semantic, detected_pattern),
         "hypotheses": hypotheses,
     }
 
 
-def _legacy_profile(profile: ContentProfile | None) -> _LegacyContentProfile | None:
-    if profile is None:
-        return None
-    return _LegacyContentProfile(
-        tipo_dados=profile.data_type,
-        valores_distintos=profile.distinct_values,
-        n_unicos=profile.distinct_count,
-        ratio_unicidade=profile.uniqueness_ratio,
-        str_len_media=profile.mean_string_length,
-        comprimento_fixo=profile.fixed_length,
-        assimetria=profile.skewness,
-        minimo=profile.minimum,
-        monotonica_crescente=profile.monotonically_increasing,
-        casas_decimais_fixas=profile.fixed_decimal_places,
-    )
-
-
-def infer_column(
-    column_name: str,
-    detected_pattern: str = "None",
-    profile: ContentProfile | None = None,
-) -> dict[str, Any]:
-    pattern = "Nenhum" if detected_pattern == "None" else detected_pattern
-    return _english_result(_infer_column(column_name, pattern, _legacy_profile(profile)))
+def infer_column(column_name: str, detected_pattern: str = "None", profile: ContentProfile | None = None) -> dict[str, Any]:
+    override = current_context().column_overrides.get(column_name)
+    if override:
+        axis = ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS
+        result = _build_result(
+            [Evidence(override, axis, 1.0, "vocabulary override")], profile, detected_pattern
+        )
+        result["conclusive"] = True
+        return result
+    return _build_result(_collect_evidence(column_name, detected_pattern, profile), profile, detected_pattern)
 
 
 def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    entries = [
-        {
-            "nome": column.get("column_name", column.get("name")),
-            "padrao": column.get("detected_pattern", column.get("pattern", "Nenhum")),
-            "perfil": _legacy_profile(column.get("profile")),
-        }
-        for column in columns
-    ]
-    return [_english_result(result) for result in _infer_table(entries)]
+    evidence_by_column: list[list[Evidence]] = []
+    results: list[dict[str, Any]] = []
+    for column in columns:
+        name = str(column.get("column_name", column.get("name")))
+        profile = column.get("profile")
+        if profile is not None and not isinstance(profile, ContentProfile):
+            raise TypeError("profile must be a ContentProfile instance")
+        override = current_context().column_overrides.get(name)
+        detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))
+        evidence_items = [Evidence(override, ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS, 1.0, "vocabulary override")] if override else _collect_evidence(name, detected_pattern, profile)
+        evidence_by_column.append(evidence_items)
+        result = _build_result(evidence_items, profile, detected_pattern)
+        if override:
+            result["conclusive"] = True
+        results.append(result)
+    table_domains = _subject_profile(results)
+    if not table_domains:
+        return results
+    for index, (column, result) in enumerate(zip(columns, results, strict=True)):
+        if result["conclusive"]:
+            continue
+        name = str(column.get("column_name", column.get("name")))
+        extras = by_table_context(tokenizar(name), table_domains)
+        if extras:
+            detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))
+            results[index] = _build_result(
+                evidence_by_column[index] + extras, column.get("profile"), detected_pattern
+            )
+    return results
+
+
+def _subject_profile(results: list[dict[str, Any]]) -> dict[str, float]:
+    strengths: dict[str, float] = {}
+    for result in results:
+        if not result["conclusive"]:
+            continue
+        for category in (result["role"], result["domain"]):
+            if category and category != config.GENERIC_SEMANTIC and result["raw_confidence"] >= _CONTEXT_MINIMUM_CONFIDENCE:
+                strengths[category] = max(strengths.get(category, 0.0), result["raw_confidence"])
+    return strengths

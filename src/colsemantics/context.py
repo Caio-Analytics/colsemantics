@@ -7,11 +7,12 @@ from types import MappingProxyType
 from typing import Any
 
 from . import _taxonomy as taxonomy
-from .vocabulary import ABREVIATURAS, GAZETTEERS
+from .vocabulary import ABBREVIATIONS, GAZETTEERS
 
 
 @dataclass(frozen=True)
 class SemanticContext:
+    profile_name: str
     strong_categories: Mapping[str, tuple[str, ...]]
     fuzzy_categories: Mapping[str, tuple[str, ...]]
     gazetteers: tuple[Mapping[str, Any], ...]
@@ -21,16 +22,17 @@ class SemanticContext:
 
 
 def create_context(
+    profile_name: str = "pt-BR",
     strong_categories: Mapping[str, tuple[str, ...]] | None = None,
     fuzzy_categories: Mapping[str, tuple[str, ...]] | None = None,
     gazetteers: tuple[Mapping[str, Any], ...] | None = None,
     column_overrides: Mapping[str, str] | None = None,
 ) -> SemanticContext:
     strong = strong_categories or {
-        category: tuple(terms) for category, terms in taxonomy.CATEGORIAS_FORTES.items()
+        category: tuple(terms) for category, terms in taxonomy.STRONG_CATEGORIES.items()
     }
     fuzzy = fuzzy_categories or {
-        category: tuple(terms) for category, terms in taxonomy.CATEGORIAS_FUZZY.items()
+        category: tuple(terms) for category, terms in taxonomy.FUZZY_CATEGORIES.items()
     }
     sources = gazetteers or tuple(GAZETTEERS)
     index: dict[str, list[str]] = {}
@@ -39,12 +41,13 @@ def create_context(
             index.setdefault(term, []).append(category)
     words = {word for terms in strong.values() for word in terms}
     words.update(word for terms in fuzzy.values() for word in terms)
-    words.update(word for expansions in ABREVIATURAS.values() for word in expansions)
+    words.update(word for expansions in ABBREVIATIONS.values() for word in expansions)
     return SemanticContext(
+        profile_name=profile_name,
         strong_categories=MappingProxyType(dict(strong)),
         fuzzy_categories=MappingProxyType(dict(fuzzy)),
         gazetteers=tuple(
-            MappingProxyType({**item, "valores": frozenset(item["valores"])}) for item in sources
+            MappingProxyType({**item, "values": frozenset(item["values"])}) for item in sources
         ),
         strong_token_index=MappingProxyType({key: tuple(value) for key, value in index.items()}),
         abbreviation_words=tuple(sorted(words)),

@@ -25,11 +25,11 @@ def load_vocabularies(paths: str | None, base: SemanticContext | None = None) ->
     strong = {category: tuple(terms) for category, terms in context.strong_categories.items()}
     fuzzy = {category: tuple(terms) for category, terms in context.fuzzy_categories.items()}
     gazetteers: list[dict[str, object]] = [
-        {**item, "valores": set(item["valores"])} for item in context.gazetteers
+        {**item, "values": set(item["values"])} for item in context.gazetteers
     ]
     overrides = dict(context.column_overrides)
     if not paths:
-        return create_context(strong, fuzzy, tuple(gazetteers), overrides)
+        return create_context(context.profile_name, strong, fuzzy, tuple(gazetteers), overrides)
     for path in (Path(value.strip()) for value in paths.split(",") if value.strip()):
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
@@ -60,13 +60,13 @@ def load_vocabularies(paths: str | None, base: SemanticContext | None = None) ->
                 raise ValueError(f"Gazetteer axis in '{path}' must be 'role' or 'domain'.")
             gazetteers.append(
                 {
-                    "nome": str(item["name"]),
-                    "valores": set(values),
-                    "categoria": str(item["category"]),
-                    "eixo": "papel" if item["axis"] == "role" else "dominio",
-                    "cobertura_minima": float(item.get("minimum_coverage", 0.8)),
-                    "peso": float(item.get("weight", 0.8)),
-                    "max_distintos": int(item.get("max_distinct", 100)),
+                    "name": str(item["name"]),
+                    "values": set(values),
+                    "category": str(item["category"]),
+                    "axis": "role" if item["axis"] == "role" else "domain",
+                    "minimum_coverage": float(item.get("minimum_coverage", 0.8)),
+                    "weight": float(item.get("weight", 0.8)),
+                    "max_distinct": int(item.get("max_distinct", 100)),
                 }
             )
         file_overrides = data.get("column_overrides", {})
@@ -76,7 +76,7 @@ def load_vocabularies(paths: str | None, base: SemanticContext | None = None) ->
         ):
             raise ValueError(f"'column_overrides' in '{path}' must map column names to categories.")
         overrides.update(file_overrides)
-    return create_context(strong, fuzzy, tuple(gazetteers), overrides)
+    return create_context(context.profile_name, strong, fuzzy, tuple(gazetteers), overrides)
 
 
 def export_overrides_template(payload: dict[str, Any], path: str) -> None:

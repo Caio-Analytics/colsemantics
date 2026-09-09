@@ -3,7 +3,7 @@ import pytest
 import colsemantics
 from colsemantics import ContentProfile, infer_column, infer_table, load_vocabularies, tokenizar
 from colsemantics.context import reset_context, set_context
-from colsemantics.tokens import expandir_abreviatura
+from colsemantics.tokens import expand_abbreviation
 
 
 def profile(values: list[str], data_type: str = "Text") -> ContentProfile:
@@ -46,9 +46,12 @@ def test_result_has_only_english_keys():
         "semantic",
         "role",
         "domain",
+        "raw_confidence",
         "confidence",
         "evidence",
         "conclusive",
+        "review_required",
+        "sensitivity",
         "hypotheses",
     }
 
@@ -90,8 +93,8 @@ def test_independent_evidence_increases_confidence():
     from_name = infer_column("uf")
     from_values = infer_column("f27", profile=profile(values))
     combined = infer_column("uf", profile=profile(values))
-    assert combined["confidence"] > from_name["confidence"]
-    assert combined["confidence"] > from_values["confidence"]
+    assert combined["raw_confidence"] > from_name["raw_confidence"]
+    assert combined["raw_confidence"] > from_values["raw_confidence"]
 
 
 def test_table_context_resolves_an_ambiguous_abbreviation():
@@ -119,8 +122,8 @@ def test_tokenization_handles_camel_and_snake_case():
 
 
 def test_abbreviation_expansion_supports_portuguese_source_tokens():
-    assert "departamento" in [word for word, _ in expandir_abreviatura("dpto")]
-    assert expandir_abreviatura("name") == ()
+    assert "departamento" in [word for word, _ in expand_abbreviation("dpto")]
+    assert expand_abbreviation("name") == ()
 
 
 def test_custom_vocabulary_is_scoped(tmp_path):
@@ -166,3 +169,36 @@ def test_public_api_exports_csv_and_profile_interfaces():
     assert {"available_profiles", "infer_csv", "load_profile", "temporary_profile"} <= set(
         colsemantics.__all__
     )
+
+
+@pytest.mark.parametrize(
+    ("column_name", "expected_semantic", "expected_role", "expected_domain"),
+    [
+        ("employee_id", "Identifier (ID)", "Identifier (ID)", None),
+        ("start_date", "Date / Calendar", "Date / Calendar", None),
+        (
+            "department_name",
+            "Organizational Structure",
+            "Entity Label / Name",
+            "Organizational Structure",
+        ),
+        ("xyzabc123", "Generic / Unmapped", None, None),
+    ],
+)
+def test_english_core_regression_cases(
+    column_name, expected_semantic, expected_role, expected_domain
+):
+    result = infer_column(column_name)
+    assert result["semantic"] == expected_semantic
+    assert result["role"] == expected_role
+    assert result["domain"] == expected_domain
+
+
+def test_english_core_regression_uses_profiled_values():
+    profile = ContentProfile(
+        data_type="Text",
+        distinct_values=["SP", "RJ", "MG", "BA"],
+        distinct_count=4,
+        uniqueness_ratio=0.1,
+    )
+    assert infer_column("f27", profile=profile)["semantic"] == "Geographic Location"

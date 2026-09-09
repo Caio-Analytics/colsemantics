@@ -19,7 +19,7 @@ def _parser() -> argparse.ArgumentParser:
     infer.add_argument("--vocabulary", help="comma-separated YAML vocabulary paths")
     infer.add_argument("--encoding", default="utf-8", help="CSV input encoding")
     infer.add_argument("--output", required=True, help="JSON report path")
-    benchmark = commands.add_parser("benchmark", help="evaluate JSON benchmark cases")
+    benchmark = commands.add_parser("benchmark", help="evaluate JSON cases with calibration metrics")
     benchmark.add_argument("cases", help="JSON benchmark fixture path")
     benchmark.add_argument("--output", required=True, help="JSON report path")
     return parser
