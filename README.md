@@ -71,7 +71,7 @@ results = infer_table(
 
 ## Vocabulary profiles and extensions
 
-`pt-BR` is the embedded profile. Use `available_profiles()` to list embedded profiles and `load_profile()` when an application needs an explicit context.
+`pt-BR` is the embedded (and default) profile. A profile controls the column-name vocabulary only; value patterns such as e-mail, phone, and postal code are detected independently of it. Use `available_profiles()` to list embedded profiles and `load_profile()` when an application needs an explicit context.
 
 ```python
 from colsemantics import infer_column, temporary_profile

@@ -1,14 +1,16 @@
+from .patterns import canonical_pattern
 from .results import Sensitivity
 
 
 def assess_sensitivity(semantic: str, detected_pattern: str) -> Sensitivity:
-    if detected_pattern == "CPF":
+    detected_pattern = canonical_pattern(detected_pattern)
+    if detected_pattern == "cpf":
         return {
             "level": "high",
             "action": "mask",
             "reason": "validated CPF pattern",
         }
-    if detected_pattern == "CNPJ":
+    if detected_pattern == "cnpj":
         return {
             "level": "medium",
             "action": "review",

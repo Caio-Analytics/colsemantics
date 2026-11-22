@@ -6,6 +6,7 @@ from rapidfuzz.distance import JaroWinkler
 from . import _taxonomy as config
 from .context import current_context
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence
+from .patterns import PATTERN_LABELS
 from .tokens import expand_abbreviation, expanded_tokens, normalize
 
 STRUCTURAL_ROLES = frozenset(
@@ -21,12 +22,12 @@ STRUCTURAL_ROLES = frozenset(
 )
 
 _PATTERN_SEMANTICS: dict[str, tuple[str, str]] = {
-    "CPF": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
-    "CNPJ": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
-    "UUID": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
-    "E-mail": ("Contact / Network", ROLE_AXIS),
-    "Telefone": ("Contact / Network", ROLE_AXIS),
-    "CEP": ("Geographic Location", DOMAIN_AXIS),
+    "cpf": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "cnpj": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "uuid": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "email": ("Contact / Network", ROLE_AXIS),
+    "phone": ("Contact / Network", ROLE_AXIS),
+    "postal_code": ("Geographic Location", DOMAIN_AXIS),
 }
 
 _POSITIONAL_DECAY = 0.03
@@ -77,7 +78,14 @@ def by_content_pattern(detected_pattern: str) -> list[Evidence]:
     if entry is None:
         return []
     category, axis = entry
-    return [Evidence(category, axis, 0.98, f"validated {detected_pattern} pattern")]
+    return [
+        Evidence(
+            category,
+            axis,
+            0.98,
+            f"validated {PATTERN_LABELS.get(detected_pattern, detected_pattern)} pattern",
+        )
+    ]
 
 
 def by_gazetteer(profile: ContentProfile) -> list[Evidence]:

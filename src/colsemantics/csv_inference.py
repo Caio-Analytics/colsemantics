@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Literal
 
 from .patterns import detect_column_pattern
-from .profiles import temporary_profile
+from .profiles import DEFAULT_PROFILE, temporary_profile
 from .profiling import profile_values
 from .results import CsvColumnResult, CsvReport
 
@@ -43,7 +43,7 @@ def infer_csv(
     path: str | Path,
     *,
     sample_size: int = 10000,
-    profile_name: str = "pt-BR",
+    profile_name: str = DEFAULT_PROFILE,
     vocabulary_paths: str | None = None,
     encoding: str = DEFAULT_ENCODING,
     delimiter: str | None = None,

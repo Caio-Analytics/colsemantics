@@ -16,6 +16,7 @@ from .detectors import (
     by_table_context,
 )
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence, choose, rank
+from .patterns import canonical_pattern
 from .profiles import available_profiles, load_profile, temporary_profile
 from .results import CsvColumnResult, CsvReport, Hypothesis, InferenceResult, Sensitivity
 from .sensitivity import assess_sensitivity
@@ -152,20 +153,31 @@ def _build_result(
     }
 
 
+def _column_evidence(
+    name: str, detected_pattern: str, profile: ContentProfile | None
+) -> tuple[list[Evidence], bool]:
+    """Return the evidence for a column and whether a vocabulary override decided it."""
+    override = current_context().column_overrides.get(name)
+    if override:
+        axis = ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS
+        return [Evidence(override, axis, 1.0, "vocabulary override")], True
+    return _collect_evidence(name, detected_pattern, profile), False
+
+
+def _infer_one(
+    name: str, detected_pattern: str, profile: ContentProfile | None
+) -> tuple[InferenceResult, list[Evidence]]:
+    evidence_items, overridden = _column_evidence(name, detected_pattern, profile)
+    result = _build_result(evidence_items, profile, detected_pattern)
+    if overridden:
+        result["conclusive"] = True
+    return result, evidence_items
+
+
 def infer_column(
     column_name: str, detected_pattern: str = "None", profile: ContentProfile | None = None
 ) -> InferenceResult:
-    override = current_context().column_overrides.get(column_name)
-    if override:
-        axis = ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS
-        result = _build_result(
-            [Evidence(override, axis, 1.0, "vocabulary override")], profile, detected_pattern
-        )
-        result["conclusive"] = True
-        return result
-    return _build_result(
-        _collect_evidence(column_name, detected_pattern, profile), profile, detected_pattern
-    )
+    return _infer_one(column_name, canonical_pattern(detected_pattern), profile)[0]
 
 
 def _column_name(column: dict[str, Any], position: int) -> str:
@@ -175,46 +187,35 @@ def _column_name(column: dict[str, Any], position: int) -> str:
     return name
 
 
+def _column_profile(column: dict[str, Any]) -> ContentProfile | None:
+    profile = column.get("profile")
+    if profile is not None and not isinstance(profile, ContentProfile):
+        raise TypeError("profile must be a ContentProfile instance")
+    return profile
+
+
 def infer_table(columns: list[dict[str, Any]]) -> list[InferenceResult]:
-    evidence_by_column: list[list[Evidence]] = []
-    results: list[InferenceResult] = []
-    for position, column in enumerate(columns):
-        name = _column_name(column, position)
-        profile = column.get("profile")
-        if profile is not None and not isinstance(profile, ContentProfile):
-            raise TypeError("profile must be a ContentProfile instance")
-        override = current_context().column_overrides.get(name)
-        detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))
-        evidence_items = (
-            [
-                Evidence(
-                    override,
-                    ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS,
-                    1.0,
-                    "vocabulary override",
-                )
-            ]
-            if override
-            else _collect_evidence(name, detected_pattern, profile)
+    parsed = [
+        (
+            _column_name(column, position),
+            canonical_pattern(str(column.get("detected_pattern", column.get("pattern", "None")))),
+            _column_profile(column),
         )
-        evidence_by_column.append(evidence_items)
-        result = _build_result(evidence_items, profile, detected_pattern)
-        if override:
-            result["conclusive"] = True
-        results.append(result)
+        for position, column in enumerate(columns)
+    ]
+    first_pass = [_infer_one(name, pattern, profile) for name, pattern, profile in parsed]
+    results = [result for result, _ in first_pass]
     table_domains = _subject_profile(results)
     if not table_domains:
         return results
-    for index, (column, result) in enumerate(zip(columns, results, strict=True)):
+    for index, ((name, pattern, profile), (result, evidence_items)) in enumerate(
+        zip(parsed, first_pass, strict=True)
+    ):
         if result["conclusive"]:
             continue
-        name = _column_name(column, index)
         extras = by_table_context(tokenize(name), table_domains)
         if extras:
-            detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))
-            results[index] = _build_result(
-                evidence_by_column[index] + extras, column.get("profile"), detected_pattern
-            )
+            results[index] = _build_result(evidence_items + extras, profile, pattern)
     return results
 
 

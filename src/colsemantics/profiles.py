@@ -4,14 +4,17 @@ from contextlib import contextmanager
 from .context import SemanticContext, create_context, reset_context, set_context
 from .vocabularies import load_vocabularies
 
-_PROFILES = {"pt-BR": create_context("pt-BR")}
+DEFAULT_PROFILE = "pt-BR"
+_PROFILES = {DEFAULT_PROFILE: create_context(DEFAULT_PROFILE)}
 
 
 def available_profiles() -> tuple[str, ...]:
     return tuple(_PROFILES)
 
 
-def load_profile(name: str = "pt-BR", vocabulary_paths: str | None = None) -> SemanticContext:
+def load_profile(
+    name: str = DEFAULT_PROFILE, vocabulary_paths: str | None = None
+) -> SemanticContext:
     try:
         base_context = _PROFILES[name]
     except KeyError as error:
@@ -21,7 +24,9 @@ def load_profile(name: str = "pt-BR", vocabulary_paths: str | None = None) -> Se
 
 
 @contextmanager
-def temporary_profile(name: str = "pt-BR", vocabulary_paths: str | None = None) -> Iterator[None]:
+def temporary_profile(
+    name: str = DEFAULT_PROFILE, vocabulary_paths: str | None = None
+) -> Iterator[None]:
     token = set_context(load_profile(name, vocabulary_paths))
     try:
         yield

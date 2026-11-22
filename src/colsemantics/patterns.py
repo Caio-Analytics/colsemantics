@@ -6,6 +6,33 @@ import re
 from collections.abc import Callable, Iterable
 
 NO_PATTERN = "None"
+
+_LEGACY_NAMES = {
+    "cpf": "cpf",
+    "cnpj": "cnpj",
+    "uuid": "uuid",
+    "e-mail": "email",
+    "email": "email",
+    "telefone": "phone",
+    "phone": "phone",
+    "cep": "postal_code",
+    "postal_code": "postal_code",
+}
+PATTERN_LABELS = {
+    "cpf": "CPF",
+    "cnpj": "CNPJ",
+    "uuid": "UUID",
+    "email": "e-mail",
+    "phone": "phone",
+    "postal_code": "postal code",
+}
+
+
+def canonical_pattern(name: str) -> str:
+    """Map pattern names (including legacy ``E-mail``, ``Telefone``, ``CEP``) to English keys."""
+    return _LEGACY_NAMES.get(name.strip().lower(), NO_PATTERN if name == NO_PATTERN else name)
+
+
 MINIMUM_PATTERN_COVERAGE = 0.8
 
 _EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$")
@@ -63,12 +90,12 @@ def _is_formatted_phone(value: str) -> bool:
 
 
 _VALIDATORS: tuple[tuple[str, Callable[[str], bool]], ...] = (
-    ("CPF", is_valid_cpf),
-    ("CNPJ", is_valid_cnpj),
-    ("UUID", lambda value: bool(_UUID.match(value))),
-    ("E-mail", lambda value: bool(_EMAIL.match(value))),
-    ("Telefone", _is_formatted_phone),
-    ("CEP", lambda value: bool(_CEP.match(value))),
+    ("cpf", is_valid_cpf),
+    ("cnpj", is_valid_cnpj),
+    ("uuid", lambda value: bool(_UUID.match(value))),
+    ("email", lambda value: bool(_EMAIL.match(value))),
+    ("phone", _is_formatted_phone),
+    ("postal_code", lambda value: bool(_CEP.match(value))),
 )
 
 

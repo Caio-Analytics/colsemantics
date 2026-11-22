@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .benchmark import evaluate_cases, load_cases
 from .csv_inference import DEFAULT_ENCODING, infer_csv
+from .profiles import DEFAULT_PROFILE
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -14,7 +15,11 @@ def _parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
     infer = commands.add_parser("infer", help="infer semantic labels from a CSV file")
     infer.add_argument("input", help="CSV file to analyze")
-    infer.add_argument("--profile", default="pt-BR", help="embedded vocabulary profile")
+    infer.add_argument(
+        "--profile",
+        default=DEFAULT_PROFILE,
+        help="embedded vocabulary profile (column-name vocabulary only; value patterns are locale-independent)",
+    )
     infer.add_argument("--sample", type=int, default=10000, help="maximum rows to sample")
     infer.add_argument(
         "--sampling",
