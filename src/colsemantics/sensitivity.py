@@ -5,6 +5,12 @@ def assess_sensitivity(semantic: str, detected_pattern: str) -> dict[str, str]:
             "action": "mask",
             "reason": "validated CPF pattern",
         }
+    if detected_pattern == "CNPJ":
+        return {
+            "level": "medium",
+            "action": "review",
+            "reason": "validated CNPJ pattern",
+        }
     if semantic == "Person Name / Identifier":
         return {
             "level": "high",

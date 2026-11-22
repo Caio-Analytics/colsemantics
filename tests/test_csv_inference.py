@@ -47,3 +47,73 @@ def test_rejects_an_empty_csv(tmp_path):
 
     with pytest.raises(ValueError, match="header"):
         infer_csv(source)
+
+
+def test_report_names_each_column(tmp_path):
+    source = tmp_path / "employees.csv"
+    source.write_text("employee_id,state\n1,SP\n", encoding="utf-8")
+
+    report = infer_csv(source)
+
+    assert [(c["column_index"], c["column_name"]) for c in report["columns"]] == [
+        (0, "employee_id"),
+        (1, "state"),
+    ]
+
+
+def test_detects_semicolon_delimited_files(tmp_path):
+    source = tmp_path / "employees.csv"
+    source.write_text("employee_id;state\n1;SP\n", encoding="utf-8")
+
+    report = infer_csv(source)
+
+    assert report["source"]["delimiter"] == ";"
+    assert [c["column_name"] for c in report["columns"]] == ["employee_id", "state"]
+
+
+def test_explicit_delimiter_overrides_detection(tmp_path):
+    source = tmp_path / "employees.csv"
+    source.write_text("a|b;c\n1|2;3\n", encoding="utf-8")
+
+    report = infer_csv(source, delimiter="|")
+
+    assert [c["column_name"] for c in report["columns"]] == ["a", "b;c"]
+
+
+def test_rejects_multi_character_delimiters(tmp_path):
+    source = tmp_path / "employees.csv"
+    source.write_text("a,b\n1,2\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="delimiter"):
+        infer_csv(source, delimiter="||")
+
+
+def test_strips_a_utf8_bom_from_the_first_header(tmp_path):
+    source = tmp_path / "employees.csv"
+    source.write_bytes("﻿employee_id\n1\n".encode())
+
+    report = infer_csv(source)
+
+    assert report["columns"][0]["column_name"] == "employee_id"
+
+
+def test_explains_how_to_fix_an_encoding_error(tmp_path):
+    source = tmp_path / "employees.csv"
+    source.write_bytes("nome\nJoão\n".encode("latin-1"))
+
+    with pytest.raises(ValueError, match="latin-1"):
+        infer_csv(source)
+    assert infer_csv(source, encoding="latin-1")["rows_sampled"] == 1
+
+
+def test_detects_cpf_values_and_marks_them_sensitive(tmp_path):
+    source = tmp_path / "people.csv"
+    source.write_text("doc\n529.982.247-25\n111.444.777-35\n", encoding="utf-8")
+
+    column = infer_csv(source)["columns"][0]
+
+    assert column["sensitivity"] == {
+        "level": "high",
+        "action": "mask",
+        "reason": "validated CPF pattern",
+    }
