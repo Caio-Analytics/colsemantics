@@ -37,7 +37,7 @@ colsemantics = "colsemantics.cli:main"
 dev = ["pytest>=9.2.0", "pytest-cov>=7.1.0", "mypy>=2.4.1", "ruff>=0.17.4"]
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=84.2.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
