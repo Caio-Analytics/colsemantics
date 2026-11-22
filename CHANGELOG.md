@@ -4,6 +4,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+## [0.3.1]
+
 ### Added
 - CI workflow: lint, format check, mypy, tests on Python 3.11 to 3.14, lowest-dependency job, and distribution check.
 - Dependabot configuration, contribution guide, security policy, code of conduct, and pull request template.
@@ -23,7 +25,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [0.3.0]
 
-Calibrated confidence (`raw_confidence`, `confidence`, `review_required`) and sensitive-data recommendations. Tagged in `pyproject.toml` but not yet released or published to PyPI.
+Calibrated confidence (`raw_confidence`, `confidence`, `review_required`) and sensitive-data recommendations. Never tagged or published; its changes ship in 0.3.1.
 
 ## [0.2.0]
 
