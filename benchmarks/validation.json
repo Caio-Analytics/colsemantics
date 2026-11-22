@@ -1,0 +1,287 @@
+[
+  {
+    "profile": "pt-BR",
+    "column_name": "customer_id",
+    "expected_semantic": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "order_number",
+    "expected_semantic": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "codigo_pedido",
+    "expected_semantic": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "user_uuid",
+    "expected_semantic": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "created_at",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "data_nascimento",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "birth_date",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "last_login",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "dt_emissao",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "is_active",
+    "expected_semantic": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "flag_ativo",
+    "expected_semantic": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "status",
+    "expected_semantic": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "deleted",
+    "expected_semantic": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "total_price",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "valor_total",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "salary",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "vl_desconto",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "invoice_amount",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "quantity",
+    "expected_semantic": "Quantity / Metric"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "qtd_itens",
+    "expected_semantic": "Quantity / Metric"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "total_count",
+    "expected_semantic": "Quantity / Metric"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "peso_kg",
+    "expected_semantic": "Quantity / Metric"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "comments",
+    "expected_semantic": "Free-form Text"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "observacao",
+    "expected_semantic": "Free-form Text"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "first_name",
+    "expected_semantic": "Person Name / Identifier"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "nome_cliente",
+    "expected_semantic": "Person Name / Identifier"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "last_name",
+    "expected_semantic": "Person Name / Identifier"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "full_name",
+    "expected_semantic": "Person Name / Identifier"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "email",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "phone_number",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "telefone",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "celular",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "email_address",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "city",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "estado",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "zip_code",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "country",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "municipio",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "street_address",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "endereco",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "department",
+    "expected_semantic": "Organizational Structure"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "setor",
+    "expected_semantic": "Organizational Structure"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "xk9_qz",
+    "expected_semantic": "Generic / Unmapped"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "col_17",
+    "expected_semantic": "Generic / Unmapped"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "tmp",
+    "expected_semantic": "Generic / Unmapped"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f1",
+    "expected_semantic": "Geographic Location",
+    "values": [
+      "SP",
+      "RJ",
+      "MG",
+      "BA",
+      "RS"
+    ]
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f2",
+    "expected_semantic": "Geographic Location",
+    "values": [
+      "CA",
+      "NY",
+      "TX",
+      "FL",
+      "WA"
+    ]
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f3",
+    "expected_semantic": "Status / Indicator / Flag",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f4",
+    "expected_semantic": "Status / Indicator / Flag",
+    "values": [
+      "S",
+      "N"
+    ]
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f5",
+    "expected_semantic": "Contact / Network",
+    "detected_pattern": "email"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f6",
+    "expected_semantic": "Contact / Network",
+    "detected_pattern": "phone"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "f7",
+    "expected_semantic": "Identifier (ID)",
+    "detected_pattern": "cpf"
+  }
+]

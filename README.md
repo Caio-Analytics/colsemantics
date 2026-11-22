@@ -108,6 +108,8 @@ The report includes semantic, role, and domain accuracy, coverage, per-profile m
 
 `raw_confidence` is the direct score assembled from independent evidence. `confidence` is the profile calibration for that score bucket, derived from the versioned calibration fixture. A result sets `review_required` when calibrated confidence is below `0.80`.
 
+See `benchmarks/README.md` for the held-out validation set; its first measurement was 71% semantic accuracy on 52 hand-written cases (Brazilian and US column names), which shows the engine is not yet production-grade for English column names.
+
 The embedded calibration is provisional: it is a controlled regression fixture, not evidence of production-grade accuracy. A held-out, versioned corpus is required before treating its precision as a production measurement.
 
 ## Sensitive-data recommendations
