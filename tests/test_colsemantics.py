@@ -50,6 +50,7 @@ def test_result_has_only_english_keys():
         "conclusive",
         "review_required",
         "sensitivity",
+        "pattern",
         "hypotheses",
     }
 

@@ -4,6 +4,19 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+### Added
+- Locale-aware value patterns for Brazil and the US: phone (mobile, landline, toll-free, NANP), postal code (CEP, ZIP+4), street addresses (including PO boxes and highways), CPF, CNPJ, SSN, EIN. Results include `pattern` with `type`, `locale`, `variant`, `format`, `coverage`, `validated`, and a message.
+- Sensitivity rules for SSN, addresses, EIN, and postal codes.
+- English vocabulary (dates, flags, money, quantities, text, contact, address terms), multi-word terms such as `phone_number` and `zip_code`, and a US state gazetteer.
+- `infer_csv`: delimiter detection and `--delimiter`, `utf-8-sig` default with clear decode errors, typed profiles (Boolean/Integer/Decimal/Date/Text), seeded reservoir sampling (`--sampling`, `--seed`), duplicate-header and malformed-row warnings, and `column_name`/`column_index` in the report.
+- Typed results (`InferenceResult`, `CsvReport`, ...), strict mypy, `benchmarks/validation.json` and `benchmarks/holdout-v2.json`.
+
+### Fixed
+- Value patterns (CPF, e-mail, ...) were never detected in CSV input.
+- `infer_table` no longer invents a column named `None` when `column_name` is missing; it raises `ValueError`.
+- Legacy Portuguese `data_type` names were the only ones the structural rules understood; English names now work and the Portuguese ones are still accepted.
+- A strong content domain (for example addresses) now beats a weak structural role guessed from an uninformative column name.
+
 ## [0.3.1]
 
 ### Added

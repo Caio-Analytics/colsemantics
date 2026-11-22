@@ -2,10 +2,13 @@ from pathlib import Path
 
 from colsemantics.benchmark import evaluate_cases, load_cases
 
-VALIDATION = Path(__file__).parents[1] / "benchmarks" / "validation.json"
+BENCHMARKS = Path(__file__).parents[1] / "benchmarks"
+VALIDATION = BENCHMARKS / "validation.json"
+HOLDOUT_V2 = BENCHMARKS / "holdout-v2.json"
 
 # Regression floors. Raise them when the engine improves; never lower them to make CI pass.
-MINIMUM_SEMANTIC_ACCURACY = 0.70
+MINIMUM_SEMANTIC_ACCURACY = 0.90
+MINIMUM_HOLDOUT_V2_ACCURACY = 0.88
 
 
 def test_validation_corpus_is_held_out_from_calibration_fixture():
@@ -22,3 +25,11 @@ def test_validation_accuracy_does_not_regress():
     report = evaluate_cases(load_cases(VALIDATION))
 
     assert report["semantic_accuracy"] >= MINIMUM_SEMANTIC_ACCURACY
+
+
+def test_second_holdout_does_not_regress_and_is_disjoint():
+    first = {case["column_name"] for case in load_cases(VALIDATION)}
+    second = load_cases(HOLDOUT_V2)
+
+    assert not first & {case["column_name"] for case in second}
+    assert evaluate_cases(second)["semantic_accuracy"] >= MINIMUM_HOLDOUT_V2_ACCURACY

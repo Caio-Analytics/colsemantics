@@ -6,7 +6,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Literal
 
-from .patterns import detect_column_pattern
 from .profiles import DEFAULT_PROFILE, temporary_profile
 from .profiling import profile_values
 from .results import CsvColumnResult, CsvReport
@@ -127,7 +126,6 @@ def infer_csv(
             {
                 "column_name": header,
                 "profile": profile_values(values),
-                "detected_pattern": detect_column_pattern(values),
             }
         )
 

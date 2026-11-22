@@ -112,14 +112,43 @@ See `benchmarks/README.md` for the held-out validation set; its first measuremen
 
 The embedded calibration is provisional: it is a controlled regression fixture, not evidence of production-grade accuracy. A held-out, versioned corpus is required before treating its precision as a production measurement.
 
+## Value patterns and locales
+
+When a column has sampled values, colsemantics also looks at how the values are written. Detection uses values only, so it works the same for Brazilian and US data and does not depend on the vocabulary profile.
+
+| Type | Brazil (BR) | United States (US) |
+|---|---|---|
+| `phone` | `(11) 91234-5678`, `11 91234-5678`, `+55 11 91234-5678`, `(21) 3456-7890`, `0800 123 4567`; the area code (DDD) must exist, mobiles start with 9, landlines with 2-5 | `(415) 555-2671`, `415-555-2671`, `415.555.2671`, `+1 415 555 2671`; area code and exchange start with 2-9 and are not N11 |
+| `postal_code` | CEP `01310-100` | `94105-1234` (ZIP+4) |
+| `address` | `Rua das Flores, 123`, `Av. Paulista, 1578`, `Rodovia BR-101 km 5` | `123 Main St`, `500 N. Michigan Ave., Suite 300`, `PO Box 1234` |
+| national id | `cpf`, `cnpj` (check digits verified) | `ssn` (area/group/serial ranges verified), `ein` (format only) |
+| any | `email`, `uuid` | |
+
+Bare digit strings such as `4155552671` or `11912345678`, and plain five-digit ZIP codes, are not reported as phones or postal codes because they are indistinguishable from ids and amounts. Addresses are matched heuristically and are never marked `validated`.
+
+The result carries a `pattern` that says what was found and where it looks like it comes from:
+
+```python
+result = infer_column("f6", profile=profile_values(["(11) 91234-5678", "(21) 99876-5432"]))
+result["pattern"]
+# {"type": "phone", "locale": "BR", "variant": "mobile", "format": "(DD) 9NNNN-NNNN",
+#  "coverage": 1.0, "validated": True,
+#  "message": "100% of sampled values look like a Brazilian mobile phone number (e.g. (DD) 9NNNN-NNNN)"}
+```
+
+`pattern` is `None` when no format reaches its coverage threshold (80% of the sampled values, 60% for addresses). The same text is used as the `evidence` of the classification. You can still pass `detected_pattern="phone"` to `infer_column`; legacy names (`CPF`, `E-mail`, `Telefone`, `CEP`) keep working.
+
+`infer_csv` reads each file with type detection (numbers, dates, booleans in Brazilian and US formats), picks the `,`, `;`, tab, or `|` delimiter from the header, samples rows uniformly with a seed, and reports duplicate headers and malformed rows in `warnings`.
+
 ## Sensitive-data recommendations
 
 Each result includes a descriptive `sensitivity` recommendation. It does not modify input data.
 
-- Validated CPF patterns: `high` / `mask`
+- Validated CPF or SSN patterns: `high` / `mask`
+- Detected street addresses: `high` / `mask`
 - Person identity semantics: `high` / `restrict`
-- Contact semantics: `high` / `mask`
-- Other identifiers: `medium` / `review`
+- Contact semantics (e-mail, phone): `high` / `mask`
+- CNPJ, EIN, postal codes, other identifiers: `medium` / `review`
 - Everything else: `none` / `allow`
 
 ## Result shape
@@ -135,6 +164,7 @@ Each result includes a descriptive `sensitivity` recommendation. It does not mod
     "conclusive": bool,
     "review_required": bool,
     "sensitivity": {"level": str, "action": str, "reason": str},
+    "pattern": dict | None,  # see "Value patterns and locales"
     "hypotheses": list[dict],
 }
 ```

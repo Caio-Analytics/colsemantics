@@ -6,7 +6,7 @@ from rapidfuzz.distance import JaroWinkler
 from . import _taxonomy as config
 from .context import current_context
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence
-from .patterns import PATTERN_LABELS
+from .results import PatternInfo
 from .tokens import expand_abbreviation, expanded_tokens, normalize
 
 STRUCTURAL_ROLES = frozenset(
@@ -24,10 +24,13 @@ STRUCTURAL_ROLES = frozenset(
 _PATTERN_SEMANTICS: dict[str, tuple[str, str]] = {
     "cpf": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
     "cnpj": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "ssn": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "ein": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
     "uuid": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
     "email": ("Contact / Network", ROLE_AXIS),
     "phone": ("Contact / Network", ROLE_AXIS),
     "postal_code": ("Geographic Location", DOMAIN_AXIS),
+    "address": ("Geographic Location", DOMAIN_AXIS),
 }
 
 _POSITIONAL_DECAY = 0.03
@@ -73,19 +76,17 @@ def _positional_weight(index: int) -> float:
     return max(1.0 - _POSITIONAL_DECAY * index, 0.5)
 
 
-def by_content_pattern(detected_pattern: str) -> list[Evidence]:
-    entry = _PATTERN_SEMANTICS.get(detected_pattern)
+def by_content_pattern(pattern: PatternInfo | None) -> list[Evidence]:
+    """Evidence from a value format. Validated formats weigh more than heuristic ones."""
+    if pattern is None:
+        return []
+    entry = _PATTERN_SEMANTICS.get(pattern["type"])
     if entry is None:
         return []
     category, axis = entry
-    return [
-        Evidence(
-            category,
-            axis,
-            0.98,
-            f"validated {PATTERN_LABELS.get(detected_pattern, detected_pattern)} pattern",
-        )
-    ]
+    coverage = pattern["coverage"] if pattern["coverage"] is not None else 1.0
+    weight = (0.98 if pattern["validated"] else 0.88) * (0.9 + 0.1 * coverage)
+    return [Evidence(category, axis, round(weight, 4), pattern["message"])]
 
 
 def by_gazetteer(profile: ContentProfile) -> list[Evidence]:
@@ -140,21 +141,46 @@ def _edge_qualifier(token: str, position: str) -> Evidence | None:
     return None
 
 
+def _compound_evidence(tokens: list[str]) -> tuple[list[Evidence], set[int]]:
+    """Match multi-word terms such as ``phone number``; return evidence and covered positions."""
+    evidence_items: list[Evidence] = []
+    covered: set[int] = set()
+    index = 0
+    while index < len(tokens):
+        for size in (3, 2):
+            key = tuple(tokens[index : index + size])
+            entry = config.COMPOUND_TERMS.get(key)
+            if entry is not None and len(key) == size:
+                category, axis = entry
+                evidence_items.append(
+                    Evidence(category, axis, 0.95, f"compound term '{' '.join(key)}'")
+                )
+                covered.update(range(index, index + size))
+                index += size - 1
+                break
+        index += 1
+    return evidence_items, covered
+
+
 def by_strong_token(tokens: list[str]) -> list[Evidence]:
     if not tokens:
         return []
 
-    evidence_items: list[Evidence] = []
+    evidence_items, covered = _compound_evidence(tokens)
 
-    edges = [(tokens[0], "leading")]
+    edges = [(0, tokens[0], "leading")]
     if len(tokens) > 1:
-        edges.append((tokens[-1], "trailing"))
-    for token, position in edges:
-        evidence_item = _edge_qualifier(token, position)
+        edges.append((len(tokens) - 1, tokens[-1], "trailing"))
+    for position, token, label in edges:
+        if position in covered:
+            continue
+        evidence_item = _edge_qualifier(token, label)
         if evidence_item is not None:
             evidence_items.append(evidence_item)
 
     for index, (word, expansion_confidence, original) in enumerate(expanded_tokens(tokens)):
+        if index in covered:
+            continue
         for category in current_context().strong_token_index.get(word, ()):
             token_weight = (
                 config.QUALIFIER_TOKEN_WEIGHT

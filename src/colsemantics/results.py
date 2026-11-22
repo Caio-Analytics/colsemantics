@@ -18,6 +18,18 @@ class Hypothesis(TypedDict):
     evidence: list[str]
 
 
+class PatternInfo(TypedDict):
+    """A value format found in the column, for example a Brazilian mobile phone number."""
+
+    type: str  # cpf, cnpj, ssn, ein, uuid, email, phone, postal_code, address
+    locale: str | None  # "BR" or "US" when the format is country-specific
+    variant: str | None  # for example "mobile", "landline", "CEP", "ZIP+4", "street"
+    format: str | None  # most common mask, for example "(DD) 9NNNN-NNNN"
+    coverage: float | None  # share of sampled values that match; None if reported by the caller
+    validated: bool  # True when a checksum or numbering-plan rule confirmed the values
+    message: str
+
+
 class InferenceResult(TypedDict):
     semantic: str
     role: str | None
@@ -28,6 +40,7 @@ class InferenceResult(TypedDict):
     conclusive: bool
     review_required: bool
     sensitivity: Sensitivity
+    pattern: PatternInfo | None
     hypotheses: list[Hypothesis]
 
 

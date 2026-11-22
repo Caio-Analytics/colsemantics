@@ -16,9 +16,16 @@ from .detectors import (
     by_table_context,
 )
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence, choose, rank
-from .patterns import canonical_pattern
+from .patterns import NO_PATTERN, PATTERN_LABELS, analyze_values, canonical_pattern
 from .profiles import available_profiles, load_profile, temporary_profile
-from .results import CsvColumnResult, CsvReport, Hypothesis, InferenceResult, Sensitivity
+from .results import (
+    CsvColumnResult,
+    CsvReport,
+    Hypothesis,
+    InferenceResult,
+    PatternInfo,
+    Sensitivity,
+)
 from .sensitivity import assess_sensitivity
 from .tokens import normalize, tokenize
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
@@ -31,6 +38,7 @@ __all__ = [
     "CsvReport",
     "Hypothesis",
     "InferenceResult",
+    "PatternInfo",
     "SemanticContext",
     "Sensitivity",
     "assess_sensitivity",
@@ -68,17 +76,42 @@ def __getattr__(name: str) -> Any:
 _CONTEXT_MINIMUM_CONFIDENCE = 0.7
 _DOMAIN_MINIMUM_CONFIDENCE = 0.5
 _MAX_HYPOTHESES = 4
+# A strong domain (for example an address pattern in the values) beats a weak structural
+# role guessed from an uninformative column name.
+_CONTENT_DOMAIN_CONFIDENCE = 0.85
+_CONTENT_DOMAIN_MARGIN = 0.3
+
+
+def _resolve_pattern(detected_pattern: str, profile: ContentProfile | None) -> PatternInfo | None:
+    """Combine a caller-reported pattern with what the sampled values actually look like."""
+    reported = canonical_pattern(detected_pattern)
+    expected = None if reported == NO_PATTERN else reported
+    found = (
+        analyze_values(profile.distinct_values, expected_type=expected)
+        if profile is not None and profile.distinct_values
+        else None
+    )
+    if found is not None or expected is None:
+        return found
+    label = PATTERN_LABELS.get(expected, expected)
+    return {
+        "type": expected,
+        "locale": None,
+        "variant": None,
+        "format": None,
+        "coverage": None,
+        "validated": True,
+        "message": f"validated {label} pattern",
+    }
 
 
 def _collect_evidence(
-    column_name: str, detected_pattern: str, profile: ContentProfile | None
+    column_name: str, pattern: PatternInfo | None, profile: ContentProfile | None
 ) -> list[Evidence]:
     tokens = tokenize(column_name)
     normalized_name = normalize(column_name)
     evidence_items = (
-        by_content_pattern(detected_pattern)
-        + by_strong_token(tokens)
-        + by_fuzzy(normalized_name, tokens)
+        by_content_pattern(pattern) + by_strong_token(tokens) + by_fuzzy(normalized_name, tokens)
     )
     if profile is not None:
         evidence_items += by_gazetteer(profile) + by_structural_signature(profile)
@@ -107,7 +140,7 @@ def _refine_role(
 def _build_result(
     evidence_items: list[Evidence],
     profile: ContentProfile | None = None,
-    detected_pattern: str = "None",
+    pattern: PatternInfo | None = None,
 ) -> InferenceResult:
     role_ranking = rank(evidence_items, ROLE_AXIS)
     domain_ranking = rank(evidence_items, DOMAIN_AXIS)
@@ -117,7 +150,12 @@ def _build_result(
     if uncertain_domain:
         domain, domain_confidence, domain_source = None, 0.0, "No evidence"
     role = _refine_role(role, domain, profile)
-    if role in STRUCTURAL_ROLES:
+    content_domain_wins = (
+        domain is not None
+        and domain_confidence >= _CONTENT_DOMAIN_CONFIDENCE
+        and role_confidence < domain_confidence - _CONTENT_DOMAIN_MARGIN
+    )
+    if role in STRUCTURAL_ROLES and not content_domain_wins:
         semantic, raw_confidence, source = role, role_confidence, role_source
     elif domain is not None:
         semantic, raw_confidence, source = domain, domain_confidence, domain_source
@@ -148,27 +186,29 @@ def _build_result(
         "evidence": source,
         "conclusive": not (bool(role_ranking) and not role_conclusive) and not uncertain_domain,
         "review_required": requires_review(confidence),
-        "sensitivity": assess_sensitivity(semantic, detected_pattern),
+        "sensitivity": assess_sensitivity(semantic, pattern["type"] if pattern else NO_PATTERN),
+        "pattern": pattern,
         "hypotheses": hypotheses,
     }
 
 
 def _column_evidence(
-    name: str, detected_pattern: str, profile: ContentProfile | None
+    name: str, pattern: PatternInfo | None, profile: ContentProfile | None
 ) -> tuple[list[Evidence], bool]:
     """Return the evidence for a column and whether a vocabulary override decided it."""
     override = current_context().column_overrides.get(name)
     if override:
         axis = ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS
         return [Evidence(override, axis, 1.0, "vocabulary override")], True
-    return _collect_evidence(name, detected_pattern, profile), False
+    return _collect_evidence(name, pattern, profile), False
 
 
 def _infer_one(
     name: str, detected_pattern: str, profile: ContentProfile | None
 ) -> tuple[InferenceResult, list[Evidence]]:
-    evidence_items, overridden = _column_evidence(name, detected_pattern, profile)
-    result = _build_result(evidence_items, profile, detected_pattern)
+    pattern = _resolve_pattern(detected_pattern, profile)
+    evidence_items, overridden = _column_evidence(name, pattern, profile)
+    result = _build_result(evidence_items, profile, pattern)
     if overridden:
         result["conclusive"] = True
     return result, evidence_items
@@ -177,7 +217,7 @@ def _infer_one(
 def infer_column(
     column_name: str, detected_pattern: str = "None", profile: ContentProfile | None = None
 ) -> InferenceResult:
-    return _infer_one(column_name, canonical_pattern(detected_pattern), profile)[0]
+    return _infer_one(column_name, detected_pattern, profile)[0]
 
 
 def _column_name(column: dict[str, Any], position: int) -> str:
@@ -198,7 +238,7 @@ def infer_table(columns: list[dict[str, Any]]) -> list[InferenceResult]:
     parsed = [
         (
             _column_name(column, position),
-            canonical_pattern(str(column.get("detected_pattern", column.get("pattern", "None")))),
+            str(column.get("detected_pattern", column.get("pattern", NO_PATTERN))),
             _column_profile(column),
         )
         for position, column in enumerate(columns)
@@ -208,14 +248,14 @@ def infer_table(columns: list[dict[str, Any]]) -> list[InferenceResult]:
     table_domains = _subject_profile(results)
     if not table_domains:
         return results
-    for index, ((name, pattern, profile), (result, evidence_items)) in enumerate(
+    for index, ((name, _pattern, profile), (result, evidence_items)) in enumerate(
         zip(parsed, first_pass, strict=True)
     ):
         if result["conclusive"]:
             continue
         extras = by_table_context(tokenize(name), table_domains)
         if extras:
-            results[index] = _build_result(evidence_items + extras, profile, pattern)
+            results[index] = _build_result(evidence_items + extras, profile, result["pattern"])
     return results
 
 
