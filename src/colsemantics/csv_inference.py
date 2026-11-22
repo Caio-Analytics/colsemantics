@@ -43,6 +43,17 @@ def detect_delimiter(header_line: str) -> str:
     return best
 
 
+def _duplicate_header_warnings(headers: list[str]) -> list[str]:
+    positions: dict[str, list[int]] = {}
+    for position, header in enumerate(headers):
+        positions.setdefault(header, []).append(position)
+    return [
+        f"Header '{header}' appears in columns {', '.join(map(str, where))}; each is analyzed separately."
+        for header, where in positions.items()
+        if len(where) > 1
+    ]
+
+
 def infer_csv(
     path: str | Path,
     *,
@@ -68,13 +79,19 @@ def infer_csv(
         with source_path.open(encoding=encoding, newline="") as source:
             used_delimiter = delimiter or detect_delimiter(source.readline())
             source.seek(0)
-            reader = csv.DictReader(source, delimiter=used_delimiter)
-            headers = reader.fieldnames
-            if not headers or any(not header or not header.strip() for header in headers):
+            reader = csv.reader(source, delimiter=used_delimiter)
+            headers = next(reader, None)
+            if not headers or any(not header.strip() for header in headers):
                 raise ValueError("CSV input must include a non-empty header row.")
-            rows = []
-            for row in reader:
-                rows.append(row)
+            rows: list[list[str]] = []
+            malformed_rows = 0
+            for record in reader:
+                if not record:
+                    continue
+                if len(record) != len(headers):
+                    malformed_rows += 1
+                    record = (record + [""] * len(headers))[: len(headers)]
+                rows.append(record)
                 if len(rows) == sample_size:
                     break
     except UnicodeDecodeError as error:
@@ -83,9 +100,16 @@ def infer_csv(
             "Pass the file's real encoding (for example 'latin-1' or 'cp1252')."
         ) from error
 
+    warnings = _duplicate_header_warnings(headers)
+    if malformed_rows:
+        warnings.append(
+            f"{malformed_rows} sampled row(s) had a different number of fields than the header; "
+            "missing fields were treated as empty and extra fields were ignored."
+        )
+
     columns_input = []
-    for header in headers:
-        values = [str(row.get(header, "")) for row in rows if row.get(header) not in (None, "")]
+    for position, header in enumerate(headers):
+        values = [row[position] for row in rows if row[position] != ""]
         columns_input.append(
             {
                 "column_name": header,
@@ -110,6 +134,8 @@ def infer_csv(
         "profile": profile_name,
         "sample_size": sample_size,
         "rows_sampled": len(rows),
+        "rows_malformed": malformed_rows,
+        "warnings": warnings,
         "columns": columns,
         "summary": summary,
     }

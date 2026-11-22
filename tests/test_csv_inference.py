@@ -117,3 +117,44 @@ def test_detects_cpf_values_and_marks_them_sensitive(tmp_path):
         "action": "mask",
         "reason": "validated CPF pattern",
     }
+
+
+def test_analyzes_duplicate_headers_separately_and_warns(tmp_path):
+    source = tmp_path / "dupes.csv"
+    source.write_text("code,code\nSP,1\nRJ,2\n", encoding="utf-8")
+
+    report = infer_csv(source)
+
+    assert [c["column_index"] for c in report["columns"]] == [0, 1]
+    assert any("'code' appears in columns 0, 1" in warning for warning in report["warnings"])
+
+
+def test_duplicate_headers_do_not_share_values(tmp_path):
+    source = tmp_path / "dupes.csv"
+    source.write_text("f27,f27\nSP,x1\nRJ,x2\nMG,x3\nBA,x4\n", encoding="utf-8")
+
+    first, second = infer_csv(source)["columns"]
+
+    assert first["semantic"] == "Geographic Location"
+    assert second["semantic"] != "Geographic Location"
+
+
+def test_reports_ragged_rows_instead_of_hiding_them(tmp_path):
+    source = tmp_path / "ragged.csv"
+    source.write_text("id,name\n1\n2,b,extra\n3,c\n\n", encoding="utf-8")
+
+    report = infer_csv(source)
+
+    assert report["rows_sampled"] == 3
+    assert report["rows_malformed"] == 2
+    assert any("2 sampled row(s)" in warning for warning in report["warnings"])
+
+
+def test_clean_files_report_no_warnings(tmp_path):
+    source = tmp_path / "clean.csv"
+    source.write_text("id,name\n1,a\n", encoding="utf-8")
+
+    report = infer_csv(source)
+
+    assert report["warnings"] == []
+    assert report["rows_malformed"] == 0
