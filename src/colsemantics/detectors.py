@@ -6,6 +6,7 @@ from rapidfuzz.distance import JaroWinkler
 from . import _taxonomy as config
 from .context import current_context
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence
+from .results import PatternInfo
 from .tokens import expand_abbreviation, expanded_tokens, normalize
 
 STRUCTURAL_ROLES = frozenset(
@@ -17,22 +18,29 @@ STRUCTURAL_ROLES = frozenset(
         "Contact / Network",
         "Status / Indicator / Flag",
         "Assessment Result",
+        config.FREE_FORM_TEXT_SEMANTIC,
     }
 )
 
 _PATTERN_SEMANTICS: dict[str, tuple[str, str]] = {
-    "CPF": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
-    "CNPJ": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
-    "UUID": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
-    "E-mail": ("Contact / Network", ROLE_AXIS),
-    "Telefone": ("Contact / Network", ROLE_AXIS),
-    "CEP": ("Geographic Location", DOMAIN_AXIS),
+    "cpf": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "cnpj": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "ssn": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "ein": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "uuid": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
+    "email": ("Contact / Network", ROLE_AXIS),
+    "phone": ("Contact / Network", ROLE_AXIS),
+    "postal_code": ("Geographic Location", DOMAIN_AXIS),
+    "address": ("Geographic Location", DOMAIN_AXIS),
+    "geometry": ("Geographic Location", DOMAIN_AXIS),
+    "coordinates": ("Geographic Location", DOMAIN_AXIS),
 }
 
 _POSITIONAL_DECAY = 0.03
 
 
 _MINIMUM_PREFIX_COVERAGE = 0.7
+_MIN_DISTINCT_FOR_IDENTIFIER = 20  # tiny samples are trivially "unique"
 
 
 @dataclass
@@ -49,16 +57,39 @@ class ContentProfile:
     fixed_decimal_places: int | None = None
 
 
+_DATA_TYPE_ALIASES = {
+    "booleano": "Boolean",
+    "número inteiro": "Integer",
+    "numero inteiro": "Integer",
+    "número decimal": "Decimal",
+    "numero decimal": "Decimal",
+    "data": "Date",
+}
+
+
+def normalize_data_type(data_type: str) -> str:
+    """Map legacy Portuguese type names (``Número Inteiro``, ``Texto...``) to English."""
+    key = data_type.strip().lower()
+    if key.startswith("texto"):
+        return "Text"
+    return _DATA_TYPE_ALIASES.get(key, data_type)
+
+
 def _positional_weight(index: int) -> float:
     return max(1.0 - _POSITIONAL_DECAY * index, 0.5)
 
 
-def by_content_pattern(detected_pattern: str) -> list[Evidence]:
-    entry = _PATTERN_SEMANTICS.get(detected_pattern)
+def by_content_pattern(pattern: PatternInfo | None) -> list[Evidence]:
+    """Evidence from a value format. Validated formats weigh more than heuristic ones."""
+    if pattern is None:
+        return []
+    entry = _PATTERN_SEMANTICS.get(pattern["type"])
     if entry is None:
         return []
     category, axis = entry
-    return [Evidence(category, axis, 0.98, f"validated {detected_pattern} pattern")]
+    coverage = pattern["coverage"] if pattern["coverage"] is not None else 1.0
+    weight = (0.98 if pattern["validated"] else 0.88) * (0.9 + 0.1 * coverage)
+    return [Evidence(category, axis, round(weight, 4), pattern["message"])]
 
 
 def by_gazetteer(profile: ContentProfile) -> list[Evidence]:
@@ -71,11 +102,17 @@ def by_gazetteer(profile: ContentProfile) -> list[Evidence]:
         return []
 
     findings: list[Evidence] = []
+    first_tokens = [value.split()[0] for value in normalized_values]
     for gazetteer in current_context().gazetteers:
-        if profile.distinct_count > gazetteer["max_distinct"]:
+        if (
+            not gazetteer.get("minimum_distinct", 1)
+            <= profile.distinct_count
+            <= gazetteer["max_distinct"]
+        ):
             continue
-        matches = sum(1 for value in normalized_values if value in gazetteer["values"])
-        coverage = matches / len(normalized_values)
+        candidates = first_tokens if gazetteer.get("match") == "first_token" else normalized_values
+        matches = sum(1 for value in candidates if value in gazetteer["values"])
+        coverage = matches / len(candidates)
         if coverage < gazetteer["minimum_coverage"]:
             continue
         findings.append(
@@ -113,21 +150,46 @@ def _edge_qualifier(token: str, position: str) -> Evidence | None:
     return None
 
 
+def _compound_evidence(tokens: list[str]) -> tuple[list[Evidence], set[int]]:
+    """Match multi-word terms such as ``phone number``; return evidence and covered positions."""
+    evidence_items: list[Evidence] = []
+    covered: set[int] = set()
+    index = 0
+    while index < len(tokens):
+        for size in (3, 2):
+            key = tuple(tokens[index : index + size])
+            entry = config.COMPOUND_TERMS.get(key)
+            if entry is not None and len(key) == size:
+                category, axis = entry
+                evidence_items.append(
+                    Evidence(category, axis, 0.95, f"compound term '{' '.join(key)}'")
+                )
+                covered.update(range(index, index + size))
+                index += size - 1
+                break
+        index += 1
+    return evidence_items, covered
+
+
 def by_strong_token(tokens: list[str]) -> list[Evidence]:
     if not tokens:
         return []
 
-    evidence_items: list[Evidence] = []
+    evidence_items, covered = _compound_evidence(tokens)
 
-    edges = [(tokens[0], "leading")]
+    edges = [(0, tokens[0], "leading")]
     if len(tokens) > 1:
-        edges.append((tokens[-1], "trailing"))
-    for token, position in edges:
-        evidence_item = _edge_qualifier(token, position)
+        edges.append((len(tokens) - 1, tokens[-1], "trailing"))
+    for position, token, label in edges:
+        if position in covered:
+            continue
+        evidence_item = _edge_qualifier(token, label)
         if evidence_item is not None:
             evidence_items.append(evidence_item)
 
     for index, (word, expansion_confidence, original) in enumerate(expanded_tokens(tokens)):
+        if index in covered:
+            continue
         for category in current_context().strong_token_index.get(word, ()):
             token_weight = (
                 config.QUALIFIER_TOKEN_WEIGHT
@@ -168,6 +230,8 @@ def by_fuzzy(normalized_name: str, tokens: list[str]) -> list[Evidence]:
             )
             for index, (candidate, confidence, original) in enumerate(name_candidates):
                 normalized_candidate = normalize(candidate)
+                if index == 0 and len(normalized_candidate) > 1.5 * len(normalized_word):
+                    continue  # the whole name is much longer than the word: not a typo of it
                 similarity = JaroWinkler.similarity(normalized_candidate, normalized_word)
                 if similarity < threshold:
                     continue
@@ -200,15 +264,20 @@ def by_fuzzy(normalized_name: str, tokens: list[str]) -> list[Evidence]:
 
 def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
     evidence_items: list[Evidence] = []
-    data_type = profile.data_type
+    data_type = normalize_data_type(profile.data_type)
 
-    if data_type == "Booleano":
+    if data_type == "Boolean":
         evidence_items.append(
             Evidence("Status / Indicator / Flag", ROLE_AXIS, 0.7, "boolean column")
         )
 
+    if data_type == "Date":
+        evidence_items.append(
+            Evidence(config.DATE_CALENDAR_SEMANTIC, ROLE_AXIS, 0.7, "date-formatted values")
+        )
+
     if (
-        data_type == "Número Inteiro"
+        data_type == "Integer"
         and profile.monotonically_increasing
         and profile.uniqueness_ratio >= 0.99
     ):
@@ -222,7 +291,7 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
         )
 
     if (
-        data_type == "Número Decimal"
+        data_type == "Decimal"
         and profile.fixed_decimal_places == 2
         and profile.minimum is not None
         and profile.minimum >= 0
@@ -238,7 +307,7 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
             )
         )
 
-    if data_type.startswith("Texto") and profile.mean_string_length is not None:
+    if data_type == "Text" and profile.mean_string_length is not None:
         if profile.mean_string_length > 40 and profile.uniqueness_ratio > 0.5:
             evidence_items.append(
                 Evidence(
@@ -248,7 +317,11 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
                     f"long text with {profile.mean_string_length:.0f} average characters",
                 )
             )
-        elif profile.fixed_length and profile.uniqueness_ratio > 0.9:
+        elif (
+            profile.fixed_length
+            and profile.uniqueness_ratio > 0.9
+            and profile.distinct_count >= _MIN_DISTINCT_FOR_IDENTIFIER
+        ):
             evidence_items.append(
                 Evidence(
                     config.IDENTIFIER_SEMANTIC,

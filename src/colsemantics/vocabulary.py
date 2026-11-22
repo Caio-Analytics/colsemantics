@@ -1,9 +1,16 @@
 from typing import Any
 
 from . import _taxonomy as config
+from ._data import load_wordlist
 
 ABBREVIATIONS: dict[str, list[str]] = {
     "cd": ["codigo"],
+    "nom": ["nome"],
+    "sig": ["sigla"],
+    "tip": ["tipo"],
+    "dat": ["data"],
+    "ide": ["identificador"],
+    "idc": ["identificador"],
     "cod": ["codigo"],
     "cdg": ["codigo"],
     "dt": ["data"],
@@ -343,7 +350,30 @@ _PORTE_CONTRATO = {
 }
 
 
+_US_STATES = {
+    "al", "ak", "az", "ar", "ca", "co", "ct", "de", "fl", "ga", "hi", "id", "il", "in", "ia",
+    "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "ne", "nv", "nh", "nj",
+    "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", "vt",
+    "va", "wa", "wv", "wi", "wy", "dc",
+    "alabama", "alaska", "arizona", "arkansas", "california", "colorado", "connecticut",
+    "delaware", "florida", "georgia", "hawaii", "idaho", "illinois", "indiana", "iowa", "kansas",
+    "kentucky", "louisiana", "maine", "maryland", "massachusetts", "michigan", "minnesota",
+    "mississippi", "missouri", "montana", "nebraska", "nevada", "new hampshire", "new jersey",
+    "new mexico", "new york", "north carolina", "north dakota", "ohio", "oklahoma", "oregon",
+    "pennsylvania", "rhode island", "south carolina", "south dakota", "tennessee", "texas",
+    "utah", "vermont", "virginia", "washington", "west virginia", "wisconsin", "wyoming",
+}  # fmt: skip
+
 GAZETTEERS: list[dict[str, Any]] = [
+    {
+        "name": "US state",
+        "values": _US_STATES,
+        "category": "Geographic Location",
+        "axis": "domain",
+        "minimum_coverage": 0.85,
+        "weight": 0.95,
+        "max_distinct": 60,
+    },
     {
         "name": "UF brasileira",
         "values": _UFS,
@@ -471,3 +501,50 @@ GAZETTEERS: list[dict[str, Any]] = [
         "max_distinct": 10,
     },
 ]
+
+
+GAZETTEERS.extend(
+    [
+        {
+            "name": "município brasileiro",
+            "values": load_wordlist("br_municipalities.txt"),
+            "category": "Geographic Location",
+            "axis": "domain",
+            "minimum_coverage": 0.8,
+            "weight": 0.9,
+            "max_distinct": 6000,
+            "minimum_distinct": 3,
+        },
+        {
+            "name": "US city",
+            "values": load_wordlist("us_cities.txt"),
+            "category": "Geographic Location",
+            "axis": "domain",
+            "minimum_coverage": 0.8,
+            "weight": 0.85,
+            "max_distinct": 4000,
+            "minimum_distinct": 3,
+        },
+        {
+            "name": "country",
+            "values": load_wordlist("countries.txt"),
+            "category": "Geographic Location",
+            "axis": "domain",
+            "minimum_coverage": 0.85,
+            "weight": 0.9,
+            "max_distinct": 400,
+            "minimum_distinct": 3,
+        },
+        {
+            "name": "first name (BR/US)",
+            "values": load_wordlist("br_first_names.txt") | load_wordlist("us_first_names.txt"),
+            "category": "Person Name / Identifier",
+            "axis": "role",
+            "minimum_coverage": 0.7,
+            "weight": 0.85,
+            "max_distinct": 1_000_000,
+            "minimum_distinct": 5,
+            "match": "first_token",
+        },
+    ]
+)

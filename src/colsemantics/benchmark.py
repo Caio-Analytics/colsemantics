@@ -2,11 +2,13 @@ import json
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Literal, TypedDict
 
 from . import ContentProfile, infer_column
 from .calibration import bucket_for
 from .profiles import temporary_profile
+from .profiling import profile_values
+from .results import InferenceResult
 
 _GENERIC_SEMANTIC = "Generic / Unmapped"
 _EXPECTED_FIELDS = ("expected_semantic", "expected_role", "expected_domain")
@@ -15,7 +17,7 @@ _EXPECTED_FIELDS = ("expected_semantic", "expected_role", "expected_domain")
 class _BenchmarkEntry(TypedDict):
     profile: str
     expected: dict[str, object]
-    result: dict[str, Any]
+    result: InferenceResult
 
 
 def load_cases(path: str | Path) -> list[dict[str, object]]:
@@ -30,13 +32,7 @@ def _profile_from_values(values: object) -> ContentProfile | None:
         return None
     if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
         raise ValueError("Benchmark values must be a list of strings.")
-    distinct_values = sorted(set(values))
-    return ContentProfile(
-        data_type="Text",
-        distinct_values=distinct_values,
-        distinct_count=len(distinct_values),
-        uniqueness_ratio=len(distinct_values) / len(values) if values else 0.0,
-    )
+    return profile_values([value for value in values if value != ""])
 
 
 def _required_string(case: Mapping[str, object], key: str) -> str:
@@ -64,7 +60,9 @@ def _evaluate(case: Mapping[str, object]) -> _BenchmarkEntry:
 
 
 def _accuracy(
-    entries: Sequence[_BenchmarkEntry], expected_key: str, actual_key: str
+    entries: Sequence[_BenchmarkEntry],
+    expected_key: str,
+    actual_key: Literal["semantic", "role", "domain"],
 ) -> float | None:
     comparable = [entry for entry in entries if expected_key in entry["expected"]]
     if not comparable:
@@ -73,6 +71,21 @@ def _accuracy(
         entry["expected"][expected_key] == entry["result"][actual_key] for entry in comparable
     )
     return round(correct / len(comparable), 4)
+
+
+def _label_accuracy(entries: Sequence[_BenchmarkEntry]) -> dict[str, dict[str, object]]:
+    """Accuracy per expected semantic, so a strong label cannot hide a weak one."""
+    totals: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    for entry in entries:
+        label = entry["expected"].get("expected_semantic")
+        if label is None:
+            continue
+        totals[str(label)][1] += 1
+        totals[str(label)][0] += int(entry["result"]["semantic"] == label)
+    return {
+        label: {"cases": total, "accuracy": round(correct / total, 4)}
+        for label, (correct, total) in sorted(totals.items())
+    }
 
 
 def _metrics(entries: Sequence[_BenchmarkEntry]) -> dict[str, object]:
@@ -89,6 +102,7 @@ def _metrics(entries: Sequence[_BenchmarkEntry]) -> dict[str, object]:
         "role_accuracy": _accuracy(entries, "expected_role", "role"),
         "domain_accuracy": _accuracy(entries, "expected_domain", "domain"),
         "coverage": round(covered / len(entries), 4) if entries else 0.0,
+        "label_accuracy": _label_accuracy(entries),
         "confusion_matrix": {
             expected: dict(sorted(actual.items())) for expected, actual in sorted(confusion.items())
         },

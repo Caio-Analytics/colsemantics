@@ -18,7 +18,7 @@ Python 3.11 or newer is required.
 CI runs all of these on Python 3.11 to 3.14, plus a job with the lowest supported dependency versions.
 
 ```bash
-pytest --cov          # fails below 85% coverage
+pytest --cov          # fails below 90% coverage
 ruff check .
 ruff format --check .   # `ruff format .` fixes it
 mypy

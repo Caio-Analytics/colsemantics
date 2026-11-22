@@ -2,11 +2,12 @@ import re
 
 from unidecode import unidecode
 
+from ._data import load_wordlist
 from .context import current_context
 from .vocabulary import ABBREVIATIONS
 
 _RE_CAMEL = re.compile(r"([a-z0-9])([A-Z])")
-_RE_SEPARATORS = re.compile(r"[_\s\-\.]+")
+_RE_SEPARATORS = re.compile(r"[\W_]+")
 _RE_LETTER_DIGIT = re.compile(r"([a-z])(\d)")
 
 
@@ -21,11 +22,55 @@ def normalize(text: str) -> str:
     return unidecode(str(text)).lower().strip()
 
 
+# Fused, lower-case column names such as ``issueddate``, ``datecreated`` or ``objectid`` are split
+# when one part is a head word and the other a modifier seen in public column names.
+_TRAILING_HEADS = ("datetime", "timestamp", "date", "time", "id", "code", "number", "name", "year")
+_LEADING_HEADS = ("datetime", "date", "time", "fecha")
+_PAST_PARTICIPLES = frozenset(
+    {"created", "updated", "modified", "entered", "posted", "closed", "opened", "issued"}
+)
+_EXTRA_LEADING_REST = frozenset({"asof", "extract", "export", "dispatch", "arrive", "create"})
+_MIN_FUSED_LENGTH = 6
+_MIN_MODIFIER_LENGTH = 3
+
+
+def _split_fused(token: str) -> list[str]:
+    """Split ``issueddate`` into ``issued date`` when the other part is a known modifier."""
+    if len(token) < _MIN_FUSED_LENGTH or not token.isalpha():
+        return [token]
+    modifiers = load_wordlist("modifiers.txt")
+    for head in _TRAILING_HEADS:
+        prefix = token[: -len(head)]
+        if token.endswith(head) and len(prefix) >= _MIN_MODIFIER_LENGTH and prefix in modifiers:
+            return [*_split_fused(prefix), head]
+    for head in _LEADING_HEADS:
+        rest = token[len(head) :]
+        known = rest in modifiers or rest in _PAST_PARTICIPLES or rest in _EXTRA_LEADING_REST
+        if token.startswith(head) and len(rest) >= _MIN_MODIFIER_LENGTH + 1 and known:
+            return [head, rest]
+    if token.startswith("data") and token[4:] in _EXTRA_LEADING_REST | _PAST_PARTICIPLES:
+        return ["data", token[4:]]
+    if token.endswith("flag") and len(token) >= len("flag") + 3:
+        return [token[:-4], "flag"]
+    for suffix in ("on", "date"):
+        prefix = token[: -len(suffix)]
+        if token.endswith(suffix) and prefix in _PAST_PARTICIPLES:
+            return [prefix, "date"]
+    for participle in ("updated", "modified", "created"):
+        if token.endswith(participle) and token[: -len(participle)] in ("last", "date"):
+            return [token[: -len(participle)], participle]
+    return [token]
+
+
 def tokenize(column_name: str) -> list[str]:
     name = _RE_CAMEL.sub(r"\1_\2", str(column_name))
     name = normalize(name)
     name = _RE_LETTER_DIGIT.sub(r"\1_\2", name)
-    return [p for p in _RE_SEPARATORS.split(name) if p]
+    tokens: list[str] = []
+    for part in _RE_SEPARATORS.split(name):
+        if part:
+            tokens.extend(_split_fused(part))
+    return tokens
 
 
 def _expansion_vocabulary() -> tuple[str, ...]:

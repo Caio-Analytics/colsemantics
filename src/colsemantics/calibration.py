@@ -23,7 +23,8 @@ def _bucket_midpoint(bucket: str) -> float:
 
 @lru_cache(maxsize=1)
 def load_calibration() -> dict[str, Any]:
-    return json.loads(_CALIBRATION_PATH.read_text(encoding="utf-8"))
+    payload: dict[str, Any] = json.loads(_CALIBRATION_PATH.read_text(encoding="utf-8"))
+    return payload
 
 
 def calibrate(raw_confidence: float, profile_name: str) -> float:

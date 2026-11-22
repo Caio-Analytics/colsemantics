@@ -1,6 +1,6 @@
 [project]
 name = "colsemantics"
-version = "0.3.1"
+version = "0.4.1"
 description = "Infer semantic roles and domains for tabular columns from names, values, and table context."
 readme = "README.md"
 license = "MIT"
@@ -37,14 +37,14 @@ colsemantics = "colsemantics.cli:main"
 dev = ["pytest>=9.2.0", "pytest-cov>=7.1.0", "mypy>=2.4.1", "ruff>=0.17.4"]
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=84.2.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-colsemantics = ["py.typed", "calibration.json"]
+colsemantics = ["py.typed", "calibration.json", "data/*.txt", "data/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -67,12 +67,13 @@ python_version = "3.11"
 files = ["src/colsemantics"]
 ignore_missing_imports = true
 warn_unused_ignores = true
+strict = true
 
 [tool.coverage.run]
 source = ["colsemantics"]
 branch = true
 
 [tool.coverage.report]
-fail_under = 85
+fail_under = 90
 show_missing = true
 skip_covered = true

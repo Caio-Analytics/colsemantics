@@ -1,0 +1,207 @@
+[
+  {
+    "profile": "pt-BR",
+    "column_name": "account_id",
+    "expected_semantic": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "transaction_code",
+    "expected_semantic": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ticket_number",
+    "expected_semantic": "Identifier (ID)"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "updated_at",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "expiry_date",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "data_cadastro",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "hire_date",
+    "expected_semantic": "Date / Calendar"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "is_deleted",
+    "expected_semantic": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ativo",
+    "expected_semantic": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "is_verified",
+    "expected_semantic": "Status / Indicator / Flag"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "unit_price",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "valor_pago",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "monthly_income",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "tax_amount",
+    "expected_semantic": "Financial Value"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "qty_ordered",
+    "expected_semantic": "Quantity / Metric"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "num_items",
+    "expected_semantic": "Quantity / Metric"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "peso_liquido",
+    "expected_semantic": "Quantity / Metric"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "notes",
+    "expected_semantic": "Free-form Text"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "comentarios",
+    "expected_semantic": "Free-form Text"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "message_body",
+    "expected_semantic": "Free-form Text"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "customer_name",
+    "expected_semantic": "Person Name / Identifier"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "sobrenome",
+    "expected_semantic": "Person Name / Identifier"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "employee_name",
+    "expected_semantic": "Person Name / Identifier"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "mobile_phone",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "numero_celular",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "contact_email",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "email_corporativo",
+    "expected_semantic": "Contact / Network"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "postal_code",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "codigo_postal",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "home_address",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "endereco_residencial",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "cidade_origem",
+    "expected_semantic": "Geographic Location"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "qwerty_77",
+    "expected_semantic": "Generic / Unmapped"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "zzz",
+    "expected_semantic": "Generic / Unmapped"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "g1",
+    "expected_semantic": "Geographic Location",
+    "values": [
+      "TX",
+      "OH",
+      "GA",
+      "NC",
+      "MI",
+      "IL"
+    ]
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "g2",
+    "expected_semantic": "Geographic Location",
+    "values": [
+      "Texas",
+      "Ohio",
+      "Georgia",
+      "Nevada"
+    ]
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "g3",
+    "expected_semantic": "Geographic Location",
+    "values": [
+      "SC",
+      "PR",
+      "MG",
+      "GO"
+    ]
+  }
+]

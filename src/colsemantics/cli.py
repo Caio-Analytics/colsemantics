@@ -6,7 +6,8 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from .benchmark import evaluate_cases, load_cases
-from .csv_inference import infer_csv
+from .csv_inference import DEFAULT_ENCODING, infer_csv
+from .profiles import DEFAULT_PROFILE
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -14,10 +15,26 @@ def _parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
     infer = commands.add_parser("infer", help="infer semantic labels from a CSV file")
     infer.add_argument("input", help="CSV file to analyze")
-    infer.add_argument("--profile", default="pt-BR", help="embedded vocabulary profile")
+    infer.add_argument(
+        "--profile",
+        default=DEFAULT_PROFILE,
+        help="embedded vocabulary profile (column-name vocabulary only; value patterns are locale-independent)",
+    )
     infer.add_argument("--sample", type=int, default=10000, help="maximum rows to sample")
+    infer.add_argument(
+        "--sampling",
+        choices=["reservoir", "head"],
+        default="reservoir",
+        help="reservoir: random rows from the whole file; head: first rows only",
+    )
+    infer.add_argument("--seed", type=int, default=0, help="random seed for reservoir sampling")
     infer.add_argument("--vocabulary", help="comma-separated YAML vocabulary paths")
-    infer.add_argument("--encoding", default="utf-8", help="CSV input encoding")
+    infer.add_argument(
+        "--encoding", default=DEFAULT_ENCODING, help="CSV input encoding (default: utf-8-sig)"
+    )
+    infer.add_argument(
+        "--delimiter", help="CSV field delimiter (default: detect , ; tab or | from the header)"
+    )
     infer.add_argument("--output", required=True, help="JSON report path")
     benchmark = commands.add_parser(
         "benchmark", help="evaluate JSON cases with calibration metrics"
@@ -47,6 +64,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 profile_name=args.profile,
                 vocabulary_paths=args.vocabulary,
                 encoding=args.encoding,
+                delimiter=args.delimiter,
+                sampling=args.sampling,
+                seed=args.seed,
             )
             _write_json(report, args.output)
             return 0

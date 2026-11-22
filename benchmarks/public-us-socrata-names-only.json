@@ -1,0 +1,2342 @@
+[
+ {
+  "profile": "pt-BR",
+  "column_name": "Actual Construction Procurement Start",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset fb86-vt7u (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Adjudication Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset i55n-9sba (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "AdvStartDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ever-58ni (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ANO_CONVO",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset hrhc-c4wu (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Application Received Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset it4w-cpf4 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "APPLICATIONPROCESSEDDATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pubx-yq2d (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "AppReceivedDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset mv7j-tx3u (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Approval Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset rsxa-ify5 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Arrest Date Time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 34jw-x9zp (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Bid Available Date/Time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pgna-cxjh (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Blanket Begin Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pgna-cxjh (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "BOND_DATE_INITIAL",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 7mck-ehwz (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "BuildNumber",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 5dqz-y4ea (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "C-2 Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset jshw-gkgu (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "C_O_ISSUE_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset bs8b-p36w (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CAD Event Original Time Queued",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 33kz-ixgy (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Call Sign In-Service Time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 33kz-ixgy (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Collect DateTime",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset vwmt-pvjw (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Comment Period End Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8eww-pamb (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "COMPLAINT_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset vnz2-rmie (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Completed Date/Time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset xy7j-y59g (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CONTROL DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset dakq-4sda (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Controverted Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset jshw-gkgu (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CP_DD",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset qcdj-rwhu (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CRASH DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset h9gi-nx95 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "creation_date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 6m7q-g56h (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Cremation Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset f9wk-2wb9 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Current Phase Start",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset fb86-vt7u (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Data as of",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset r8kw-7aab (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "data_period_end",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset mpx5-t7tu (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DATE  OF OCCURRENCE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset x2n5-8w5q (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date Analyzed",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset vwmt-pvjw (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date of Most Recent Change (Data Change or Metadata Change)",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8ypa-c9d9 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date of Most Recent Data Change",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8ypa-c9d9 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date Opened",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 652y-5ihx (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date Pulled",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset u8gi-zru8 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date Qualified",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset acvd-5wvz (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date Recorded",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 5mzw-sjtu (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "date time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 3rsj-iche (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date/Time Found",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ake9-ajui (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date_Closed",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 476u-uxxa (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Date_Time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset f362-6fup (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DATETIME",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ym6k-rx7a (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DDL End Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset xven-is8v (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Debarment End Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset i4jv-zkey (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "deedFileDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset vffy-snc6 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Desde",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8yi9-t44c (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DesignAdjustedCompletion",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 4hcv-tc5r (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Dispatch Date / Time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset icn6-v9z3 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DISPOSITION_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset tg8v-tm6u (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ENTERED_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset cncm-znd6 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ESTU_FECHANACIMIENTO",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset a8xr-en99 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Evicted Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset mvqb-b4hf (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "EXPIRESDATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset uhjb-xac9 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "EXPORT DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset upii-frjc (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Extended Contract Expiration Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset qdmp-ygft (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fecha",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset rgxm-mmea (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "FECHA ACTO NOTARIAL",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 38pt-2nwa (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fecha de recepcion",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset yn23-73dm (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fecha Ini Ejec Contrato",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset f789-7hwg (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fecha publicación",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ptj2-kj7i (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "filing_period",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 9nnw-c693 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "First Inspection Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 652y-5ihx (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "First Sales Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 3kx8-uryv (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fiscal Year End Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset unag-2p27 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "From_Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset isbe-v4d8 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Generation Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset usc3-8zwd (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "gis_trans_date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pwqp-uiq9 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Hearing Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset jz4z-kudi (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Hire Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset kcjb-nf3e (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "HWOCreateDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset sbnd-xujn (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Incident Start Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset xagr-a3x2 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "INCIDENT_DATE_TIME",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset tm6d-hbzd (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Initial Permit Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset va8e-9s3h (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "IssuedWorkStartDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset tqtj-sjs8 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LAST MODIFIED DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 6br9-quuz (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Last Renewal Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset nhjr-rpi2 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Last Used Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset utni-rddb (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "last_edi_1",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset c392-hjk3 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LAST_UPDATED",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset cncm-znd6 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LastInspection",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 5ery-qagt (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LASTINSPECTIONDATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pubx-yq2d (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LastModifi",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8qgy-ka3v (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Latest Issued or Received Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset mkbn-caye (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LayOff_Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8w53-c4f6 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LICENSE_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 5squ-mg4w (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "licenseLastRenewedDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 7s5z-vewr (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Measurement Time",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ggws-77ih (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "metadata_generatedAt",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset in46-gmir (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "month_beginning",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset mq3i-nnqe (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Most Recent Payment Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset suf7-r643 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "NewCorrectByDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset wvxf-dwi5 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Next Annual Inspection",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset fahm-yuh4 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "NOTICE_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8w53-c4f6 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "offensedateofoccurence1",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ftja-9jxd (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Original Issue Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 9s3h-dpkz (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Original Nb Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset suf7-r643 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Period End Year",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 6npu-erdk (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Permit Finaled Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset bnrb-u445 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Permit Issuance Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset weik-ttee (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "PlanReviewCompleteDate",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 76t5-zqzr (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Process Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset kpav-sd4t (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ProcurementStart",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 4hcv-tc5r (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Program Year",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset vd6z-fkpm (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Published Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset vx8i-nprf (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "QC_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset syp8-uezg (column type Date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "REFRESH_TIME",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pi9x-tg5x (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Repeal Comment Period End Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 8eww-pamb (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Report or Data Preparation Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 4sut-q3dt (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Report Published Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset jabi-xxkk (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "REPORTED ANTICIPATED COMPLETION DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset rrtd-iyd7 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ret_date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset mzxg-pwib (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Shift Start",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset tix9-r5tc (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SNAPSHOT_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset dn4d-tjbb (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Spill Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset u44d-k5fk (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SR_RECD_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pk9w-99n6 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Start Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset r8kw-7aab (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "START_DT_UTC",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 35ra-9556 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Status Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset dx9v-zd7x (column type Date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "STATUS_DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset pi9x-tg5x (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SUBMITTED_ON",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset xubg-57si (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Sunset Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ksj8-bd3u (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "TABC Expired Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset waq4-gs4m (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Test Date",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset jvfi-ffup (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "TimeClosed",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 5fn8-vtui (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "tpep_dropoff_datetime",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset biws-g3hs (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Transit Timestamp",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset ebfx-2m7v (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ULTIMA. RENOVACÓN.",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset drwf-rmb8 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "VIOLATION LAST MODIFIED DATE",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset 22u3-xenr (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "YRENDDT",
+  "expected_semantic": "Date / Calendar",
+  "source": "data.socrata.com dataset rgyu-ii48 (column type Calendar date)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ADDRESS",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 29cn-rph9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ADDRESS WITH GEOCODE",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 7at3-sxhp (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "beginLocation",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset wd94-wugt (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Bus Stop Georeference",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset kh8p-hcbm (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "BusinessLocation",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset gpri-47xz (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Card Origin",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 769e-73q6 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Case_Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ax3m-jhxx (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "centroid",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 8ejy-sj4q (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CENTROID_LATLNG",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset byps-gsbw (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "City",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ax8j-dhzm (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "City Hall Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ybvh-5bzv (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "City_State_Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset xp92-5xme (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "columna georreferenciada",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset cpp6-je64 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Coordenadas",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset t5sw-amxr (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Coordinate",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset tgrf-v2zc (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Coordinates",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 5pme-xbs5 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Coordinates (County Centroid)",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset mwzi-gyw7 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "County Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset syny-pj3r (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DeathCityGeo",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset rybz-nyjw (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Destination Point",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset jsu2-fbtj (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "District Coordinates (Decimal Degrees)",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset hr84-s96f (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Dropoff Centroid Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset m6dm-c72p (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "End Centroid Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 2kfw-zvte (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "END_LOCATION",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 4g9f-3jbs (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "endLocation",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset wd94-wugt (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "entrance_georeference",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset i9wp-a4ja (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Facility Latitude & Longitude",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ajn5-kaxt (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "feed_bbox",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 6m7q-g56h (column type Polygon)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "FROM LOCATION",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset fg6s-gzvg (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Generalized Location City",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset khr9-xwfu (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geo data_location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 2ix7-8hwk (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geo_Address",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset mqx2-w62f (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "geo_ref1",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset buxa-ujat (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "geocode",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 3nij-2pw6 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geocoded Address",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 6x9d-idz4 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geocoded Lat/Long",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset m2f8-22s6 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geocoded Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 5zy2-grhr (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geocoded Point",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset dpi6-sct5 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geographic Location of the Crash",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset dc5b-gebx (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "GeoLocation",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset hn4x-zwk7 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "geom",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 3iz8-nghx (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geom Coordinate",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset f6vp-3svh (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "GeomCoordinate",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset szww-y224 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geometry",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset d4mq-wa44 (column type MultiPolygon)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Geometry Point",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset qhi4-bdpu (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "geometry_line",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 8pdx-hfxi (column type MultiLine)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "geometry_linestring",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 6m7q-g56h (column type Line)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "geometry_multipoint",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 6m7q-g56h (column type MultiPoint)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georefence",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset d8tb-8zub (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georeference",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 3x8r-34rs (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georeference_1",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset qq4h-8p86 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georeferenced Column",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset rksx-33p3 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georeferenced Latitude & Longitude",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset fbgu-sqgp (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georeferenced Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset idhm-59de (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "GEOREFERENCIACIÓN",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ffwn-j5cw (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georeferenciación / Georeferencing",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset jqyq-37cq (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Georreferenciación",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset i8ww-5mcf (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "GPS_COORDS ON MAP",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset mymu-zi3s (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "InjuryCityGeo",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset rybz-nyjw (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Lat and Long",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset bkpt-5h2w (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Lat/Lng",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset j2a5-itxh (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Lat/Long",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Lat_Lon",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset qgea-i56i (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Latitude/Longitude",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 3f9m-afei (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LatLng",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset au6r-w9n3 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LatLon",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 9ivb-8ae9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "latlong",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 2zg8-cta8 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Legal Entity Latitude & Longitude",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ajn5-kaxt (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LOCALIZACIÓN",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset iddq-8fza (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Localización Oficina",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset cnh8-i5yd (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Localización País Representa",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 2iqs-g9cv (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset erm2-nwe9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location ",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset s96u-ttmv (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location (Center point of the Zip Code)",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 3xyp-aqkj (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location 1",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset rcm3-fn58 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location 2",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset pwqp-uiq9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location 3",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset pwqp-uiq9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location 4",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset pwqp-uiq9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location 5",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset pwqp-uiq9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location by Zip",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 2ix7-8hwk (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location Geocode",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset hwep-2s8y (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location Point",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset bc88-hemr (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location1",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset cnih-y5dw (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "location_1",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 55ju-2fs9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location_address_geo",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset bc5r-88dy (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Location_masked",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset sckh-3xyx (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "location_point",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset w7yp-px4i (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Mailing Address",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset dsx5-5mwh (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Map Coordinates",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset bt58-qu28 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "multiline",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ie7y-asdn (column type MultiLine)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "MULTILINESTRING",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset hpnd-riq4 (column type MultiLine)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "multipolygon",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset enfh-gkve (column type MultiPolygon)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Nbhd Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset q7ua-agfg (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "New Georeferenced Column",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 5uac-w243 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Next Timepoint Stop Georeference",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 58t6-89vi (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Nueva columna georreferenciada",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 7nqq-3qnk (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "NW_LOCATION",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset kf7e-cur8 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "NYS Physical Points",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset gegk-4ghy (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Origin Point",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset jsu2-fbtj (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "OwnerLocation",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset t2vi-f8qs (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Physical Address",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset dsx5-5mwh (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Pickup Centroid Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset m6dm-c72p (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Point",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 35ra-9556 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Point Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset dkk9-cj3x (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "polygon",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset j92d-uipa (column type MultiPolygon)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Property Address",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset uv9w-h8i4 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "PropertyLocation",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset t2vi-f8qs (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "recipient_location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset tijg-9zyp (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "RegionCentroid",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset uaxb-77vv (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Reporting Area Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset xuad-73uj (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ResidenceCityGeo",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset rybz-nyjw (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "road_event_bbox",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 6m7q-g56h (column type Polygon)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SE_LOCATION",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset kf7e-cur8 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Search By Address:",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 9qpt-bnm4 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "shape",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 6rrm-vxj9 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Shape_Le_1",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset ycrg-ses3 (column type MultiLine)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Start Centroid Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 2kfw-zvte (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "START_LOCATION",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 4g9f-3jbs (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "StateCoordinate",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 69qe-yiui (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Station Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset cnsu-iagr (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "The_Geom",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset uiay-nctu (column type MultiLine)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Timepoint Stop Georeference",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset 58t6-89vi (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "TO LOCATION",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset fg6s-gzvg (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "travelerdataframe_msgId_position",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset in46-gmir (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Ubicación",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset hp9r-jxuu (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "UBICACIÓN ",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset fgfq-enis (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "UBICACIÓN PAÍS",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset e97j-vuf7 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Vehicle Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset f6w7-q2d2 (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Violation Georeference",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset kh8p-hcbm (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Ward Location",
+  "expected_semantic": "Geographic Location",
+  "source": "data.socrata.com dataset q7ua-agfg (column type Point)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ACCEPTS_PUBLIC_FUNDING",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wgzf-9czk (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Accredited?",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset q8me-hzr8 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "active",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 69qe-yiui (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ANY PEOPLE USING PROPERTY? (HOMELESS, CHILDEN, GANGS)",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 7nii-7srd (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "APPEALED",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset uqb9-r7vn (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Approaches",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Available Free Public Wi-Fi in a Pedestrian Corridor (Y/N)",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset fg5j-q5nk (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Balcony/Landing/Porch Construction",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Basement Plumbing Fixture",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "BIDDER PREQUALIFICATION WAIVER FLAG",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qh8x-rm8r (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "bikes_allowed",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset ctwr-tvrd (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "BOND_ELECTROINIC_MONITOR_FLAG_CURRENT",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 7mck-ehwz (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "BOND_ELECTRONIC_MONITOR_FLAG_INITIAL",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 7mck-ehwz (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CASING-DRIVE-SHOE",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wphv-ux6v (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CASING-WELDED",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wphv-ux6v (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CCCAP AUTHORIZATION STATUS",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset a9rr-k8mu (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Change in at least half of total area",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Change in Floor Area or Dimensions",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Change in Property Use",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Changing exterior elements",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Chasing",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Complex",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset u8gi-zru8 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "comPropFlag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vffy-snc6 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Condo Association",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Conforming Lot (58.1152)",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bkpt-5h2w (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Conservation Commission Review",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Construction Dewatering",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "continuation",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wffy-3uut (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Critical Access Hospital?",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset q8me-hzr8 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Curb Cut",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Current",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset kxfh-a6zz (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "CURRENT_SENTENCE_FLAG",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset tg8v-tm6u (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Deck Construction",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Deficiencies",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 8ced-xbvn (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DEFICIENCYRESOLVED",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 8ced-xbvn (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Disabling Damage Flag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 9ivb-8ae9 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Discharge to Sewer or Storm Water System",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DiscoveredInProgress",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset sb4j-ca4h (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Does_work_involve_full_or_partial_demolition",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset g76y-dcqj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DOMESTIC_I",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset gj7a-742p (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "DVFlag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset isbe-v4d8 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "EARLY_HEAD_START",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset dn4d-tjbb (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Eating",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ELA_MetESSA_Participation",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qtus-455b (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Elevated Building Indicator",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset suf7-r643 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "entitySBCL",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vffy-snc6 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "FEDERAL_STATE_LOCAL",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wgzf-9czk (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fire Arm Used Flag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset isbe-v4d8 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fire Department Review",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Fixed Route Flag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 9ivb-8ae9 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "flood_fema_sfha",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset pabr-t5kh (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Footprint change",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "FORHIRE",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset ggf4-p68x (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "garage",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset dkk9-cj3x (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Hiring",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset f4yq-wry5 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Historical Commission Review",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "HubzoneIndicator",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bkfc-yqhx (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "in_stock",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bugr-bbfr (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Indifferent",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Initial Sampling Complete",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset g9uy-32jy (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "insurance_accepted",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bugr-bbfr (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Is Active",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset sckh-3xyx (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Is Contract Item",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 75y3-eci7 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Is In Conjunction",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset kfp4-dz4h (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "IS THE BUILDING VACANT DUE TO FIRE?",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 7nii-7srd (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Is_a_residence_within_200feet_of_the_site",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset g76y-dcqj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "IS_NEW",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 5bhp-bdab (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "is_primary",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vyry-2yfg (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "IsArchived",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset j8eb-8um2 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "IsPinned",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset j8eb-8um2 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Kuks",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LEED Certification",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "LMIIndicator",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bkfc-yqhx (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "MANDATORY PRE-BIDDERS CONFERENCE ATTENDENCE",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qh8x-rm8r (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "manufacturedHomeTransactions",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wffy-3uut (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "MEDICARE CERTIFIED",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset rm6f-b9qj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Meets 2019 HB 2042 Electric Range Requirement",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset rpr4-cgyd (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Meets 2019 HB 2042 Sale Price/Value Requirement",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset rpr4-cgyd (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "mihopt1",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 64uk-42ks (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "mihopt3",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 64uk-42ks (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "MMI",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset xven-is8v (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "MULTIPLE_TNPS",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset j6wf-834c (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "needAPIKey",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 69qe-yiui (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "New or Replaced Storm Sewer",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "new surface parking",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Officer Issued Verbal Warning Prior to Shooting",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset jmq7-sp2e (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ohare_noise_contour_half_mile_buffer_bool",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset pabr-t5kh (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "ohare_noise_contour_no_buffer_bool",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset pabr-t5kh (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "OMWBE Certification",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset t9je-9qwa (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Open Air Windows",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Overlapping Locations",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset r59r-rpip (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Owner-Occupied",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "OWNER_OCC",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset xbwc-ntpx (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Permit Work Items",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bnrb-u445 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Platted (Y/N)",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bkpt-5h2w (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "PPS Psych?",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset q8me-hzr8 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Pre-FIRM Construction Indicator",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset suf7-r643 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "PRIMARY_CHARGE_FLAG",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset tg8v-tm6u (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Public Right-of-Way",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Rail (True/False)",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 9ivb-8ae9 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Running",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Runs from",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SCHOOL DISTRICT OPERATED PROGRAM",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset a9rr-k8mu (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SCREEN-USED",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wphv-ux6v (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Shared Trip Match",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset n26f-ihde (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Solarize Indicator",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset fvw8-89kt (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Sold at Sale",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 55ju-2fs9 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SpayNeuter",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset rsgh-akpg (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "SPECIAL NOTIFICATION TXT FLAG",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qh8x-rm8r (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Subject Armed",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset jmq7-sp2e (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Subject Arrested or Cited",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset jmq7-sp2e (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Swingbeds?",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset q8me-hzr8 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Tail flags",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Tail twitches",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vfnx-vebw (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "terminationFlag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wffy-3uut (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Transit Worker Assault Flag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 9ivb-8ae9 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "TRIP_PURPOSE_COMMUTER_TRANSIT",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wgzf-9czk (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "TRIP_PURPOSE_OTHER",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wgzf-9czk (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "TRIP_PURPOSE_ROADWAY_CONN",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wgzf-9czk (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "udiPropFlag",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset vffy-snc6 (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "validado",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 9a89-px8u (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "VOUCHER_CONTRACT",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset dn4d-tjbb (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "walk_in",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset w7yp-px4i (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "walkins_accepted",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset bugr-bbfr (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Water Department Review",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset qu2z-8suj (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "Wheelchair Accessible",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset kxfh-a6zz (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "wheelchair_accessible",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset ctwr-tvrd (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "workersPresent",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset wd94-wugt (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "wz_enforcement",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 74ug-57tr (column type Checkbox)"
+ },
+ {
+  "profile": "pt-BR",
+  "column_name": "zmcode",
+  "expected_semantic": "Status / Indicator / Flag",
+  "source": "data.socrata.com dataset 64uk-42ks (column type Checkbox)"
+ }
+]

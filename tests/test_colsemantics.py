@@ -50,6 +50,7 @@ def test_result_has_only_english_keys():
         "conclusive",
         "review_required",
         "sensitivity",
+        "pattern",
         "hypotheses",
     }
 
@@ -160,7 +161,7 @@ def test_custom_gazetteer_uses_english_schema(tmp_path):
 
 
 def test_runtime_version_matches_the_release_candidate():
-    assert colsemantics.__version__ == "0.3.1"
+    assert colsemantics.__version__ == "0.4.1"
 
 
 def test_public_api_exports_csv_and_profile_interfaces():
@@ -200,3 +201,8 @@ def test_english_core_regression_uses_profiled_values():
         uniqueness_ratio=0.1,
     )
     assert infer_column("f27", profile=profile)["semantic"] == "Geographic Location"
+
+
+def test_infer_table_rejects_columns_without_a_name():
+    with pytest.raises(ValueError, match="position 1"):
+        infer_table([{"column_name": "employee_id"}, {"profile": None}])
