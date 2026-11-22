@@ -12,6 +12,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Typed results (`InferenceResult`, `CsvReport`, ...), strict mypy, `benchmarks/validation.json` and `benchmarks/holdout-v2.json`.
 
 ### Fixed
+- Build backend floor: `setuptools>=68` could not build this project, because `license = "MIT"` (a PEP 639 license expression) needs setuptools 77 or newer. The floor is now `setuptools>=84.2.1`, the release suggested by Dependabot (published 2026-10-20, past the 14-day cooldown).
 - Value patterns (CPF, e-mail, ...) were never detected in CSV input.
 - `infer_table` no longer invents a column named `None` when `column_name` is missing; it raises `ValueError`.
 - Legacy Portuguese `data_type` names were the only ones the structural rules understood; English names now work and the Portuguese ones are still accepted.
