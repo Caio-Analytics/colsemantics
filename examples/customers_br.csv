@@ -1,0 +1,6 @@
+nome;cpf;telefone;cep;endereco;cidade;dt_cadastro;valor_total;ativo
+Ana Souza;529.982.247-25;(11) 91234-5678;01310-100;Av. Paulista, 1578;São Paulo;2024-03-15;1250,90;sim
+Carlos Lima;111.444.777-35;(21) 3456-7890;20040-020;Rua da Assembleia, 10;Rio de Janeiro;2024-04-02;980,00;sim
+Fernanda Alves;390.533.447-05;(31) 99876-5432;30130-010;Rua da Bahia, 1148;Belo Horizonte;2024-05-21;45,50;não
+Paulo Rocha;168.995.350-09;(41) 3222-4455;80010-000;Rua XV de Novembro, 700;Curitiba;2024-06-09;3120,00;sim
+Maria Santos;529.982.247-25;(51) 98888-7777;90010-150;Av. Borges de Medeiros, 200;Porto Alegre;2024-07-30;75,25;sim

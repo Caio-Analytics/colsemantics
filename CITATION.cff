@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use colsemantics in your work, please cite it as below."
+title: "colsemantics"
+type: software
+abstract: >-
+  Infer semantic roles, business domains, and privacy recommendations for tabular columns from
+  names, sampled values, and table context, with Brazilian and US formats.
+authors:
+  - name: "Caio"
+version: 0.4.2
+date-released: "2026-11-22"
+license: MIT
+repository-code: "https://github.com/Caio-Analytics/colsemantics"
+url: "https://pypi.org/project/colsemantics/"
+keywords:
+  - semantic type detection
+  - data profiling
+  - PII
+  - LGPD
+  - data catalog
