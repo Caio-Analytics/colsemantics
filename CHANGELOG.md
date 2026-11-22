@@ -4,6 +4,24 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+## [0.4.1]
+
+### Added
+- `colsemantics benchmark` reports `label_accuracy` (accuracy and case count per expected label).
+- Value formats: ISO and US timestamps with time and zone, `Y/N`, `T/F`, and `S/N` booleans, WKT geometry (`geometry`), coordinate pairs and `address (lat, lon)` text (`coordinates`, medium/review sensitivity).
+- Question-style names (`PPS Psych?`), more predicate words for flags (`allowed`, `required`, `needed`, `accessible`, `review`, `bool`), `...flag` suffix splitting, and compounds `total_price`, `unit_price`, `num_items`, `number_of`.
+- `benchmarks/public-us-socrata.json` now carries real sample values; the names-only version is `public-us-socrata-names-only.json`. `scripts/fetch_public_values.py`.
+- Test floors: every benchmark set must reach 60% overall and per label (labels with 10+ cases).
+
+### Changed
+- Benchmark values are profiled like CSV values (typed), not as plain text.
+- Strong geometry or coordinate values now decide the domain over a weak name-derived role.
+- The whole-name fuzzy comparison ignores words much shorter than the name (`customer_name` is no longer similar to `custo`).
+
+### Fixed
+- Checkbox columns judged with their values: 100% flags on both halves of the US sample (was 23% by name).
+- Documented limit: Checkbox columns judged by name alone stay near 40%; the names carry no signal. See `benchmarks/README.md`.
+
 ## [0.4.0]
 
 ### Breaking
