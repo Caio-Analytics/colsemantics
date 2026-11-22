@@ -2,11 +2,12 @@ import json
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Literal, TypedDict
 
 from . import ContentProfile, infer_column
 from .calibration import bucket_for
 from .profiles import temporary_profile
+from .results import InferenceResult
 
 _GENERIC_SEMANTIC = "Generic / Unmapped"
 _EXPECTED_FIELDS = ("expected_semantic", "expected_role", "expected_domain")
@@ -15,7 +16,7 @@ _EXPECTED_FIELDS = ("expected_semantic", "expected_role", "expected_domain")
 class _BenchmarkEntry(TypedDict):
     profile: str
     expected: dict[str, object]
-    result: dict[str, Any]
+    result: InferenceResult
 
 
 def load_cases(path: str | Path) -> list[dict[str, object]]:
@@ -64,7 +65,9 @@ def _evaluate(case: Mapping[str, object]) -> _BenchmarkEntry:
 
 
 def _accuracy(
-    entries: Sequence[_BenchmarkEntry], expected_key: str, actual_key: str
+    entries: Sequence[_BenchmarkEntry],
+    expected_key: str,
+    actual_key: Literal["semantic", "role", "domain"],
 ) -> float | None:
     comparable = [entry for entry in entries if expected_key in entry["expected"]]
     if not comparable:

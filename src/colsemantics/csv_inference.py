@@ -4,11 +4,12 @@ import csv
 import random
 from collections import Counter
 from pathlib import Path
-from typing import Any, Literal
+from typing import Literal
 
 from .patterns import detect_column_pattern
 from .profiles import temporary_profile
 from .profiling import profile_values
+from .results import CsvColumnResult, CsvReport
 
 _CANDIDATE_DELIMITERS = (",", ";", "\t", "|")
 DEFAULT_ENCODING = "utf-8-sig"
@@ -48,7 +49,7 @@ def infer_csv(
     delimiter: str | None = None,
     sampling: Literal["reservoir", "head"] = "reservoir",
     seed: int = 0,
-) -> dict[str, Any]:
+) -> CsvReport:
     """Infer column semantics from a bounded CSV sample.
 
     ``delimiter=None`` detects ``,``, ``;``, tab, or ``|`` from the header line.
@@ -131,10 +132,11 @@ def infer_csv(
         )
 
     with temporary_profile(profile_name, vocabulary_paths):
-        columns = infer_table(columns_input)
-    for index, (column, header) in enumerate(zip(columns, headers, strict=True)):
-        column["column_name"] = header
-        column["column_index"] = index
+        inferred = infer_table(columns_input)
+    columns: list[CsvColumnResult] = [
+        {**result, "column_name": header, "column_index": index}
+        for index, (result, header) in enumerate(zip(inferred, headers, strict=True))
+    ]
     summary = dict(sorted(Counter(str(column["semantic"]) for column in columns).items()))
     return {
         "source": {

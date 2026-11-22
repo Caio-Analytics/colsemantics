@@ -1,4 +1,7 @@
-def assess_sensitivity(semantic: str, detected_pattern: str) -> dict[str, str]:
+from .results import Sensitivity
+
+
+def assess_sensitivity(semantic: str, detected_pattern: str) -> Sensitivity:
     if detected_pattern == "CPF":
         return {
             "level": "high",

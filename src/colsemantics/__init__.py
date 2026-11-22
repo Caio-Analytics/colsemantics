@@ -17,6 +17,7 @@ from .detectors import (
 )
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence, choose, rank
 from .profiles import available_profiles, load_profile, temporary_profile
+from .results import CsvColumnResult, CsvReport, Hypothesis, InferenceResult, Sensitivity
 from .sensitivity import assess_sensitivity
 from .tokens import normalize, tokenize
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
@@ -25,7 +26,12 @@ __version__ = "0.3.1"
 
 __all__ = [
     "ContentProfile",
+    "CsvColumnResult",
+    "CsvReport",
+    "Hypothesis",
+    "InferenceResult",
     "SemanticContext",
+    "Sensitivity",
     "assess_sensitivity",
     "available_profiles",
     "calibrate",
@@ -101,7 +107,7 @@ def _build_result(
     evidence_items: list[Evidence],
     profile: ContentProfile | None = None,
     detected_pattern: str = "None",
-) -> dict[str, Any]:
+) -> InferenceResult:
     role_ranking = rank(evidence_items, ROLE_AXIS)
     domain_ranking = rank(evidence_items, DOMAIN_AXIS)
     role, role_confidence, role_source, role_conclusive = choose(role_ranking)
@@ -118,19 +124,19 @@ def _build_result(
         semantic, raw_confidence, source = role, role_confidence, role_source
     else:
         semantic, raw_confidence, source = config.GENERIC_SEMANTIC, 0.0, "Unmatched"
-    hypotheses = sorted(
-        [
-            {
-                "semantic": item["category"],
-                "axis": axis,
-                "confidence": item["confidence"],
-                "evidence": item["sources"][:3],
-            }
-            for axis, ranking in ((ROLE_AXIS, role_ranking), (DOMAIN_AXIS, domain_ranking))
-            for item in ranking
-        ],
-        key=lambda hypothesis: -hypothesis["confidence"],
-    )[:_MAX_HYPOTHESES]
+    candidates: list[Hypothesis] = [
+        {
+            "semantic": item["category"],
+            "axis": axis,
+            "confidence": item["confidence"],
+            "evidence": item["sources"][:3],
+        }
+        for axis, ranking in ((ROLE_AXIS, role_ranking), (DOMAIN_AXIS, domain_ranking))
+        for item in ranking
+    ]
+    hypotheses = sorted(candidates, key=lambda hypothesis: -hypothesis["confidence"])[
+        :_MAX_HYPOTHESES
+    ]
     confidence = calibrate(round(raw_confidence, 4), current_context().profile_name)
     return {
         "semantic": semantic,
@@ -148,7 +154,7 @@ def _build_result(
 
 def infer_column(
     column_name: str, detected_pattern: str = "None", profile: ContentProfile | None = None
-) -> dict[str, Any]:
+) -> InferenceResult:
     override = current_context().column_overrides.get(column_name)
     if override:
         axis = ROLE_AXIS if override in STRUCTURAL_ROLES else DOMAIN_AXIS
@@ -169,9 +175,9 @@ def _column_name(column: dict[str, Any], position: int) -> str:
     return name
 
 
-def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def infer_table(columns: list[dict[str, Any]]) -> list[InferenceResult]:
     evidence_by_column: list[list[Evidence]] = []
-    results: list[dict[str, Any]] = []
+    results: list[InferenceResult] = []
     for position, column in enumerate(columns):
         name = _column_name(column, position)
         profile = column.get("profile")
@@ -212,7 +218,7 @@ def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return results
 
 
-def _subject_profile(results: list[dict[str, Any]]) -> dict[str, float]:
+def _subject_profile(results: list[InferenceResult]) -> dict[str, float]:
     strengths: dict[str, float] = {}
     for result in results:
         if not result["conclusive"]:
