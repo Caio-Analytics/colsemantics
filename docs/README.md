@@ -12,3 +12,7 @@
 
 `archive/plans/` keeps the implementation plans written while building 0.2 and 0.3. They are
 historical and may not match the code.
+
+`assets/social-preview.png` (1280x640) is the GitHub social preview image; `assets/social-preview.html`
+is its source. To regenerate it:
+`chromium --headless --window-size=1280,640 --screenshot=docs/assets/social-preview.png file://$PWD/docs/assets/social-preview.html`.
