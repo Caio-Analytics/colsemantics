@@ -32,7 +32,9 @@ def calibrate(raw_confidence: float, profile_name: str) -> float:
     profile = profiles.get(profile_name, {})
     precision = profile.get(bucket, {}).get("precision")
     if precision is None:
-        return round(raw_confidence if profile_name not in profiles else _bucket_midpoint(bucket), 4)
+        return round(
+            raw_confidence if profile_name not in profiles else _bucket_midpoint(bucket), 4
+        )
     return round(float(precision), 4)
 
 

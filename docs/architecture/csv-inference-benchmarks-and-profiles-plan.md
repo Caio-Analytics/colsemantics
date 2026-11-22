@@ -116,7 +116,10 @@ def test_cli_writes_a_json_report(tmp_path):
     output = tmp_path / "report.json"
     source.write_text("employee_id\n1\n", encoding="utf-8")
     assert main(["infer", str(source), "--output", str(output)]) == 0
-    assert json.loads(output.read_text(encoding="utf-8"))["columns"][0]["semantic"] == "Identifier (ID)"
+    assert (
+        json.loads(output.read_text(encoding="utf-8"))["columns"][0]["semantic"]
+        == "Identifier (ID)"
+    )
 ```
 
 - [ ] Run the targeted test; expect import failure because `cli.py` does not exist.
@@ -144,10 +147,20 @@ def test_cli_writes_a_json_report(tmp_path):
 
 ```python
 def test_reports_accuracy_coverage_and_confusion_matrix():
-    report = evaluate_cases([
-        {"profile": "pt-BR", "column_name": "employee_id", "expected_semantic": "Identifier (ID)"},
-        {"profile": "pt-BR", "column_name": "unknown", "expected_semantic": "Generic / Unmapped"},
-    ])
+    report = evaluate_cases(
+        [
+            {
+                "profile": "pt-BR",
+                "column_name": "employee_id",
+                "expected_semantic": "Identifier (ID)",
+            },
+            {
+                "profile": "pt-BR",
+                "column_name": "unknown",
+                "expected_semantic": "Generic / Unmapped",
+            },
+        ]
+    )
     assert report["semantic_accuracy"] == 1.0
     assert report["coverage"] == 0.5
 ```

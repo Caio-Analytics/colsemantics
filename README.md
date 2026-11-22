@@ -2,6 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/colsemantics)](https://pypi.org/project/colsemantics/)
 [![Python versions](https://img.shields.io/pypi/pyversions/colsemantics)](https://pypi.org/project/colsemantics/)
+[![CI](https://github.com/Caio-Analytics/colsemantics/actions/workflows/ci.yml/badge.svg)](https://github.com/Caio-Analytics/colsemantics/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/Caio-Analytics/colsemantics)](LICENSE)
 [![PyPI downloads](https://img.shields.io/pypi/dm/colsemantics)](https://pypi.org/project/colsemantics/)
 
@@ -136,12 +137,21 @@ Each result includes a descriptive `sensitivity` recommendation. It does not mod
 }
 ```
 
-## Development
+## Migrating from 0.2
+
+`normalizar` and `tokenizar` were renamed to `normalize` and `tokenize`. The old names still work but emit a `DeprecationWarning` and will be removed in 1.0. `infer_table`, `assess_sensitivity`, `calibrate`, and `requires_review` are now listed in `__all__`.
+
+Python 3.10 is no longer supported (it reached end of life, and current `rapidfuzz` requires 3.11).
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, checks, and the release process, and [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ```bash
 python -m pip install -e '.[dev]'
-pytest
+pytest --cov
 ruff check .
+ruff format --check .
 mypy
 ```
 

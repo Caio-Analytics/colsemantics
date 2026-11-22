@@ -6,17 +6,17 @@ from rapidfuzz.distance import JaroWinkler
 from . import _taxonomy as config
 from .context import current_context
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence
-from .tokens import expand_abbreviation, expanded_tokens, normalizar
+from .tokens import expand_abbreviation, expanded_tokens, normalize
 
 STRUCTURAL_ROLES = frozenset(
     {
         config.IDENTIFIER_SEMANTIC,
         config.DATE_CALENDAR_SEMANTIC,
-        'Financial Value',
-        'Quantity / Metric',
-        'Contact / Network',
-        'Status / Indicator / Flag',
-        'Assessment Result',
+        "Financial Value",
+        "Quantity / Metric",
+        "Contact / Network",
+        "Status / Indicator / Flag",
+        "Assessment Result",
     }
 )
 
@@ -24,9 +24,9 @@ _PATTERN_SEMANTICS: dict[str, tuple[str, str]] = {
     "CPF": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
     "CNPJ": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
     "UUID": (config.IDENTIFIER_SEMANTIC, ROLE_AXIS),
-    "E-mail": ('Contact / Network', ROLE_AXIS),
-    "Telefone": ('Contact / Network', ROLE_AXIS),
-    "CEP": ('Geographic Location', DOMAIN_AXIS),
+    "E-mail": ("Contact / Network", ROLE_AXIS),
+    "Telefone": ("Contact / Network", ROLE_AXIS),
+    "CEP": ("Geographic Location", DOMAIN_AXIS),
 }
 
 _POSITIONAL_DECAY = 0.03
@@ -65,7 +65,7 @@ def by_gazetteer(profile: ContentProfile) -> list[Evidence]:
     if not profile.distinct_values or profile.distinct_count <= 0:
         return []
 
-    normalized_values = [normalizar(value) for value in profile.distinct_values]
+    normalized_values = [normalize(value) for value in profile.distinct_values]
     normalized_values = [value for value in normalized_values if value]
     if not normalized_values:
         return []
@@ -136,9 +136,7 @@ def by_strong_token(tokens: list[str]) -> list[Evidence]:
             )
             weight = 0.85 * token_weight * expansion_confidence * _positional_weight(index)
             source = (
-                f"token '{word}'"
-                if word == original
-                else f"abbreviation '{original}' → '{word}'"
+                f"token '{word}'" if word == original else f"abbreviation '{original}' → '{word}'"
             )
             evidence_items.append(Evidence(category, ROLE_AXIS, round(weight, 4), source))
 
@@ -162,23 +160,21 @@ def by_fuzzy(normalized_name: str, tokens: list[str]) -> list[Evidence]:
     ]
     for category, keywords in current_context().fuzzy_categories.items():
         for word in keywords:
-            normalized_word = normalizar(word)
+            normalized_word = normalize(word)
             threshold = (
                 config.SHORT_FUZZY_THRESHOLD
                 if len(normalized_word) <= 3
                 else config.DEFAULT_FUZZY_THRESHOLD
             )
             for index, (candidate, confidence, original) in enumerate(name_candidates):
-                normalized_candidate = normalizar(candidate)
+                normalized_candidate = normalize(candidate)
                 similarity = JaroWinkler.similarity(normalized_candidate, normalized_word)
                 if similarity < threshold:
                     continue
                 similarity *= _truncation_factor(normalized_candidate, normalized_word)
 
                 qualifier_weight = (
-                    config.QUALIFIER_TOKEN_WEIGHT
-                    if original in config.QUALIFIER_TOKENS
-                    else 1.0
+                    config.QUALIFIER_TOKEN_WEIGHT if original in config.QUALIFIER_TOKENS else 1.0
                 )
                 weight = (
                     0.8
@@ -208,10 +204,14 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
 
     if data_type == "Booleano":
         evidence_items.append(
-            Evidence('Status / Indicator / Flag', ROLE_AXIS, 0.7, "boolean column")
+            Evidence("Status / Indicator / Flag", ROLE_AXIS, 0.7, "boolean column")
         )
 
-    if data_type == "Número Inteiro" and profile.monotonically_increasing and profile.uniqueness_ratio >= 0.99:
+    if (
+        data_type == "Número Inteiro"
+        and profile.monotonically_increasing
+        and profile.uniqueness_ratio >= 0.99
+    ):
         evidence_items.append(
             Evidence(
                 config.IDENTIFIER_SEMANTIC,
@@ -231,7 +231,7 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
     ):
         evidence_items.append(
             Evidence(
-                'Financial Value',
+                "Financial Value",
                 ROLE_AXIS,
                 0.45,
                 "non-negative, right-skewed decimal with two places",
@@ -242,7 +242,7 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
         if profile.mean_string_length > 40 and profile.uniqueness_ratio > 0.5:
             evidence_items.append(
                 Evidence(
-                    'Free-form Text',
+                    "Free-form Text",
                     ROLE_AXIS,
                     0.55,
                     f"long text with {profile.mean_string_length:.0f} average characters",
@@ -261,9 +261,7 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
     return evidence_items
 
 
-def by_table_context(
-    tokens: list[str], table_domains: dict[str, float]
-) -> list[Evidence]:
+def by_table_context(tokens: list[str], table_domains: dict[str, float]) -> list[Evidence]:
     if not table_domains:
         return []
 

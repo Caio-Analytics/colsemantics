@@ -1,14 +1,14 @@
-GENERIC_SEMANTIC: str = 'Generic / Unmapped'
-DATE_CALENDAR_SEMANTIC: str = 'Date / Calendar'
-IDENTIFIER_SEMANTIC: str = 'Identifier (ID)'
-FREE_FORM_TEXT_SEMANTIC: str = 'Free-form Text'
-PERSON_NAME_SEMANTIC: str = 'Person Name / Identifier'
+GENERIC_SEMANTIC: str = "Generic / Unmapped"
+DATE_CALENDAR_SEMANTIC: str = "Date / Calendar"
+IDENTIFIER_SEMANTIC: str = "Identifier (ID)"
+FREE_FORM_TEXT_SEMANTIC: str = "Free-form Text"
+PERSON_NAME_SEMANTIC: str = "Person Name / Identifier"
 
 
-ENTITY_LABEL_SEMANTIC: str = 'Entity Label / Name'
+ENTITY_LABEL_SEMANTIC: str = "Entity Label / Name"
 
 
-CATEGORY_SEMANTIC: str = 'Category / Classification'
+CATEGORY_SEMANTIC: str = "Category / Classification"
 
 
 DEFAULT_FUZZY_THRESHOLD: float = 0.85
@@ -58,7 +58,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
         "expiracao",
         "ano",
     ],
-    'Status / Indicator / Flag': [
+    "Status / Indicator / Flag": [
         "status",
         "flg",
         "flag",
@@ -72,7 +72,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
         "habilitado",
         "bloqueado",
     ],
-    'Financial Value': [
+    "Financial Value": [
         "salario",
         "salary",
         "wage",
@@ -96,7 +96,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
         "provisao",
         "encargo",
     ],
-    'Quantity / Metric': [
+    "Quantity / Metric": [
         "qtd",
         "quantidade",
         "count",
@@ -117,7 +117,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
         "proporcao",
         "media",
     ],
-    'Free-form Text': [
+    "Free-form Text": [
         "desc",
         "descricao",
         "description",
@@ -135,7 +135,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
         "anotacao",
         "mensagem",
     ],
-    'Person Name / Identifier': [
+    "Person Name / Identifier": [
         "nome",
         "name",
         "colaborador",
@@ -148,7 +148,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
         "usuario",
         "user",
     ],
-    'Contact / Network': [
+    "Contact / Network": [
         "email",
         "mail",
         "telefone",
@@ -159,7 +159,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
         "fone",
         "phone",
     ],
-    'Assessment Result': [
+    "Assessment Result": [
         "resultado",
         "result",
         "aprovacao",
@@ -178,7 +178,7 @@ STRONG_CATEGORIES: dict[str, list[str]] = {
 
 
 FUZZY_CATEGORIES: dict[str, list[str]] = {
-    'Geographic Location': [
+    "Geographic Location": [
         "country",
         "province",
         "city",
@@ -197,7 +197,7 @@ FUZZY_CATEGORIES: dict[str, list[str]] = {
         "bairro",
         "logradouro",
     ],
-    'Organizational Structure': [
+    "Organizational Structure": [
         "department",
         "company",
         "business",
@@ -225,7 +225,7 @@ FUZZY_CATEGORIES: dict[str, list[str]] = {
         "ministerio",
         "autarquia",
     ],
-    'Electoral Process': [
+    "Electoral Process": [
         "eleicao",
         "partido",
         "pleito",
@@ -236,7 +236,7 @@ FUZZY_CATEGORIES: dict[str, list[str]] = {
         "sufragio",
         "candidatura",
     ],
-    'Workforce Profile': [
+    "Workforce Profile": [
         "gender",
         "nationality",
         "career",
@@ -250,7 +250,7 @@ FUZZY_CATEGORIES: dict[str, list[str]] = {
         "deficiencia",
         "etnia",
     ],
-    'Product / Item': [
+    "Product / Item": [
         "product",
         "item",
         "sku",
@@ -268,7 +268,7 @@ FUZZY_CATEGORIES: dict[str, list[str]] = {
         "modelo",
         "model",
     ],
-    'Job / Function': [
+    "Job / Function": [
         "cargo",
         "funcao",
         "nivel",
@@ -284,7 +284,7 @@ FUZZY_CATEGORIES: dict[str, list[str]] = {
         "title",
         "occupation",
     ],
-    'Finance / Cost': [
+    "Finance / Cost": [
         "custo",
         "cost",
         "centro de custo",
@@ -298,7 +298,7 @@ FUZZY_CATEGORIES: dict[str, list[str]] = {
         "conta",
         "rateio",
     ],
-    'Course / Training': [
+    "Course / Training": [
         "curso",
         "treinamento",
         "capacitacao",
@@ -372,7 +372,7 @@ QUALIFIER_TOKEN_WEIGHT: float = 0.45
 ENTITY_TOKEN_WEIGHT: float = 1.0
 
 
-PERSON_DOMAINS: frozenset[str] = frozenset({'Workforce Profile'})
+PERSON_DOMAINS: frozenset[str] = frozenset({"Workforce Profile"})
 
 
 MAX_CATEGORY_CARDINALITY: int = 100

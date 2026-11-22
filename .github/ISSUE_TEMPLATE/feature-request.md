@@ -1,25 +1,15 @@
 ---
-name: Feature Request
-about: Suggest a new feature, improvement, or idea for this project
-title: ''
+name: Feature request
+about: Propose a new capability, vocabulary profile, or detector
 labels: enhancement, needs-triage
-assignees: ''
-
 ---
 
-## Is this request related to a problem? Please describe.
-Explain the context or pain point that led to this idea. Ex.: "Whenever I need to do X, I have to manually repeat Y..."
+## Problem
+<!-- What are you trying to do that colsemantics cannot do today? -->
 
-## Describe the solution you'd like
-Clearly describe what you'd like to happen or be implemented.
+## Proposed solution
 
 ## Alternatives considered
-Have you considered other ways to solve this? Briefly describe them, even if you ruled them out.
 
-## Additional context
-Screenshots, links, references to other tools, or any info that helps clarify the idea.
-
-## Perceived priority
-- [ ] High (blocks or significantly impacts day-to-day work)
-- [ ] Medium (would be a solid improvement)
-- [ ] Low (interesting idea, not urgent)
+## Example column names or values
+<!-- Synthetic examples only. -->
