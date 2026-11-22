@@ -28,6 +28,9 @@ def load_calibration() -> dict[str, Any]:
 
 
 def calibrate(raw_confidence: float, profile_name: str) -> float:
+    """Map a raw confidence to the precision measured for its bucket in the embedded
+    calibration fixture. Unknown buckets keep the raw value. The fixture is provisional.
+    """
     bucket = bucket_for(raw_confidence)
     profiles = load_calibration().get("profiles", {})
     profile = profiles.get(profile_name, {})
@@ -40,4 +43,5 @@ def calibrate(raw_confidence: float, profile_name: str) -> float:
 
 
 def requires_review(confidence: float) -> bool:
+    """True when the calibrated confidence is below the review threshold (0.80)."""
     return confidence < _REVIEW_THRESHOLD

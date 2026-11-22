@@ -30,7 +30,7 @@ from .sensitivity import assess_sensitivity
 from .tokens import normalize, tokenize
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 __all__ = [
     "ContentProfile",
@@ -155,8 +155,12 @@ def _build_result(
         domain, domain_confidence, domain_source = None, 0.0, "No evidence"
     role = _refine_role(role, domain, profile)
     geometry_found = pattern is not None and pattern["type"] in ("geometry", "coordinates")
+    # Sampled values that match a reference list (for example US states under a column named
+    # ``state``) outweigh an ambiguous name token.
+    values_decide = domain is not None and domain_source.startswith("values match")
     content_domain_wins = domain is not None and (
         geometry_found
+        or (values_decide and domain_confidence >= role_confidence)
         or (
             domain_confidence >= _CONTENT_DOMAIN_CONFIDENCE
             and role_confidence < domain_confidence - _CONTENT_DOMAIN_MARGIN
@@ -224,6 +228,21 @@ def _infer_one(
 def infer_column(
     column_name: str, detected_pattern: str = "None", profile: ContentProfile | None = None
 ) -> InferenceResult:
+    """Infer the semantic role and domain of one column.
+
+    Args:
+        column_name: The header, for example ``"SUPPLIER_CONTACT_CODE"`` or ``"f27"``.
+        detected_pattern: A value format already detected by the caller (``"cpf"``,
+            ``"phone"``, ``"email"``, ...). Optional; formats are also detected from
+            ``profile.distinct_values``.
+        profile: Sampled values and statistics, see ``ContentProfile`` and
+            ``colsemantics.profiling.profile_values``.
+
+    Returns:
+        An ``InferenceResult``: ``semantic``, ``role``, ``domain``, ``raw_confidence``,
+        ``confidence``, ``evidence``, ``conclusive``, ``review_required``, ``sensitivity``,
+        ``pattern`` (value format and locale, or ``None``), and ``hypotheses``.
+    """
     return _infer_one(column_name, detected_pattern, profile)[0]
 
 
@@ -242,6 +261,19 @@ def _column_profile(column: dict[str, Any]) -> ContentProfile | None:
 
 
 def infer_table(columns: list[dict[str, Any]]) -> list[InferenceResult]:
+    """Infer every column of a table, letting confident columns inform ambiguous ones.
+
+    Args:
+        columns: One dict per column with ``column_name`` (or ``name``), and optionally
+            ``profile`` (a ``ContentProfile``) and ``detected_pattern``.
+
+    Returns:
+        One ``InferenceResult`` per column, in input order.
+
+    Raises:
+        ValueError: A column has no non-empty name.
+        TypeError: ``profile`` is not a ``ContentProfile``.
+    """
     parsed = [
         (
             _column_name(column, position),

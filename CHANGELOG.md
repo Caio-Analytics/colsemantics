@@ -4,6 +4,20 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+## [0.4.2]
+
+Documentation, discoverability, and one bug fix. No API changes.
+
+### Fixed
+- A column named `state` whose values are US states (or any reference list) was classified as a flag because of the ambiguous name token. Sampled values that match a reference list now outweigh an ambiguous name.
+
+### Added
+- README rewritten: real sample output, use cases, comparison with neighboring tools, accuracy and limits, and a Portuguese section.
+- `docs/` with an API reference, value patterns, and custom vocabularies; the planning documents moved to `docs/archive/plans/`.
+- `examples/` with Brazilian and US sample CSVs and `quickstart.py`; tests keep the README demo and the API reference in sync with the code.
+- Docstrings for every public function and class.
+- `CITATION.cff`; PyPI keywords (LGPD, GDPR, PII detection, data catalog, ...), classifiers (English and Brazilian Portuguese, security topic), a Documentation link, and a clearer summary.
+
 ## [0.4.1]
 
 ### Added

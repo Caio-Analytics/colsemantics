@@ -1,0 +1,6 @@
+name,ssn,phone_number,zip,street_address,city,state,created_at,total_price,is_active
+John Smith,123-45-6789,(415) 555-2671,94105-1234,500 Howard St,San Francisco,CA,2024-03-15T10:20:00,125.90,true
+Mary Jones,234-56-7890,212-555-0199,10001-0001,350 Fifth Ave,New York,NY,2024-04-02T08:00:00,98.00,true
+Robert Brown,345-67-8901,+1 310 555 0142,90012-3456,200 N Spring St,Los Angeles,CA,2024-05-21T17:45:00,45.50,false
+Linda Davis,456-78-9012,312.555.0188,60601-1234,121 N LaSalle St,Chicago,IL,2024-06-09T12:30:00,312.00,true
+James Miller,567-89-0123,(713) 555-0167,77002-5678,901 Bagby St,Houston,TX,2024-07-30T09:15:00,75.25,true

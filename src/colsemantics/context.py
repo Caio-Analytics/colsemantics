@@ -12,6 +12,8 @@ from .vocabulary import ABBREVIATIONS, GAZETTEERS
 
 @dataclass(frozen=True)
 class SemanticContext:
+    """Immutable vocabulary used for inference: categories, gazetteers, and column overrides."""
+
     profile_name: str
     strong_categories: Mapping[str, tuple[str, ...]]
     fuzzy_categories: Mapping[str, tuple[str, ...]]
@@ -62,6 +64,7 @@ _CURRENT_CONTEXT: ContextVar[SemanticContext] = ContextVar(
 
 
 def current_context() -> SemanticContext:
+    """The vocabulary context active in this thread or task."""
     return _CURRENT_CONTEXT.get()
 
 

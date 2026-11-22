@@ -19,6 +19,7 @@ _MIN_SPECULATIVE_ABBREVIATION_LEN = 3
 
 
 def normalize(text: str) -> str:
+    """Lowercase, strip accents and surrounding whitespace."""
     return unidecode(str(text)).lower().strip()
 
 
@@ -63,6 +64,11 @@ def _split_fused(token: str) -> list[str]:
 
 
 def tokenize(column_name: str) -> list[str]:
+    """Split a column name into lowercase tokens.
+
+    Handles ``snake_case``, ``camelCase``, punctuation, letter-digit boundaries, and fused
+    names such as ``issueddate`` (``["issued", "date"]``).
+    """
     name = _RE_CAMEL.sub(r"\1_\2", str(column_name))
     name = normalize(name)
     name = _RE_LETTER_DIGIT.sub(r"\1_\2", name)

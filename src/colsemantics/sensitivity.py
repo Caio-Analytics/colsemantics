@@ -13,6 +13,10 @@ _PATTERN_RULES: dict[str, tuple[str, str]] = {
 
 
 def assess_sensitivity(semantic: str, detected_pattern: str) -> Sensitivity:
+    """Recommend how to handle a column: ``level`` (none, medium, high), ``action`` (allow,
+    review, mask, restrict), and the ``reason``. The recommendation is descriptive and never
+    changes the data.
+    """
     pattern = canonical_pattern(detected_pattern)
     if pattern in _PATTERN_RULES:
         level, action = _PATTERN_RULES[pattern]

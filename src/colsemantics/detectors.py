@@ -45,6 +45,11 @@ _MIN_DISTINCT_FOR_IDENTIFIER = 20  # tiny samples are trivially "unique"
 
 @dataclass
 class ContentProfile:
+    """Sampled values and statistics of one column. Build it with ``profile_values``.
+
+    ``data_type`` is ``Boolean``, ``Integer``, ``Decimal``, ``Date``, or ``Text``.
+    """
+
     data_type: str = ""
     distinct_values: list[str] = field(default_factory=list)
     distinct_count: int = 0

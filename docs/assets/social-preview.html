@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8">
+<style>
+  :root { --bg:#0b1220; --card:#111b2e; --line:#223250; --text:#e8eef8; --muted:#8fa3c0;
+          --teal:#2dd4bf; --amber:#fbbf24; --red:#fb7185; --green:#4ade80; }
+  * { box-sizing:border-box; margin:0; }
+  body { width:1280px; height:640px; background:var(--bg); color:var(--text);
+         font-family:"DejaVu Sans","Liberation Sans",sans-serif; position:relative; overflow:hidden; }
+  body::before { content:""; position:absolute; inset:0;
+    background:radial-gradient(900px 500px at 85% 10%, #12304a 0%, transparent 60%),
+               radial-gradient(700px 400px at 0% 100%, #10283a 0%, transparent 60%); }
+  .wrap { position:relative; display:flex; gap:48px; padding:64px 72px; height:100%; align-items:center; }
+  .left { flex:0 0 470px; }
+  h1 { font-size:58px; letter-spacing:-1.5px; line-height:1; }
+  h1 span { color:var(--teal); }
+  .tag { margin-top:22px; font-size:25px; line-height:1.4; color:#cbd7ea; }
+  .chips { margin-top:26px; display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { font:600 15px "DejaVu Sans Mono",monospace; padding:6px 11px; border:1px solid var(--line);
+          border-radius:999px; color:var(--teal); background:#0e1a2c; }
+  .install { margin-top:30px; font:500 19px "DejaVu Sans Mono",monospace; color:var(--muted); }
+  .install b { color:var(--text); font-weight:500; }
+  .card { flex:1; background:var(--card); border:1px solid var(--line); border-radius:16px;
+          box-shadow:0 20px 60px rgba(0,0,0,.45); overflow:hidden; }
+  .bar { display:flex; align-items:center; gap:8px; padding:14px 18px; border-bottom:1px solid var(--line);
+         font:500 14px "DejaVu Sans Mono",monospace; color:var(--muted); }
+  .dot { width:11px; height:11px; border-radius:50%; background:#33435f; }
+  table { width:100%; border-collapse:collapse; font:500 16px "DejaVu Sans Mono",monospace; }
+  th { text-align:left; padding:12px 18px 8px; color:var(--muted); font-weight:500; font-size:13px; letter-spacing:.08em; text-transform:uppercase; }
+  td { padding:10px 18px; border-top:1px solid #182742; white-space:nowrap; }
+  td.col { color:#fff; }
+  td.sem { color:#b9c8e0; }
+  .pill { padding:3px 9px; border-radius:6px; font-size:14px; }
+  .mask { background:#3a1d28; color:var(--red); }
+  .restrict { background:#3a2a12; color:var(--amber); }
+  .review { background:#1f2a14; color:#bef264; }
+  .allow { background:#142a22; color:var(--green); }
+  .loc { color:var(--muted); font-size:14px; }
+</style>
+<div class="wrap">
+  <div class="left">
+    <h1>col<span>semantics</span></h1>
+    <p class="tag">Know what every column means, and which ones hold personal data.</p>
+    <div class="chips">
+      <span class="chip">CPF</span><span class="chip">CNPJ</span><span class="chip">CEP</span>
+      <span class="chip">SSN</span><span class="chip">ZIP</span><span class="chip">phone</span><span class="chip">address</span>
+    </div>
+    <p class="install">$ <b>pip install colsemantics</b></p>
+  </div>
+  <div class="card">
+    <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; customers_br.csv</div>
+    <table>
+      <tr><th>column</th><th>semantic</th><th>sensitivity</th></tr>
+      <tr><td class="col">nome</td><td class="sem">Person Name</td><td><span class="pill restrict">restrict</span></td></tr>
+      <tr><td class="col">cpf</td><td class="sem">Identifier <span class="loc">BR</span></td><td><span class="pill mask">mask</span></td></tr>
+      <tr><td class="col">telefone</td><td class="sem">Contact <span class="loc">BR</span></td><td><span class="pill mask">mask</span></td></tr>
+      <tr><td class="col">cep</td><td class="sem">Geographic <span class="loc">BR</span></td><td><span class="pill review">review</span></td></tr>
+      <tr><td class="col">endereco</td><td class="sem">Geographic <span class="loc">BR</span></td><td><span class="pill mask">mask</span></td></tr>
+      <tr><td class="col">dt_cadastro</td><td class="sem">Date</td><td><span class="pill allow">allow</span></td></tr>
+      <tr><td class="col">valor_total</td><td class="sem">Financial Value</td><td><span class="pill allow">allow</span></td></tr>
+    </table>
+  </div>
+</div>
+</html>
