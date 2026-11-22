@@ -16,6 +16,13 @@ def _parser() -> argparse.ArgumentParser:
     infer.add_argument("input", help="CSV file to analyze")
     infer.add_argument("--profile", default="pt-BR", help="embedded vocabulary profile")
     infer.add_argument("--sample", type=int, default=10000, help="maximum rows to sample")
+    infer.add_argument(
+        "--sampling",
+        choices=["reservoir", "head"],
+        default="reservoir",
+        help="reservoir: random rows from the whole file; head: first rows only",
+    )
+    infer.add_argument("--seed", type=int, default=0, help="random seed for reservoir sampling")
     infer.add_argument("--vocabulary", help="comma-separated YAML vocabulary paths")
     infer.add_argument(
         "--encoding", default=DEFAULT_ENCODING, help="CSV input encoding (default: utf-8-sig)"
@@ -53,6 +60,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 vocabulary_paths=args.vocabulary,
                 encoding=args.encoding,
                 delimiter=args.delimiter,
+                sampling=args.sampling,
+                seed=args.seed,
             )
             _write_json(report, args.output)
             return 0

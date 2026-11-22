@@ -1,33 +1,17 @@
 from __future__ import annotations
 
 import csv
+import random
 from collections import Counter
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any, Literal
 
 from .patterns import detect_column_pattern
 from .profiles import temporary_profile
-
-if TYPE_CHECKING:
-    from . import ContentProfile
+from .profiling import profile_values
 
 _CANDIDATE_DELIMITERS = (",", ";", "\t", "|")
 DEFAULT_ENCODING = "utf-8-sig"
-
-
-def _content_profile(values: list[str]) -> ContentProfile:
-    from . import ContentProfile
-
-    distinct_values = sorted(set(values))
-    mean_string_length = sum(len(value) for value in values) / len(values) if values else None
-    return ContentProfile(
-        data_type="Text",
-        distinct_values=distinct_values,
-        distinct_count=len(distinct_values),
-        uniqueness_ratio=len(distinct_values) / len(values) if values else 0.0,
-        mean_string_length=mean_string_length,
-        fixed_length=len({len(value) for value in values}) == 1 if values else False,
-    )
 
 
 def detect_delimiter(header_line: str) -> str:
@@ -62,15 +46,23 @@ def infer_csv(
     vocabulary_paths: str | None = None,
     encoding: str = DEFAULT_ENCODING,
     delimiter: str | None = None,
+    sampling: Literal["reservoir", "head"] = "reservoir",
+    seed: int = 0,
 ) -> dict[str, Any]:
     """Infer column semantics from a bounded CSV sample.
 
     ``delimiter=None`` detects ``,``, ``;``, tab, or ``|`` from the header line.
+    ``sampling="reservoir"`` (default) draws a uniform random sample of ``sample_size`` rows
+    from the whole file, reproducibly for a given ``seed``, and keeps them in file order.
+    ``sampling="head"`` reads only the first ``sample_size`` rows, which is faster but biased
+    when the file is sorted.
     """
     from . import infer_table
 
     if sample_size <= 0:
         raise ValueError("sample_size must be greater than zero.")
+    if sampling not in ("reservoir", "head"):
+        raise ValueError("sampling must be 'reservoir' or 'head'.")
     if delimiter is not None and len(delimiter) != 1:
         raise ValueError("delimiter must be a single character.")
 
@@ -83,17 +75,37 @@ def infer_csv(
             headers = next(reader, None)
             if not headers or any(not header.strip() for header in headers):
                 raise ValueError("CSV input must include a non-empty header row.")
-            rows: list[list[str]] = []
-            malformed_rows = 0
+            width = len(headers)
+            picked: list[tuple[int, list[str]]] = []
+            generator = random.Random(seed)
+            malformed_flags: dict[int, bool] = {}
+            rows_read = 0
             for record in reader:
                 if not record:
                     continue
-                if len(record) != len(headers):
-                    malformed_rows += 1
-                    record = (record + [""] * len(headers))[: len(headers)]
-                rows.append(record)
-                if len(rows) == sample_size:
+                if sampling == "head" and len(picked) == sample_size:
                     break
+                index = rows_read
+                rows_read += 1
+                if sampling == "head":
+                    slot: int | None = len(picked)
+                elif len(picked) < sample_size:
+                    slot = len(picked)
+                else:
+                    candidate = generator.randint(0, index)
+                    slot = candidate if candidate < sample_size else None
+                if slot is None:
+                    continue
+                entry = (index, (record + [""] * width)[:width])
+                malformed_flags[index] = len(record) != width
+                if slot == len(picked):
+                    picked.append(entry)
+                else:
+                    malformed_flags.pop(picked[slot][0], None)
+                    picked[slot] = entry
+            picked.sort(key=lambda item: item[0])
+            rows = [record for _, record in picked]
+            malformed_rows = sum(malformed_flags.values())
     except UnicodeDecodeError as error:
         raise ValueError(
             f"Could not decode {source_path} as '{encoding}'. "
@@ -113,7 +125,7 @@ def infer_csv(
         columns_input.append(
             {
                 "column_name": header,
-                "profile": _content_profile(values),
+                "profile": profile_values(values),
                 "detected_pattern": detect_column_pattern(values),
             }
         )
@@ -133,6 +145,8 @@ def infer_csv(
         },
         "profile": profile_name,
         "sample_size": sample_size,
+        "sampling": sampling,
+        "rows_read": rows_read,
         "rows_sampled": len(rows),
         "rows_malformed": malformed_rows,
         "warnings": warnings,

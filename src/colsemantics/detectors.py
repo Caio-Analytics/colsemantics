@@ -33,6 +33,7 @@ _POSITIONAL_DECAY = 0.03
 
 
 _MINIMUM_PREFIX_COVERAGE = 0.7
+_MIN_DISTINCT_FOR_IDENTIFIER = 20  # tiny samples are trivially "unique"
 
 
 @dataclass
@@ -47,6 +48,24 @@ class ContentProfile:
     minimum: float | None = None
     monotonically_increasing: bool = False
     fixed_decimal_places: int | None = None
+
+
+_DATA_TYPE_ALIASES = {
+    "booleano": "Boolean",
+    "número inteiro": "Integer",
+    "numero inteiro": "Integer",
+    "número decimal": "Decimal",
+    "numero decimal": "Decimal",
+    "data": "Date",
+}
+
+
+def normalize_data_type(data_type: str) -> str:
+    """Map legacy Portuguese type names (``Número Inteiro``, ``Texto...``) to English."""
+    key = data_type.strip().lower()
+    if key.startswith("texto"):
+        return "Text"
+    return _DATA_TYPE_ALIASES.get(key, data_type)
 
 
 def _positional_weight(index: int) -> float:
@@ -200,15 +219,20 @@ def by_fuzzy(normalized_name: str, tokens: list[str]) -> list[Evidence]:
 
 def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
     evidence_items: list[Evidence] = []
-    data_type = profile.data_type
+    data_type = normalize_data_type(profile.data_type)
 
-    if data_type == "Booleano":
+    if data_type == "Boolean":
         evidence_items.append(
             Evidence("Status / Indicator / Flag", ROLE_AXIS, 0.7, "boolean column")
         )
 
+    if data_type == "Date":
+        evidence_items.append(
+            Evidence(config.DATE_CALENDAR_SEMANTIC, ROLE_AXIS, 0.7, "date-formatted values")
+        )
+
     if (
-        data_type == "Número Inteiro"
+        data_type == "Integer"
         and profile.monotonically_increasing
         and profile.uniqueness_ratio >= 0.99
     ):
@@ -222,7 +246,7 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
         )
 
     if (
-        data_type == "Número Decimal"
+        data_type == "Decimal"
         and profile.fixed_decimal_places == 2
         and profile.minimum is not None
         and profile.minimum >= 0
@@ -238,7 +262,7 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
             )
         )
 
-    if data_type.startswith("Texto") and profile.mean_string_length is not None:
+    if data_type == "Text" and profile.mean_string_length is not None:
         if profile.mean_string_length > 40 and profile.uniqueness_ratio > 0.5:
             evidence_items.append(
                 Evidence(
@@ -248,7 +272,11 @@ def by_structural_signature(profile: ContentProfile) -> list[Evidence]:
                     f"long text with {profile.mean_string_length:.0f} average characters",
                 )
             )
-        elif profile.fixed_length and profile.uniqueness_ratio > 0.9:
+        elif (
+            profile.fixed_length
+            and profile.uniqueness_ratio > 0.9
+            and profile.distinct_count >= _MIN_DISTINCT_FOR_IDENTIFIER
+        ):
             evidence_items.append(
                 Evidence(
                     config.IDENTIFIER_SEMANTIC,

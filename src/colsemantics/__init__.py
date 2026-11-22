@@ -162,11 +162,18 @@ def infer_column(
     )
 
 
+def _column_name(column: dict[str, Any], position: int) -> str:
+    name = column.get("column_name", column.get("name"))
+    if not isinstance(name, str) or not name.strip():
+        raise ValueError(f"Column at position {position} requires a non-empty 'column_name'.")
+    return name
+
+
 def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
     evidence_by_column: list[list[Evidence]] = []
     results: list[dict[str, Any]] = []
-    for column in columns:
-        name = str(column.get("column_name", column.get("name")))
+    for position, column in enumerate(columns):
+        name = _column_name(column, position)
         profile = column.get("profile")
         if profile is not None and not isinstance(profile, ContentProfile):
             raise TypeError("profile must be a ContentProfile instance")
@@ -195,7 +202,7 @@ def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for index, (column, result) in enumerate(zip(columns, results, strict=True)):
         if result["conclusive"]:
             continue
-        name = str(column.get("column_name", column.get("name")))
+        name = _column_name(column, index)
         extras = by_table_context(tokenize(name), table_domains)
         if extras:
             detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))

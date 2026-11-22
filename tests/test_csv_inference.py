@@ -158,3 +158,52 @@ def test_clean_files_report_no_warnings(tmp_path):
 
     assert report["warnings"] == []
     assert report["rows_malformed"] == 0
+
+
+def _write_sorted_file(tmp_path, rows=300):
+    source = tmp_path / "sorted.csv"
+    lines = ["kind,amount"] + [f"{'A' if i < rows // 2 else 'B'},{i}" for i in range(rows)]
+    source.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return source
+
+
+def test_reservoir_sampling_covers_the_whole_file(tmp_path):
+    source = _write_sorted_file(tmp_path)
+
+    report = infer_csv(source, sample_size=50)
+
+    assert report["sampling"] == "reservoir"
+    assert report["rows_read"] == 300
+    assert report["rows_sampled"] == 50
+
+
+def test_head_sampling_stops_early_and_is_biased_by_order(tmp_path):
+    source = _write_sorted_file(tmp_path)
+
+    report = infer_csv(source, sample_size=50, sampling="head")
+
+    assert report["rows_sampled"] == 50
+    assert report["rows_read"] == 50
+
+
+def test_reservoir_sampling_is_reproducible_per_seed(tmp_path):
+    source = _write_sorted_file(tmp_path)
+
+    first = infer_csv(source, sample_size=20, seed=7)
+    second = infer_csv(source, sample_size=20, seed=7)
+
+    assert first == second
+
+
+def test_rejects_unknown_sampling_modes(tmp_path):
+    source = _write_sorted_file(tmp_path, rows=4)
+
+    with pytest.raises(ValueError, match="sampling"):
+        infer_csv(source, sampling="tail")  # type: ignore[arg-type]
+
+
+def test_numeric_csv_columns_use_numeric_evidence(tmp_path):
+    source = tmp_path / "ids.csv"
+    source.write_text("f1\n" + "\n".join(str(n) for n in range(1, 60)) + "\n", encoding="utf-8")
+
+    assert infer_csv(source, sample_size=100)["columns"][0]["semantic"] == "Identifier (ID)"
