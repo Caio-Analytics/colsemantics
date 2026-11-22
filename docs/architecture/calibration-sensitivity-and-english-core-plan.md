@@ -163,13 +163,15 @@ def test_validated_cpf_has_priority_over_generic_identifier():
 
 ```python
 def test_benchmark_reports_calibration_by_profile():
-    report = evaluate_cases([
-        {
-            "profile": "pt-BR",
-            "column_name": "employee_id",
-            "expected_semantic": "Identifier (ID)",
-        }
-    ])
+    report = evaluate_cases(
+        [
+            {
+                "profile": "pt-BR",
+                "column_name": "employee_id",
+                "expected_semantic": "Identifier (ID)",
+            }
+        ]
+    )
     assert report["by_profile"]["pt-BR"]["calibration"]["0.8-0.9"]["count"] >= 1
     assert report["by_profile"]["pt-BR"]["expected_calibration_error"] >= 0.0
 ```

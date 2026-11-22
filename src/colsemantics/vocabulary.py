@@ -347,7 +347,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "UF brasileira",
         "values": _UFS,
-        "category": 'Geographic Location',
+        "category": "Geographic Location",
         "axis": "domain",
         "minimum_coverage": 0.85,
         "weight": 0.95,
@@ -356,7 +356,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "capital brasileira",
         "values": _CAPITAIS,
-        "category": 'Geographic Location',
+        "category": "Geographic Location",
         "axis": "domain",
         "minimum_coverage": 0.7,
         "weight": 0.9,
@@ -365,7 +365,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "região do Brasil",
         "values": _REGIOES,
-        "category": 'Geographic Location',
+        "category": "Geographic Location",
         "axis": "domain",
         "minimum_coverage": 0.9,
         "weight": 0.9,
@@ -374,7 +374,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "sexo/gênero",
         "values": _SEXO,
-        "category": 'Workforce Profile',
+        "category": "Workforce Profile",
         "axis": "domain",
         "minimum_coverage": 0.9,
         "weight": 0.85,
@@ -383,7 +383,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "raça/cor (IBGE)",
         "values": _RACA_COR,
-        "category": 'Workforce Profile',
+        "category": "Workforce Profile",
         "axis": "domain",
         "minimum_coverage": 0.8,
         "weight": 0.9,
@@ -392,7 +392,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "estado civil",
         "values": _ESTADO_CIVIL,
-        "category": 'Workforce Profile',
+        "category": "Workforce Profile",
         "axis": "domain",
         "minimum_coverage": 0.8,
         "weight": 0.9,
@@ -401,7 +401,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "escolaridade",
         "values": _ESCOLARIDADE,
-        "category": 'Workforce Profile',
+        "category": "Workforce Profile",
         "axis": "domain",
         "minimum_coverage": 0.7,
         "weight": 0.9,
@@ -410,7 +410,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "vínculo/contrato",
         "values": _PORTE_CONTRATO,
-        "category": 'Job / Function',
+        "category": "Job / Function",
         "axis": "domain",
         "minimum_coverage": 0.8,
         "weight": 0.85,
@@ -419,7 +419,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "booleano textual",
         "values": _BOOLEANOS,
-        "category": 'Status / Indicator / Flag',
+        "category": "Status / Indicator / Flag",
         "axis": "role",
         "minimum_coverage": 1.0,
         "weight": 0.8,
@@ -428,7 +428,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "status de atividade",
         "values": _STATUS_ATIVIDADE,
-        "category": 'Status / Indicator / Flag',
+        "category": "Status / Indicator / Flag",
         "axis": "role",
         "minimum_coverage": 0.8,
         "weight": 0.85,
@@ -455,7 +455,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "moeda ISO",
         "values": _MOEDAS,
-        "category": 'Financial Value',
+        "category": "Financial Value",
         "axis": "role",
         "minimum_coverage": 0.9,
         "weight": 0.8,
@@ -464,7 +464,7 @@ GAZETTEERS: list[dict[str, Any]] = [
     {
         "name": "turno",
         "values": _TURNOS,
-        "category": 'Job / Function',
+        "category": "Job / Function",
         "axis": "domain",
         "minimum_coverage": 0.9,
         "weight": 0.75,
