@@ -67,3 +67,21 @@ def test_legacy_portuguese_data_type_names_still_work():
         monotonically_increasing=True,
     )
     assert infer_column("f3", profile=profile)["semantic"] == "Identifier (ID)"
+
+
+@pytest.mark.parametrize(
+    ("values", "expected"),
+    [
+        (["2020-01-31T00:00:00.000", "2021-02-01T13:45:10.250"], "Date"),
+        (["2020-01-31T00:00:00Z", "2021-02-01T13:45:10+02:00"], "Date"),
+        (["03/15/2021 02:30:00 PM", "12/01/2020 11:05:00 AM"], "Date"),
+        (["true", "false", "true"], "Boolean"),
+        (["Y", "N", "Y"], "Boolean"),
+        (["T", "F"], "Boolean"),
+        (["S", "N"], "Boolean"),
+        (["A", "B"], "Text"),
+        (["1", "0"], "Integer"),
+    ],
+)
+def test_more_date_and_boolean_formats(values, expected):
+    assert detect_data_type(values) == expected

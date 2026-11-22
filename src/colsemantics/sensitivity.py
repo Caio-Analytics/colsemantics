@@ -8,6 +8,7 @@ _PATTERN_RULES: dict[str, tuple[str, str]] = {
     "cnpj": ("medium", "review"),
     "ein": ("medium", "review"),
     "postal_code": ("medium", "review"),
+    "coordinates": ("medium", "review"),
 }
 
 

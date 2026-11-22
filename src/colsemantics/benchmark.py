@@ -7,6 +7,7 @@ from typing import Literal, TypedDict
 from . import ContentProfile, infer_column
 from .calibration import bucket_for
 from .profiles import temporary_profile
+from .profiling import profile_values
 from .results import InferenceResult
 
 _GENERIC_SEMANTIC = "Generic / Unmapped"
@@ -31,13 +32,7 @@ def _profile_from_values(values: object) -> ContentProfile | None:
         return None
     if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
         raise ValueError("Benchmark values must be a list of strings.")
-    distinct_values = sorted(set(values))
-    return ContentProfile(
-        data_type="Text",
-        distinct_values=distinct_values,
-        distinct_count=len(distinct_values),
-        uniqueness_ratio=len(distinct_values) / len(values) if values else 0.0,
-    )
+    return profile_values([value for value in values if value != ""])
 
 
 def _required_string(case: Mapping[str, object], key: str) -> str:
@@ -78,6 +73,21 @@ def _accuracy(
     return round(correct / len(comparable), 4)
 
 
+def _label_accuracy(entries: Sequence[_BenchmarkEntry]) -> dict[str, dict[str, object]]:
+    """Accuracy per expected semantic, so a strong label cannot hide a weak one."""
+    totals: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    for entry in entries:
+        label = entry["expected"].get("expected_semantic")
+        if label is None:
+            continue
+        totals[str(label)][1] += 1
+        totals[str(label)][0] += int(entry["result"]["semantic"] == label)
+    return {
+        label: {"cases": total, "accuracy": round(correct / total, 4)}
+        for label, (correct, total) in sorted(totals.items())
+    }
+
+
 def _metrics(entries: Sequence[_BenchmarkEntry]) -> dict[str, object]:
     confusion: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     for entry in entries:
@@ -92,6 +102,7 @@ def _metrics(entries: Sequence[_BenchmarkEntry]) -> dict[str, object]:
         "role_accuracy": _accuracy(entries, "expected_role", "role"),
         "domain_accuracy": _accuracy(entries, "expected_domain", "domain"),
         "coverage": round(covered / len(entries), 4) if entries else 0.0,
+        "label_accuracy": _label_accuracy(entries),
         "confusion_matrix": {
             expected: dict(sorted(actual.items())) for expected, actual in sorted(confusion.items())
         },

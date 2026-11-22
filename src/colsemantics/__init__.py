@@ -30,7 +30,7 @@ from .sensitivity import assess_sensitivity
 from .tokens import normalize, tokenize
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 __all__ = [
     "ContentProfile",
@@ -113,6 +113,10 @@ def _collect_evidence(
     evidence_items = (
         by_content_pattern(pattern) + by_strong_token(tokens) + by_fuzzy(normalized_name, tokens)
     )
+    if column_name.rstrip().endswith("?"):
+        evidence_items.append(
+            Evidence("Status / Indicator / Flag", ROLE_AXIS, 0.8, "question-style column name")
+        )
     if profile is not None:
         evidence_items += by_gazetteer(profile) + by_structural_signature(profile)
     return evidence_items
@@ -150,10 +154,13 @@ def _build_result(
     if uncertain_domain:
         domain, domain_confidence, domain_source = None, 0.0, "No evidence"
     role = _refine_role(role, domain, profile)
-    content_domain_wins = (
-        domain is not None
-        and domain_confidence >= _CONTENT_DOMAIN_CONFIDENCE
-        and role_confidence < domain_confidence - _CONTENT_DOMAIN_MARGIN
+    geometry_found = pattern is not None and pattern["type"] in ("geometry", "coordinates")
+    content_domain_wins = domain is not None and (
+        geometry_found
+        or (
+            domain_confidence >= _CONTENT_DOMAIN_CONFIDENCE
+            and role_confidence < domain_confidence - _CONTENT_DOMAIN_MARGIN
+        )
     )
     if role in STRUCTURAL_ROLES and not content_domain_wins:
         semantic, raw_confidence, source = role, role_confidence, role_source

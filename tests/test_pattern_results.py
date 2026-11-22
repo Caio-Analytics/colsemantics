@@ -104,3 +104,32 @@ def test_csv_report_includes_locale_aware_patterns(tmp_path):
     assert columns["phone"]["pattern"]["type"] == "phone"
     assert columns["zip"]["pattern"] is not None
     assert columns["zip"]["pattern"]["type"] == "postal_code"
+
+
+def test_geometry_values_make_an_opaque_column_geographic():
+    values = ["POINT (-87.6 41.8)", "POINT (-87.7 41.9)", "POINT (-87.5 41.7)"]
+
+    result = infer_column("col_9", profile=profile_values(values))
+
+    assert result["semantic"] == "Geographic Location"
+    assert result["pattern"] is not None and result["pattern"]["type"] == "geometry"
+
+
+def test_coordinate_pairs_are_geographic_and_reviewed():
+    result = infer_column("col_9", profile=profile_values(["(41.88, -87.63)", "(41.90, -87.65)"]))
+
+    assert result["semantic"] == "Geographic Location"
+    assert result["sensitivity"]["action"] == "review"
+
+
+def test_boolean_values_make_an_opaque_column_a_flag():
+    result = infer_column("gun_related", profile=profile_values(["true", "false", "true"]))
+
+    assert result["semantic"] == "Status / Indicator / Flag"
+
+
+def test_question_style_names_are_flags():
+    assert infer_column("PPS Psych?")["semantic"] == "Status / Indicator / Flag"
+    assert infer_column("Will the work require dewatering")["semantic"] == (
+        "Status / Indicator / Flag"
+    )

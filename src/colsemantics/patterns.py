@@ -32,6 +32,8 @@ _LEGACY_NAMES = {
     "zip": "postal_code",
     "postal_code": "postal_code",
     "address": "address",
+    "geometry": "geometry",
+    "coordinates": "coordinates",
 }
 PATTERN_LABELS = {
     "cpf": "CPF",
@@ -43,6 +45,8 @@ PATTERN_LABELS = {
     "phone": "phone number",
     "postal_code": "postal code",
     "address": "street address",
+    "geometry": "geometry",
+    "coordinates": "coordinate pair",
 }
 LOCALE_NAMES = {"BR": "Brazilian", "US": "US"}
 
@@ -297,6 +301,44 @@ def _address(value: str) -> ValueMatch | None:
     return None
 
 
+# --- Geometry and coordinates ---------------------------------------------------------------
+
+_WKT = re.compile(
+    r"^(?:SRID=\d+;)?(POINT|MULTIPOINT|LINESTRING|MULTILINESTRING|POLYGON|MULTIPOLYGON)\s*Z?\s*\(",
+    re.IGNORECASE,
+)
+_COORD_PAIR = re.compile(r"^\(?\s*(-?\d{1,3}\.\d{2,})\s*,\s*(-?\d{1,3}\.\d{2,})\s*\)?$")
+
+
+_COORD_TAIL = re.compile(r"\(\s*(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)\s*\)\s*$")
+
+
+def _geometry(value: str) -> ValueMatch | None:
+    match = _WKT.match(value)
+    if not match or not value.rstrip().endswith(")"):
+        return None
+    kind = match.group(1).upper()
+    variant = "point" if "POINT" in kind else "line" if "LINE" in kind else "polygon"
+    return ValueMatch(None, variant, "WKT geometry", True)
+
+
+def _coordinates(value: str) -> ValueMatch | None:
+    match = _COORD_PAIR.match(value)
+    if not match:
+        tail = (
+            _COORD_TAIL.search(value) if "\n" in value or "," in value[: value.rfind("(")] else None
+        )
+        if tail and abs(float(tail.group(1))) <= 90 and abs(float(tail.group(2))) <= 180:
+            return ValueMatch(None, "address+lat,lon", "address (LAT, LON)", True)
+        return None
+    first, second = float(match.group(1)), float(match.group(2))
+    if abs(first) <= 90 and abs(second) <= 180:
+        return ValueMatch(None, "lat,lon", "(LAT, LON)", True)
+    if abs(first) <= 180 and abs(second) <= 90:
+        return ValueMatch(None, "lon,lat", "(LON, LAT)", True)
+    return None
+
+
 # --- Registry and column-level analysis -------------------------------------------------------
 
 # (type, matcher, minimum coverage). Order matters: more specific formats first.
@@ -309,6 +351,8 @@ _DETECTORS: tuple[tuple[str, Callable[[str], ValueMatch | None], float], ...] = 
     ("email", _email, MINIMUM_PATTERN_COVERAGE),
     ("phone", _phone, MINIMUM_PATTERN_COVERAGE),
     ("postal_code", _postal_code, MINIMUM_PATTERN_COVERAGE),
+    ("geometry", _geometry, MINIMUM_PATTERN_COVERAGE),
+    ("coordinates", _coordinates, MINIMUM_PATTERN_COVERAGE),
     ("address", _address, 0.6),  # free-form, so a looser bar
 )
 

@@ -181,3 +181,37 @@ def test_full_us_address_variant():
     info = analyze_values(["1600 Pennsylvania Avenue NW, Washington, DC 20500"])
 
     assert info is not None and info["variant"] == "full"
+
+
+@pytest.mark.parametrize(
+    ("value", "variant"),
+    [
+        ("POINT (-87.6298 41.8781)", "point"),
+        ("point(-87.6 41.8)", "point"),
+        ("MULTIPOLYGON (((-87.6 41.8, -87.5 41.8, -87.5 41.9, -87.6 41.8)))", "polygon"),
+        ("LINESTRING (0 0, 1 1)", "line"),
+        ("SRID=4326;POINT (1 2)", "point"),
+    ],
+)
+def test_well_known_text_geometry(value, variant):
+    info = analyze_values([value])
+
+    assert info is not None
+    assert (info["type"], info["variant"], info["validated"]) == ("geometry", variant, True)
+
+
+@pytest.mark.parametrize(
+    ("value", "variant"),
+    [("(41.8781, -87.6298)", "lat,lon"), ("41.8781,-87.6298", "lat,lon"), ("(-122.42, 37.77)", "lon,lat")],
+)  # fmt: skip
+def test_coordinate_pairs(value, variant):
+    info = analyze_values([value])
+
+    assert info is not None
+    assert (info["type"], info["variant"]) == ("coordinates", variant)
+
+
+@pytest.mark.parametrize("value", ["(200.5, 300.5)", "1, 2", "(41.8)", "POINT", "POINT (1 2"])
+def test_not_geometry_or_coordinates(value):
+    info = analyze_values([value])
+    assert info is None or info["type"] not in ("geometry", "coordinates")

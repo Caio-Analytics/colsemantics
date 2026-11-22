@@ -32,6 +32,8 @@ _PATTERN_SEMANTICS: dict[str, tuple[str, str]] = {
     "phone": ("Contact / Network", ROLE_AXIS),
     "postal_code": ("Geographic Location", DOMAIN_AXIS),
     "address": ("Geographic Location", DOMAIN_AXIS),
+    "geometry": ("Geographic Location", DOMAIN_AXIS),
+    "coordinates": ("Geographic Location", DOMAIN_AXIS),
 }
 
 _POSITIONAL_DECAY = 0.03
@@ -228,6 +230,8 @@ def by_fuzzy(normalized_name: str, tokens: list[str]) -> list[Evidence]:
             )
             for index, (candidate, confidence, original) in enumerate(name_candidates):
                 normalized_candidate = normalize(candidate)
+                if index == 0 and len(normalized_candidate) > 1.5 * len(normalized_word):
+                    continue  # the whole name is much longer than the word: not a typo of it
                 similarity = JaroWinkler.similarity(normalized_candidate, normalized_word)
                 if similarity < threshold:
                     continue

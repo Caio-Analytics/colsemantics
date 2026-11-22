@@ -11,11 +11,17 @@ if TYPE_CHECKING:
     from .detectors import ContentProfile
 
 _BOOLEAN_WORDS = frozenset({"true", "false", "yes", "no", "sim", "nao", "não"})
+# Single letters count as Boolean only as a matched pair (y/n, t/f, s/n for sim/não).
+_BOOLEAN_LETTER_PAIRS = (frozenset("yn"), frozenset("tf"), frozenset("sn"))
 _PLAIN_NUMBER = re.compile(r"^-?\d+([.,]\d+)?$")
 _BR_NUMBER = re.compile(r"^-?\d{1,3}(\.\d{3})+,\d+$")
 _US_NUMBER = re.compile(r"^-?\d{1,3}(,\d{3})+\.\d+$")
-_ISO_DATE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})([T ]\d{2}:\d{2}(:\d{2})?)?$")
-_SLASH_DATE = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4})$")
+_ISO_DATE = re.compile(
+    r"^(\d{4})-(\d{2})-(\d{2})([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$"
+)
+_SLASH_DATE = re.compile(
+    r"^(\d{1,2})/(\d{1,2})/(\d{4})(\s+\d{1,2}:\d{2}(:\d{2})?(\s*[AaPp][Mm])?)?$"
+)
 
 
 def parse_number(value: str) -> float | None:
@@ -60,7 +66,8 @@ def detect_data_type(values: list[str]) -> str:
     """Return Boolean, Integer, Decimal, Date, or Text for non-empty values."""
     if not values:
         return "Text"
-    if all(value.strip().lower() in _BOOLEAN_WORDS for value in values):
+    lowered = {value.strip().lower() for value in values}
+    if lowered <= _BOOLEAN_WORDS or any(lowered <= pair for pair in _BOOLEAN_LETTER_PAIRS):
         return "Boolean"
     if all(_is_date(value) for value in values):
         return "Date"

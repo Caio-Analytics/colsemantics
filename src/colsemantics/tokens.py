@@ -50,6 +50,8 @@ def _split_fused(token: str) -> list[str]:
             return [head, rest]
     if token.startswith("data") and token[4:] in _EXTRA_LEADING_REST | _PAST_PARTICIPLES:
         return ["data", token[4:]]
+    if token.endswith("flag") and len(token) >= len("flag") + 3:
+        return [token[:-4], "flag"]
     for suffix in ("on", "date"):
         prefix = token[: -len(suffix)]
         if token.endswith(suffix) and prefix in _PAST_PARTICIPLES:
