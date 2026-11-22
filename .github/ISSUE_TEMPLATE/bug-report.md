@@ -1,37 +1,27 @@
 ---
-name: Bug Report
-about: Report something that isn't working as expected
-title: ''
+name: Bug report
+about: A column was classified wrongly, or something crashed
 labels: bug, needs-triage
-assignees: ''
-
 ---
 
-## Describe the bug
-A clear and concise description of what the bug is.
+## What happened
+<!-- Wrong classification, exception, wrong CLI output... -->
 
-## Steps to reproduce
-1. Go to '...'
-2. Click on '...'
-3. Scroll down to '...'
-4. See error
+## Reproduction
+```python
+from colsemantics import infer_column
 
-## Expected behavior
-A clear and concise description of what you expected to happen.
+infer_column("your_column_name")
+```
+Do not paste real or sensitive data. Use synthetic values.
 
-## Actual behavior
-What actually happened instead.
+## Expected result
+<!-- Expected semantic / role / domain -->
 
-## Screenshots or logs
-If applicable, add screenshots, error messages, or logs to help explain the problem.
+## Actual result
+<!-- Output or traceback -->
 
 ## Environment
-- OS: [e.g. Windows 11, macOS Sonoma]
-- Browser/Version: [e.g. Chrome 128]
-- App Version/Commit: [e.g. v1.2.3]
-
-## Severity
-- [ ] Critical (system unusable, no workaround)
-- [ ] High (major feature broken)
-- [ ] Medium (partial impact, workaround exists)
-- [ ] Low (minor/cosmetic issue)
+- colsemantics version (`pip show colsemantics`):
+- Python version:
+- OS:
