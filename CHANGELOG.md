@@ -4,6 +4,21 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+## [0.4.0]
+
+### Breaking
+- Python 3.10 is no longer supported (end of life; `rapidfuzz>=3.14.6` needs 3.11).
+- `infer_csv` samples uniformly at random (seeded) by default instead of taking the first rows; pass `sampling="head"` for the old behavior. The report gains `rows_read`, `rows_malformed`, `warnings`, `sampling`, and per-column `column_name`/`column_index`.
+- Results gain a `pattern` key. `detected_pattern` names are English keys (`cpf`, `email`, `phone`, `postal_code`, ...); the legacy `CPF`, `E-mail`, `Telefone`, and `CEP` still work.
+- `Free-form Text` is now a structural role, so `item_description` is classified as free text instead of `Product / Item`.
+- `normalizar` and `tokenizar` are deprecated aliases of `normalize` and `tokenize` (removed in 1.0).
+
+### Added
+- Vocabulary learned from public open-data catalogs (about 4,500 US Socrata datasets and 500 Brazilian CKAN resources): roughly 190 new English, Portuguese, and Spanish terms, four new domains (`Real Estate / Property`, `Energy / Utilities`, `Legal / Compliance`, `Health / Medical`), and multi-word terms such as `phone_number` and `zip_code`.
+- Fused column names are split when one part is a known modifier: `issueddate`, `objectid`, `datecreated`, `lastupdated`, `createdon`. Punctuation such as `(zip)` is a separator.
+- Gazetteers from public sources for value-based inference: Brazilian municipalities (IBGE), US cities, countries, and common Brazilian (IBGE) and US (SSA) first names, plus a US state list. See `src/colsemantics/data/SOURCES.md` and `scripts/`.
+- `benchmarks/public-us-socrata.json` (390 columns labeled by their dataset's declared type) and `benchmarks/public-br-es.json` (51 hand-labeled Brazilian columns).
+
 ### Added
 - Locale-aware value patterns for Brazil and the US: phone (mobile, landline, toll-free, NANP), postal code (CEP, ZIP+4), street addresses (including PO boxes and highways), CPF, CNPJ, SSN, EIN. Results include `pattern` with `type`, `locale`, `variant`, `format`, `coverage`, `validated`, and a message.
 - Sensitivity rules for SSN, addresses, EIN, and postal codes.

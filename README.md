@@ -112,6 +112,12 @@ See `benchmarks/README.md` for the held-out validation set; its first measuremen
 
 The embedded calibration is provisional: it is a controlled regression fixture, not evidence of production-grade accuracy. A held-out, versioned corpus is required before treating its precision as a production measurement.
 
+## Vocabulary and data sources
+
+Beyond the hand-written terms, the vocabulary was extended from public data: column names of about 4,500 US open datasets (Socrata catalog) and 500 Brazilian CKAN resources, and word lists from IBGE (municipalities, countries, first names), the US SSA (first names), and `datasets/world-cities`. Only derived word lists are shipped. Sources, licenses, and the scripts that rebuild them are in `src/colsemantics/data/SOURCES.md` and `scripts/`.
+
+With sampled values, columns of municipalities, US cities, countries, and first names (Brazilian or US) are recognized even when the column name says nothing. These lists are matched by exact (accent-insensitive) value, so misspelled or abbreviated values do not match.
+
 ## Value patterns and locales
 
 When a column has sampled values, colsemantics also looks at how the values are written. Detection uses values only, so it works the same for Brazilian and US data and does not depend on the vocabulary profile.
