@@ -6,12 +6,16 @@ from typing import TypedDict
 
 
 class Sensitivity(TypedDict):
+    """How to handle a column: ``level`` (none, medium, high), ``action`` (allow, review, mask, restrict), and why."""
+
     level: str
     action: str
     reason: str
 
 
 class Hypothesis(TypedDict):
+    """One ranked alternative classification and the evidence behind it."""
+
     semantic: str
     axis: str
     confidence: float
@@ -31,6 +35,8 @@ class PatternInfo(TypedDict):
 
 
 class InferenceResult(TypedDict):
+    """The result of classifying one column. See docs/api.md for every key."""
+
     semantic: str
     role: str | None
     domain: str | None
@@ -45,11 +51,15 @@ class InferenceResult(TypedDict):
 
 
 class CsvColumnResult(InferenceResult):
+    """An ``InferenceResult`` plus the column's header and position in the CSV file."""
+
     column_name: str
     column_index: int
 
 
 class CsvSource(TypedDict):
+    """Where a CSV report came from: path, format, encoding, and the delimiter that was used."""
+
     path: str
     format: str
     encoding: str
@@ -57,6 +67,8 @@ class CsvSource(TypedDict):
 
 
 class CsvReport(TypedDict):
+    """The result of ``infer_csv``: sampling details, warnings, and one result per column."""
+
     source: CsvSource
     profile: str
     sampling: str

@@ -10,6 +10,7 @@ from .context import SemanticContext, create_context, current_context, reset_con
 
 @contextmanager
 def temporary_vocabulary(paths: str | None) -> Iterator[None]:
+    """Context manager that applies YAML vocabularies inside the ``with`` block only."""
     if not paths:
         yield
         return
@@ -21,6 +22,15 @@ def temporary_vocabulary(paths: str | None) -> Iterator[None]:
 
 
 def load_vocabularies(paths: str | None, base: SemanticContext | None = None) -> SemanticContext:
+    """Merge comma-separated YAML vocabulary files into a context.
+
+    Args:
+        paths: YAML files, or ``None`` to copy ``base`` unchanged.
+        base: The context to extend; defaults to the current context.
+
+    Raises:
+        ValueError: A file is not a mapping or has an invalid section.
+    """
     context = base or current_context()
     strong = {category: tuple(terms) for category, terms in context.strong_categories.items()}
     fuzzy = {category: tuple(terms) for category, terms in context.fuzzy_categories.items()}
@@ -80,6 +90,9 @@ def load_vocabularies(paths: str | None, base: SemanticContext | None = None) ->
 
 
 def export_overrides_template(payload: dict[str, Any], path: str) -> None:
+    """Write a ``column_overrides`` YAML file from a report so reviewed labels can be fixed
+    and fed back through ``load_vocabularies``.
+    """
     overrides = {
         str(column["column"]): str(column["semantic"]) for column in payload.get("columns", [])
     }
