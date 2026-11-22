@@ -5,13 +5,12 @@ description = "Infer semantic roles and domains for tabular columns from names, 
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Caio" }]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["semantic-inference", "data-profiling", "schema-inference", "column-classification", "pii", "etl"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -20,9 +19,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "rapidfuzz>=3.0",
-    "unidecode>=1.3",
-    "PyYAML>=6.0.1",
+    "rapidfuzz>=3.14.6",
+    "unidecode>=1.4.0",
+    "PyYAML>=6.0.3",
 ]
 
 [project.urls]
@@ -35,7 +34,7 @@ Changelog = "https://github.com/Caio-Analytics/colsemantics/blob/main/CHANGELOG.
 colsemantics = "colsemantics.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "mypy>=1.10", "ruff>=0.6"]
+dev = ["pytest>=9.2.0", "pytest-cov>=7.1.0", "mypy>=2.4.1", "ruff>=0.17.4"]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -64,7 +63,16 @@ ignore = [
 ]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 files = ["src/colsemantics"]
 ignore_missing_imports = true
 warn_unused_ignores = true
+
+[tool.coverage.run]
+source = ["colsemantics"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_covered = true

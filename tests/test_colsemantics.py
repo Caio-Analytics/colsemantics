@@ -1,7 +1,7 @@
 import pytest
 
 import colsemantics
-from colsemantics import ContentProfile, infer_column, infer_table, load_vocabularies, tokenizar
+from colsemantics import ContentProfile, infer_column, infer_table, load_vocabularies, tokenize
 from colsemantics.context import reset_context, set_context
 from colsemantics.tokens import expand_abbreviation
 
@@ -17,22 +17,20 @@ def profile(values: list[str], data_type: str = "Text") -> ContentProfile:
 
 
 def test_public_api_exposes_only_english_contract():
-    assert colsemantics.__all__ == [
-        "ContentProfile",
-        "SemanticContext",
-        "available_profiles",
-        "current_context",
-        "infer_csv",
-        "infer_column",
-        "infer_table",
-        "load_profile",
-        "normalizar",
-        "load_vocabularies",
-        "temporary_vocabulary",
-        "temporary_profile",
-        "export_overrides_template",
-        "tokenizar",
-    ]
+    assert colsemantics.__all__ == sorted(colsemantics.__all__)
+    for name in colsemantics.__all__:
+        assert hasattr(colsemantics, name), name
+    for name in ("infer_table", "assess_sensitivity", "calibrate", "tokenize", "normalize"):
+        assert name in colsemantics.__all__
+
+
+def test_portuguese_aliases_are_deprecated():
+    with pytest.warns(DeprecationWarning, match="use colsemantics.tokenize"):
+        assert colsemantics.tokenizar("hireDate") == ["hire", "date"]
+    with pytest.warns(DeprecationWarning, match="use colsemantics.normalize"):
+        assert colsemantics.normalizar("Ação") == "acao"
+    with pytest.raises(AttributeError):
+        _ = colsemantics.does_not_exist
 
 
 def test_identifier_uses_english_taxonomy():
@@ -117,8 +115,8 @@ def test_table_api_accepts_english_input_keys():
 
 
 def test_tokenization_handles_camel_and_snake_case():
-    assert tokenizar("dt_admissao") == ["dt", "admissao"]
-    assert tokenizar("hireDate") == ["hire", "date"]
+    assert tokenize("dt_admissao") == ["dt", "admissao"]
+    assert tokenize("hireDate") == ["hire", "date"]
 
 
 def test_abbreviation_expansion_supports_portuguese_source_tokens():

@@ -6,26 +6,26 @@ from .context import current_context
 from .vocabulary import ABBREVIATIONS
 
 _RE_CAMEL = re.compile(r"([a-z0-9])([A-Z])")
-_RE_SEPARADORES = re.compile(r"[_\s\-\.]+")
-_RE_LETRA_NUMERO = re.compile(r"([a-z])(\d)")
+_RE_SEPARATORS = re.compile(r"[_\s\-\.]+")
+_RE_LETTER_DIGIT = re.compile(r"([a-z])(\d)")
 
 
-_RAZAO_MAX_EXPANSAO = 4.0
-_MIN_LEN_ABREVIATURA = 2
+_MAX_EXPANSION_RATIO = 4.0
+_MIN_ABBREVIATION_LEN = 2
 
 
-_MIN_LEN_ABREVIATURA_ESPECULATIVA = 3
+_MIN_SPECULATIVE_ABBREVIATION_LEN = 3
 
 
-def normalizar(text: str) -> str:
+def normalize(text: str) -> str:
     return unidecode(str(text)).lower().strip()
 
 
-def tokenizar(column_name: str) -> list[str]:
+def tokenize(column_name: str) -> list[str]:
     name = _RE_CAMEL.sub(r"\1_\2", str(column_name))
-    name = normalizar(name)
-    name = _RE_LETRA_NUMERO.sub(r"\1_\2", name)
-    return [p for p in _RE_SEPARADORES.split(name) if p]
+    name = normalize(name)
+    name = _RE_LETTER_DIGIT.sub(r"\1_\2", name)
+    return [p for p in _RE_SEPARATORS.split(name) if p]
 
 
 def _expansion_vocabulary() -> tuple[str, ...]:
@@ -38,7 +38,7 @@ def _is_subsequence(abbreviation: str, word: str) -> bool:
 
 
 def expand_abbreviation(token: str) -> tuple[tuple[str, float], ...]:
-    if len(token) < _MIN_LEN_ABREVIATURA or not token.isalpha():
+    if len(token) < _MIN_ABBREVIATION_LEN or not token.isalpha():
         return ()
 
     if token in _expansion_vocabulary():
@@ -49,14 +49,14 @@ def expand_abbreviation(token: str) -> tuple[tuple[str, float], ...]:
         confidence = 0.85 if len(curated) == 1 else 0.55
         return tuple((word, confidence) for word in curated)
 
-    if len(token) < _MIN_LEN_ABREVIATURA_ESPECULATIVA:
+    if len(token) < _MIN_SPECULATIVE_ABBREVIATION_LEN:
         return ()
 
     candidates: list[tuple[str, float]] = []
     for word in _expansion_vocabulary():
         if word == token or len(word) <= len(token):
             continue
-        if len(word) > len(token) * _RAZAO_MAX_EXPANSAO:
+        if len(word) > len(token) * _MAX_EXPANSION_RATIO:
             continue
         if word[0] != token[0]:
             continue

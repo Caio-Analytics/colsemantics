@@ -6,7 +6,7 @@ from rapidfuzz.distance import JaroWinkler
 from . import _taxonomy as config
 from .context import current_context
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence
-from .tokens import expand_abbreviation, expanded_tokens, normalizar
+from .tokens import expand_abbreviation, expanded_tokens, normalize
 
 STRUCTURAL_ROLES = frozenset(
     {
@@ -65,7 +65,7 @@ def by_gazetteer(profile: ContentProfile) -> list[Evidence]:
     if not profile.distinct_values or profile.distinct_count <= 0:
         return []
 
-    normalized_values = [normalizar(value) for value in profile.distinct_values]
+    normalized_values = [normalize(value) for value in profile.distinct_values]
     normalized_values = [value for value in normalized_values if value]
     if not normalized_values:
         return []
@@ -160,14 +160,14 @@ def by_fuzzy(normalized_name: str, tokens: list[str]) -> list[Evidence]:
     ]
     for category, keywords in current_context().fuzzy_categories.items():
         for word in keywords:
-            normalized_word = normalizar(word)
+            normalized_word = normalize(word)
             threshold = (
                 config.SHORT_FUZZY_THRESHOLD
                 if len(normalized_word) <= 3
                 else config.DEFAULT_FUZZY_THRESHOLD
             )
             for index, (candidate, confidence, original) in enumerate(name_candidates):
-                normalized_candidate = normalizar(candidate)
+                normalized_candidate = normalize(candidate)
                 similarity = JaroWinkler.similarity(normalized_candidate, normalized_word)
                 if similarity < threshold:
                     continue

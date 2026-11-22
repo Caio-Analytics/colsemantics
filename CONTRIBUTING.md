@@ -11,14 +11,14 @@ python -m venv .venv && source .venv/bin/activate
 python -m pip install -e '.[dev]'
 ```
 
-Python 3.10 or newer is required.
+Python 3.11 or newer is required.
 
 ## Checks
 
-CI runs all of these on Python 3.10 to 3.14, plus a job with the lowest supported dependency versions.
+CI runs all of these on Python 3.11 to 3.14, plus a job with the lowest supported dependency versions.
 
 ```bash
-pytest
+pytest --cov          # fails below 85% coverage
 ruff check .
 ruff format --check .   # `ruff format .` fixes it
 mypy

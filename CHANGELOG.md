@@ -5,14 +5,21 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 ## [Unreleased]
 
 ### Added
-- CI workflow: lint, format check, mypy, tests on Python 3.10 to 3.14, lowest-dependency job, and distribution check.
+- CI workflow: lint, format check, mypy, tests on Python 3.11 to 3.14, lowest-dependency job, and distribution check.
 - Dependabot configuration, contribution guide, security policy, code of conduct, and pull request template.
 - Release workflow verifies that the release tag matches the package version.
 
 ### Changed
-- Raised the `PyYAML` lower bound to `6.0.1`. Version 6.0 has no wheels for Python 3.12 and fails to build from source.
+- Raised dependency floors to releases at least 14 days old: `rapidfuzz>=3.14.6`, `unidecode>=1.4.0`, `PyYAML>=6.0.3` (6.0 has no Python 3.12 wheels). Dev tools: `pytest>=9.2.0`, `pytest-cov>=7.1.0`, `mypy>=2.4.1`, `ruff>=0.17.4`.
+- Dependabot only proposes versions published at least 14 days ago (`cooldown`).
+- Renamed `normalizar` to `normalize` and `tokenizar` to `tokenize`; the old names are deprecated aliases until 1.0.
+- `__all__` now lists every public function, including `infer_table`, `assess_sensitivity`, `calibrate`, and `requires_review`.
+- Test coverage is measured in CI with a minimum of 85%.
 - Declared Python 3.13 and 3.14 support.
 - Applied `ruff format` to the codebase.
+
+### Removed
+- Python 3.10 support. It is end of life and `rapidfuzz>=3.14.6` requires Python 3.11.
 
 ## [0.3.0]
 

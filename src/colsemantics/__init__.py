@@ -1,3 +1,4 @@
+import warnings
 from typing import Any
 
 from . import _taxonomy as config
@@ -17,7 +18,7 @@ from .detectors import (
 from .evidence import DOMAIN_AXIS, ROLE_AXIS, Evidence, choose, rank
 from .profiles import available_profiles, load_profile, temporary_profile
 from .sensitivity import assess_sensitivity
-from .tokens import normalizar, tokenizar
+from .tokens import normalize, tokenize
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
 __version__ = "0.3.0"
@@ -25,19 +26,37 @@ __version__ = "0.3.0"
 __all__ = [
     "ContentProfile",
     "SemanticContext",
+    "assess_sensitivity",
     "available_profiles",
+    "calibrate",
     "current_context",
-    "infer_csv",
+    "export_overrides_template",
     "infer_column",
+    "infer_csv",
     "infer_table",
     "load_profile",
-    "normalizar",
     "load_vocabularies",
-    "temporary_vocabulary",
+    "normalize",
+    "requires_review",
     "temporary_profile",
-    "export_overrides_template",
-    "tokenizar",
+    "temporary_vocabulary",
+    "tokenize",
 ]
+
+_DEPRECATED_ALIASES = {"normalizar": "normalize", "tokenizar": "tokenize"}
+
+
+def __getattr__(name: str) -> Any:
+    if name in _DEPRECATED_ALIASES:
+        replacement = _DEPRECATED_ALIASES[name]
+        warnings.warn(
+            f"colsemantics.{name} is deprecated and will be removed in 1.0; use colsemantics.{replacement}",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return globals()[replacement]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 _CONTEXT_MINIMUM_CONFIDENCE = 0.7
 _DOMAIN_MINIMUM_CONFIDENCE = 0.5
@@ -47,8 +66,8 @@ _MAX_HYPOTHESES = 4
 def _collect_evidence(
     column_name: str, detected_pattern: str, profile: ContentProfile | None
 ) -> list[Evidence]:
-    tokens = tokenizar(column_name)
-    normalized_name = normalizar(column_name)
+    tokens = tokenize(column_name)
+    normalized_name = normalize(column_name)
     evidence_items = (
         by_content_pattern(detected_pattern)
         + by_strong_token(tokens)
@@ -177,7 +196,7 @@ def infer_table(columns: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if result["conclusive"]:
             continue
         name = str(column.get("column_name", column.get("name")))
-        extras = by_table_context(tokenizar(name), table_domains)
+        extras = by_table_context(tokenize(name), table_domains)
         if extras:
             detected_pattern = str(column.get("detected_pattern", column.get("pattern", "None")))
             results[index] = _build_result(
