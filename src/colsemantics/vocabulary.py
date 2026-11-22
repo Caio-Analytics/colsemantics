@@ -1,9 +1,16 @@
 from typing import Any
 
 from . import _taxonomy as config
+from ._data import load_wordlist
 
 ABBREVIATIONS: dict[str, list[str]] = {
     "cd": ["codigo"],
+    "nom": ["nome"],
+    "sig": ["sigla"],
+    "tip": ["tipo"],
+    "dat": ["data"],
+    "ide": ["identificador"],
+    "idc": ["identificador"],
     "cod": ["codigo"],
     "cdg": ["codigo"],
     "dt": ["data"],
@@ -494,3 +501,50 @@ GAZETTEERS: list[dict[str, Any]] = [
         "max_distinct": 10,
     },
 ]
+
+
+GAZETTEERS.extend(
+    [
+        {
+            "name": "município brasileiro",
+            "values": load_wordlist("br_municipalities.txt"),
+            "category": "Geographic Location",
+            "axis": "domain",
+            "minimum_coverage": 0.8,
+            "weight": 0.9,
+            "max_distinct": 6000,
+            "minimum_distinct": 3,
+        },
+        {
+            "name": "US city",
+            "values": load_wordlist("us_cities.txt"),
+            "category": "Geographic Location",
+            "axis": "domain",
+            "minimum_coverage": 0.8,
+            "weight": 0.85,
+            "max_distinct": 4000,
+            "minimum_distinct": 3,
+        },
+        {
+            "name": "country",
+            "values": load_wordlist("countries.txt"),
+            "category": "Geographic Location",
+            "axis": "domain",
+            "minimum_coverage": 0.85,
+            "weight": 0.9,
+            "max_distinct": 400,
+            "minimum_distinct": 3,
+        },
+        {
+            "name": "first name (BR/US)",
+            "values": load_wordlist("br_first_names.txt") | load_wordlist("us_first_names.txt"),
+            "category": "Person Name / Identifier",
+            "axis": "role",
+            "minimum_coverage": 0.7,
+            "weight": 0.85,
+            "max_distinct": 1_000_000,
+            "minimum_distinct": 5,
+            "match": "first_token",
+        },
+    ]
+)

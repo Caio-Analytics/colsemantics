@@ -1,0 +1,308 @@
+[
+  {
+    "profile": "pt-BR",
+    "column_name": "Id",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Ano",
+    "expected_semantic": "Date / Calendar",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Data",
+    "expected_semantic": "Date / Calendar",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "CodigoPrograma",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "CodigoFuncao",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "CodigoOrgao",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "IdOrgao",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "IdLicitacao",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "NumeroProcesso",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "NumeroLicitacao",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "NumeroEdital",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "CpfCnpjNis",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "CnpjCpfFornecedor",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "CodigoFornecedor",
+    "expected_semantic": "Identifier (ID)",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ValorPago",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ValorEmpenho",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ValorLiquidado",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ValorRap",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "DotacaoInicial",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "DespesaPaga",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ValorPrevisto",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ValorOrcado",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "ValorLicitacao",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "MelhorLance",
+    "expected_semantic": "Financial Value",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "DataAbertura",
+    "expected_semantic": "Date / Calendar",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "DataCriacao",
+    "expected_semantic": "Date / Calendar",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "dataPublicacao",
+    "expected_semantic": "Date / Calendar",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "dataCadastro",
+    "expected_semantic": "Date / Calendar",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "DataCriacaoLicitacao",
+    "expected_semantic": "Date / Calendar",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Municipio",
+    "expected_semantic": "Geographic Location",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "NomeMunicipio",
+    "expected_semantic": "Geographic Location",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Microregiao",
+    "expected_semantic": "Geographic Location",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "NomeMicroregiao",
+    "expected_semantic": "Geographic Location",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Quantidade",
+    "expected_semantic": "Quantity / Metric",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Justificativa",
+    "expected_semantic": "Free-form Text",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Descricao",
+    "expected_semantic": "Free-form Text",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "DescricaoItemCompra",
+    "expected_semantic": "Free-form Text",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "HistoricoDocumento",
+    "expected_semantic": "Free-form Text",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "DescricaoEsfera",
+    "expected_semantic": "Free-form Text",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "FlagCovid19",
+    "expected_semantic": "Status / Indicator / Flag",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Situacao",
+    "expected_semantic": "Status / Indicator / Flag",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "SituacaoLicitacao",
+    "expected_semantic": "Status / Indicator / Flag",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Desclassificado",
+    "expected_semantic": "Status / Indicator / Flag",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Inabilitado",
+    "expected_semantic": "Status / Indicator / Flag",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Vencedor",
+    "expected_semantic": "Status / Indicator / Flag",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "NomeOrgao",
+    "expected_semantic": "Organizational Structure",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "Orgao",
+    "expected_semantic": "Organizational Structure",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "UnidadeGestora",
+    "expected_semantic": "Organizational Structure",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "UnidadeOrcamentaria",
+    "expected_semantic": "Organizational Structure",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "NomeUnidadeOrcamentaria",
+    "expected_semantic": "Organizational Structure",
+    "source": "dados.es.gov.br"
+  },
+  {
+    "profile": "pt-BR",
+    "column_name": "CargoFuncao",
+    "expected_semantic": "Job / Function",
+    "source": "dados.es.gov.br"
+  }
+]

@@ -161,7 +161,7 @@ def test_custom_gazetteer_uses_english_schema(tmp_path):
 
 
 def test_runtime_version_matches_the_release_candidate():
-    assert colsemantics.__version__ == "0.3.1"
+    assert colsemantics.__version__ == "0.4.0"
 
 
 def test_public_api_exports_csv_and_profile_interfaces():

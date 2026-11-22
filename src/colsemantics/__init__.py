@@ -30,7 +30,7 @@ from .sensitivity import assess_sensitivity
 from .tokens import normalize, tokenize
 from .vocabularies import export_overrides_template, load_vocabularies, temporary_vocabulary
 
-__version__ = "0.3.1"
+__version__ = "0.4.0"
 
 __all__ = [
     "ContentProfile",

@@ -18,6 +18,7 @@ STRUCTURAL_ROLES = frozenset(
         "Contact / Network",
         "Status / Indicator / Flag",
         "Assessment Result",
+        config.FREE_FORM_TEXT_SEMANTIC,
     }
 )
 
@@ -99,11 +100,17 @@ def by_gazetteer(profile: ContentProfile) -> list[Evidence]:
         return []
 
     findings: list[Evidence] = []
+    first_tokens = [value.split()[0] for value in normalized_values]
     for gazetteer in current_context().gazetteers:
-        if profile.distinct_count > gazetteer["max_distinct"]:
+        if (
+            not gazetteer.get("minimum_distinct", 1)
+            <= profile.distinct_count
+            <= gazetteer["max_distinct"]
+        ):
             continue
-        matches = sum(1 for value in normalized_values if value in gazetteer["values"])
-        coverage = matches / len(normalized_values)
+        candidates = first_tokens if gazetteer.get("match") == "first_token" else normalized_values
+        matches = sum(1 for value in candidates if value in gazetteer["values"])
+        coverage = matches / len(candidates)
         if coverage < gazetteer["minimum_coverage"]:
             continue
         findings.append(
